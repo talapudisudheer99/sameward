@@ -23,6 +23,8 @@ This `docs/` folder is the **source of truth** for:
 | **Data flow** | [architecture/data-flow.md](./architecture/data-flow.md) | “How does a request travel?” |
 | **Progress tracker** | [tracking/progress.md](./tracking/progress.md) | “Where are we right now?” |
 | **Interview bank** | [tracking/interview-questions.md](./tracking/interview-questions.md) | Prep & review |
+| **Design system** | [design/design-system.md](./design/design-system.md) | Colors, type, layout, tokens |
+| **How we work** | [MENTORSHIP.md](./MENTORSHIP.md) | You = functionality; mentor = UI polish |
 | **Phases 0–8** | [phases/](./phases/) | Feature-by-feature learning guides |
 | **Feature index** | [features/README.md](./features/README.md) | Jump to a product feature |
 

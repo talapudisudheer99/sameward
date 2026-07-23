@@ -6,49 +6,60 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 0 — Foundation |
-| **Current feature** | Understand scaffold (no new product UI yet) |
-| **Current technology** | Next.js App Router, RSC vs Client Components |
+| **Current phase** | Phase 1 — Product shell |
+| **Current feature** | Finish Phase 1 shell UX flows; mentor owns visual polish |
+| **Current technology** | Nested layouts + design tokens (applied); next = auth-ready shell / empty workspace flow |
 | **Last updated** | 2026-07-23 |
 
 ## Phase status
 
 | Phase | Name | Status | Notes |
 |-------|------|--------|-------|
-| 0 | Foundation | 🔄 In progress | Mentor Task 1: answer layout/page questions |
-| 1 | Product shell | ⬜ Not started | |
+| 0 | Foundation | ✅ Done | RSC, layout, theme, hydration, route-group mental model |
+| 1 | Product shell | 🔄 In progress | Route groups + shell exist; apply design system next |
 | 2 | Authentication | ⬜ Not started | |
 | 3 | Workspaces & members | ⬜ Not started | MongoDB enters here |
 | 4 | State & data layer | ⬜ Not started | Redux + RTK Query |
 | 5 | Collaboration core | ⬜ Not started | |
 | 6 | Realtime | ⬜ Not started | Socket.IO |
 | 7 | AI & integrations | ⬜ Not started | |
-| 8 | Quality & deployment | ⬜ Not started | GitHub → Vercel |
+| 8 | Quality & deployment | ⬜ Not started | Vercel later |
 
 ## Completed concepts
 
-- _(none yet — Phase 0 in progress)_
+- Server vs Client Components (`"use client"` boundary)
+- Root layout vs nested layouts / route groups
+- Hydration + `suppressHydrationWarning` (theme)
+- `next-themes` + Context provider placement
+- Data-driven sidebar (`navItems` map, `Link`, `usePathname`)
+- `type` vs `interface` for object shapes
 
 ## Interview questions covered
 
-- _(none yet)_
+- Server vs Client Components
+- Why providers live in root layout
+- Hydration mismatch with theme class on `<html>`
+- Nested layouts for marketing vs app chrome
+- `type` vs `interface`
 
 ## Session log
 
 | Date | What we did | Outcome |
 |------|-------------|---------|
-| 2026-07-23 | Mentorship kickoff + docs structure | Docs hub created; Phase 0 active |
+| 2026-07-23 | Mentorship kickoff + docs structure | Docs hub created |
+| 2026-07-23 | GitHub SSH push + working branch | `learn/phase-0-foundation` on remote |
+| 2026-07-23 | Phase 0 concepts + Phase 1 route groups/shell | `/` vs `/workspace` layouts working |
+| 2026-07-23 | Design system v1.0 approved | Saved under `docs/design/` |
 
 ## GitHub readiness
 
 | Item | Status |
 |------|--------|
-| Local git repo | ✅ Exists (`main`) |
-| Remote GitHub repo | ⬜ Not connected yet |
-| Docs committed | ⬜ Pending your commit |
-| Vercel project | ⬜ Later (Phase 8, or earlier if desired) |
-
-When you are ready to push: create a GitHub repo, add remote, push `main`. Ask your mentor for the exact git commands if you want a guided micro-task.
+| Local git repo | ✅ |
+| Remote GitHub repo | ✅ `talapudisudheer99/teamhub-ai` (SSH) |
+| Working branch | ✅ `learn/phase-0-foundation` |
+| Design docs | ✅ `docs/design/design-system.md` |
+| Vercel project | ⬜ Later |
 
 ---
 
