@@ -1,9 +1,14 @@
-const Layout =({children}:{children:React.ReactNode})=>{
-    return (
-        <>
-        {children}
-        </>
-    )
-}
+import { SiteHeader } from "@/components/marketing/site-header"
 
-export default Layout;
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteHeader />
+      <main>{children}</main>
+    </div>
+  )
+}
