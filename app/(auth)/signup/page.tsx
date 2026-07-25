@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import SubmitButton from "@/components/buttons/submit-button"
 import { AppFormField } from "@/components/forms/app-form-field"
@@ -17,6 +19,9 @@ import signupSchema, {
 } from "@/lib/schemas/auth/signup-schema"
 
 export default function SignUpPage() {
+  // Client-side navigation after the API successfully creates the account.
+  const router = useRouter()
+
   const form = useForm<SignupSchema>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -31,17 +36,55 @@ export default function SignUpPage() {
   const {
     control,
     handleSubmit,
-    formState: { isValid },
+    setError,
+    formState: { errors, isSubmitting, isValid },
   } = form
 
-  const onSubmit = (data: SignupSchema) => {
-    console.log({
-      action: "signup",
-      next: "POST /api/auth/signup (Phase 2)",
-      ...data,
-      password: "[redacted]",
-      confirmPassword: "[redacted]",
-    })
+  /**
+   * React Hook Form calls this only after client-side Zod validation passes.
+   * The server validates again because browser input can never be trusted.
+   */
+  const onSubmit = async (data: SignupSchema) => {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        // Explicit for learning: allow the browser to accept/send auth cookies.
+        // Same-origin fetch includes them by default, but this documents intent.
+        credentials: "include",
+      })
+
+      // Our API always returns JSON, whether it succeeds or fails.
+      const result = (await response.json()) as { message?: string }
+
+      if (!response.ok) {
+        // A non-2xx response (400/409/500) is an expected API failure.
+        const message = result.message ?? "Could not create your account"
+        // Form error stays next to the button; toast is the global feedback.
+        setError("root.serverError", {
+          type: "server",
+          message,
+        })
+        toast.error(message)
+        return
+      }
+
+      toast.success("Account created — welcome to TeamHub")
+      // Signup created the user and session cookie; enter the protected app.
+      router.replace("/workspace")
+      router.refresh()
+    } catch {
+      // fetch throws for network failures, not for normal 4xx/5xx responses.
+      const message = "Unable to reach the server. Please try again."
+      setError("root.serverError", {
+        type: "network",
+        message,
+      })
+      toast.error(message)
+    }
   }
 
   return (
@@ -117,12 +160,19 @@ export default function SignUpPage() {
             >
               Privacy Policy
             </button>
-            .
+            {"."}
           </p>
+
+          {errors.root?.serverError?.message ? (
+            <p role="alert" className="text-sm text-destructive">
+              {errors.root.serverError.message}
+            </p>
+          ) : null}
 
           <SubmitButton
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
+            isLoading={isSubmitting}
             text="Create account"
             className="h-11 w-full"
           />

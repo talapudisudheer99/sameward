@@ -1,8 +1,11 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { isAxiosError } from "axios"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import SubmitButton from "@/components/buttons/submit-button"
 import { AppFormField } from "@/components/forms/app-form-field"
@@ -12,11 +15,14 @@ import {
   GoogleAuthButton,
 } from "@/components/marketing/google-auth-button"
 import { Form } from "@/components/ui/form"
+import { api } from "@/lib/api/axios"
 import loginSchema, {
   type LoginSchema,
 } from "@/lib/schemas/auth/login-schema"
 
 export default function LoginPage() {
+  const router = useRouter()
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,16 +35,30 @@ export default function LoginPage() {
   const {
     control,
     handleSubmit,
-    formState: { isValid },
+    setError,
+    formState: { errors, isSubmitting, isValid },
   } = form
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log({
-      action: "login",
-      next: "POST /api/auth/login (Phase 2)",
-      email: data.email,
-      password: "[redacted]",
-    })
+  // axios throws on 4xx/5xx — unlike fetch, which only fails on network errors
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      await api.post("/api/auth/signin", data)
+
+      toast.success("Welcome back")
+      router.replace("/workspace")
+      router.refresh()
+    } catch (error) {
+      let message
+
+      if (isAxiosError(error)) {
+        message = error.response?.data?.message ?? "Invalid email or password"
+      } else {
+        message = "Unable to reach the server. Please try again."
+      }
+
+      setError("root.serverError", { type: "server", message })
+      toast.error(message)
+    }
   }
 
   return (
@@ -47,8 +67,7 @@ export default function LoginPage() {
       description="Sign in to your TeamHub AI workspace."
       panelTitle={
         <>
-          Your work.{" "}
-          <span className="text-primary">All together.</span>
+          Your work. <span className="text-primary">All together.</span>
         </>
       }
       panelDescription="Channels, docs, boards, and AI assistance in one calm place your team actually wants to use."
@@ -93,15 +112,22 @@ export default function LoginPage() {
             <button
               type="button"
               className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => console.log("forgot-password:coming-soon")}
+              onClick={() => toast.message("Forgot password — coming soon")}
             >
               Forgot password?
             </button>
           </div>
 
+          {errors.root?.serverError?.message ? (
+            <p role="alert" className="text-sm text-destructive">
+              {errors.root.serverError.message}
+            </p>
+          ) : null}
+
           <SubmitButton
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
+            isLoading={isSubmitting}
             text="Log in"
             className="h-11 w-full"
           />

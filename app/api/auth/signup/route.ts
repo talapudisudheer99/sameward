@@ -1,0 +1,100 @@
+import { NextResponse } from "next/server" // helper to build JSON HTTP responses
+
+import { hashPassword } from "@/lib/auth/password" // bcrypt hash — never store plain password
+import { createSession } from "@/lib/auth/session" // creates session row + sets the cookie
+import { connectDB } from "@/lib/db/mongoose" // opens / reuses the Mongo connection
+import { User } from "@/lib/models/user" // Mongoose model for the users collection
+import signupSchema from "@/lib/schemas/auth/signup-schema" // Zod schema shared with the form
+
+/**
+ * POST /api/auth/signup
+ * Creates a user, then logs them in by starting a session.
+ *
+ * Login is the mirror image: parse → validate → find user → verifyPassword → createSession.
+ */
+export async function POST(request: Request) {
+  try {
+    await connectDB() // ensure DB is ready before any query
+
+    // --- 1) Parse JSON body ---
+    let body: unknown // unknown = we don't trust the client shape yet
+    try {
+      body = await request.json() // reads and parses the request body as JSON
+    } catch {
+      // client sent empty body or invalid JSON
+      return NextResponse.json(
+        { message: "Invalid JSON body" },
+        { status: 400 } // 400 = bad request
+      )
+    }
+
+    // --- 2) Validate with Zod (same rules as the signup form) ---
+    const parsed = signupSchema.safeParse(body) // safeParse never throws; returns success/error
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          message: "Validation failed",
+          errors: parsed.error.flatten(), // field-level errors for debugging / UI later
+        },
+        { status: 400 }
+      )
+    }
+
+    // only after success do we use typed fields
+    const { fullName, email, password } = parsed.data
+
+    // confirmPassword is only for matching — do NOT save it to Mongo
+
+    // --- 3) Reject duplicate email ---
+    const existing = await User.findOne({ email }) // email already lowercased by Zod + schema
+    if (existing) {
+      return NextResponse.json(
+        { message: "Email already registered" },
+        { status: 409 } // 409 = conflict
+      )
+    }
+
+    // --- 4) Hash password, then create user ---
+    const passwordHash = await hashPassword(password) // one-way hash with salt rounds 12
+
+    const user = await User.create({
+      fullName,
+      email,
+      passwordHash, // store hash only — never `password`
+    })
+
+    // --- 5) Log the new user in: session row + Set-Cookie on this response ---
+    await createSession(String(user._id))
+
+    // --- 6) Success response (safe fields only) ---
+    return NextResponse.json(
+      {
+        id: String(user._id), // ObjectId → string for JSON
+        fullName: user.fullName,
+        email: user.email,
+        // passwordHash intentionally omitted
+      },
+      { status: 201 } // 201 = created
+    )
+  } catch (error: unknown) {
+    // race: two signups with same email at once can hit unique index
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === 11000 // Mongo duplicate key error
+    ) {
+      return NextResponse.json(
+        { message: "Email already registered" },
+        { status: 409 }
+      )
+    }
+
+    console.error("Signup failed:", error) // log server-side; never log the password
+
+    return NextResponse.json(
+      { message: "Something went wrong" }, // generic message to the client
+      { status: 500 }
+    )
+  }
+}

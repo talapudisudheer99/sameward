@@ -1,84 +1,56 @@
 # Phase 2 — Authentication
 
-**Status:** ⬜ Not started  
+**Status:** 🔜 Next (Phase 1 complete — UI/shell)  
 **Prev:** [← Phase 1](../01-product-shell/README.md) · **Next:** [Phase 3 — Workspaces →](../03-workspaces-members/README.md)
+
+**Full step-by-step plan:** [E2E-FLOW.md](./E2E-FLOW.md)
 
 ---
 
 ## 1. Business requirement
 
-Only signed-in users access TeamHub workspaces. Roles control who can invite, delete, or admin.
+Only signed-in users access TeamHub workspaces. Auth is the gate to the product.
 
 ## 2. What you will build
 
-- Sign up / login / logout UI
-- Session via **HTTP-only cookies**
-- Next.js **Middleware** for protected routes
-- Role checks (owner / admin / member) at API + UI
+- Wire existing `/signup` + `/login` forms to real APIs
+- Password hashing
+- HTTP-only session cookies
+- MongoDB `users` (+ `sessions`)
+- `middleware.ts` protecting `/workspace`
+- Logout
+
+Google OAuth = stretch after email/password.
 
 ## 3. Architecture
 
 ```
-Login form (Client)
-  → POST /api/auth/login (Route Handler)
-  → Verify credentials (MongoDB users — may start here or Phase 3)
-  → Set httpOnly cookie
-  → Middleware gates /app/*
-  → UI reads session (server) for personalization
+Form → Zod → Route Handler → MongoDB → Set-Cookie
+         ↑
+    middleware checks cookie on /workspace
 ```
-
-**Security rule:** UI hiding is not security. APIs must authorize.
 
 ## 4. Why these technologies
 
-| Approach | Why | Trade-off |
-|----------|-----|-----------|
-| Cookies (httpOnly) | Safer than localStorage JWT for XSS | CSRF considerations to learn |
-| Middleware | Early reject unauthenticated navigations | Not a substitute for API auth |
-| Own auth in Next | Deep learning of sessions | More work than “Supabase Auth only” |
+| Choice | Why |
+|--------|-----|
+| httpOnly cookie | Safer than localStorage JWT for XSS |
+| Middleware | Fast redirect for pages |
+| Hash on server | Never store plain passwords |
+| Shared Zod schemas | Same rules client + API |
 
 ## 5. Concepts covered
 
 - [ ] Cookies & sessions
+- [ ] Password hashing
 - [ ] Middleware matchers
 - [ ] Protected routes
-- [ ] RBAC
-- [ ] Password hashing concepts
-- [ ] OAuth optional stretch (GitHub)
+- [ ] Defense in depth (middleware + API)
+- [ ] OAuth (stretch)
 
-## 6. Folder structure (target)
+## 6. Definition of done
 
-```
-app/api/auth/[...]/route.ts   # or discrete login/logout/register
-middleware.ts
-lib/auth/
-```
-
-## 7. Backend (Next + MongoDB)
-
-- `users` collection (email, passwordHash, name, ...)
-- Auth Route Handlers
-- Session strategy documented in this phase’s notes as we implement
-
-## 8. Micro-tasks
-
-Mentor assigns after Phase 1.
-
-## 9. Testing & production notes
-
-- Never log secrets
-- Secure cookie flags in production
-- Test unauthorized API access returns 401/403
-
-## 10. Interview questions (preview)
-
-1. localStorage JWT vs httpOnly cookie — trade-offs?
-2. What does middleware protect and what does it not?
-3. Explain RBAC with an example endpoint.
-
-## 11. Definition of done
-
-Unauthenticated users cannot use `/app` or secured APIs; you can explain the full auth flow.
+See [E2E-FLOW.md](./E2E-FLOW.md) — signup/login/logout + protected `/workspace` + interview-ready explanation.
 
 ---
 
