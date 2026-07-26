@@ -15,15 +15,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Form,
-} from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 
-import workSpaceSchema, { WorkSpaceSchema } from "@/lib/schemas/workspace/workspace"
+import workSpaceSchema, {
+  WorkSpaceSchema,
+} from "@/lib/schemas/workspace/workspace"
 import CancelButton from "@/components/buttons/cancel-button"
 import { AppFormField } from "@/components/forms/app-form-field"
 import SubmitButton from "@/components/buttons/submit-button"
-
 
 type WorkspaceFormValues = z.infer<typeof workSpaceSchema>
 
@@ -42,7 +41,11 @@ export default function CreateWorkSpaceDialog({
     mode: "onChange",
   })
 
-  const { control, handleSubmit, formState: { isValid } } = form
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = form
 
   useEffect(() => {
     if (!open) {
@@ -62,9 +65,7 @@ export default function CreateWorkSpaceDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger
-        render={
-          <Button type="button" size="lg" className="h-10 px-4" />
-        }
+        render={<Button type="button" size="lg" className="h-10 px-4" />}
       >
         Create Workspace
       </DialogTrigger>
@@ -82,23 +83,21 @@ export default function CreateWorkSpaceDialog({
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-           <AppFormField
-            control={control}
-            name="name"
-            label="Workspace name"
-            type="text"
-            placeholder="e.g. Acme Product"
-            className="h-10"
-           />
+            <AppFormField
+              control={control}
+              name="name"
+              label="Workspace name"
+              type="text"
+              placeholder="e.g. Acme Product"
+              className="h-10"
+            />
             <DialogFooter className="gap-2 sm:justify-end">
-             <CancelButton
-              onClick={() => onOpenChange(false)}
-             />
-             <SubmitButton
-              type="submit"
-              disabled={!isValid}
-              text="Create Workspace"
-             />
+              <CancelButton onClick={() => onOpenChange(false)} />
+              <SubmitButton
+                type="submit"
+                disabled={!isValid}
+                text="Create Workspace"
+              />
             </DialogFooter>
           </form>
         </Form>

@@ -21,10 +21,7 @@ export default function SubmitButton({
     <Button
       type={type}
       disabled={disabled || isLoading}
-      className={cn(
-        "flex h-10 items-center justify-center gap-2",
-        className
-      )}
+      className={cn("flex h-10 items-center justify-center gap-2", className)}
     >
       {isLoading ? <Loader className="size-4" /> : null}
       {isLoading ? "Please wait…" : text}

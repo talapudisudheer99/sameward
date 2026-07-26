@@ -1,11 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import {
-  type Control,
-  type FieldPath,
-  type FieldValues,
-} from "react-hook-form"
+import { type Control, type FieldPath, type FieldValues } from "react-hook-form"
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react"
 
 import {
@@ -56,11 +52,9 @@ export function AppFormField<TFieldValues extends FieldValues>({
     else if (type === "password") resolvedAutoComplete = "current-password"
   }
 
-  const Icon =
-    type === "email" ? Mail : type === "password" ? Lock : User
+  const Icon = type === "email" ? Mail : type === "password" ? Lock : User
 
-  const inputType =
-    type === "password" ? (visible ? "text" : "password") : type
+  const inputType = type === "password" ? (visible ? "text" : "password") : type
 
   return (
     <FormField

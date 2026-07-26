@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 /** Shared create-workspace rules — reuse later on POST /api/workspaces */
- const workSpaceSchema = z.object({
+const workSpaceSchema = z.object({
   name: z
     .string()
     .trim()

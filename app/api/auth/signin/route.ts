@@ -35,11 +35,12 @@ export async function POST(request: Request) {
     const { email, password } = parsed.data
 
     const user = await User.findOne({ email }).select("+passwordHash")
-    if (!user) {
+
+    // Same message for: no user, Google-only (no password), or wrong password.
+    // Do not tell the client which case it was.
+    if (!user || !user.passwordHash) {
       return NextResponse.json(
-        {
-          message: "Invalid credentials",
-        },
+        { message: "Invalid credentials" },
         { status: 401 }
       )
     }
@@ -48,9 +49,7 @@ export async function POST(request: Request) {
 
     if (!isPasswordValid) {
       return NextResponse.json(
-        {
-          message: "Invalid credentials",
-        },
+        { message: "Invalid credentials" },
         { status: 401 }
       )
     }

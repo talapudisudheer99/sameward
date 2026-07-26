@@ -17,7 +17,7 @@ export default function MarketingPage() {
 
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16 xl:gap-20">
-          <div className="animate-in fade-in slide-in-from-left-3 duration-500">
+          <div className="animate-in duration-500 fade-in slide-in-from-left-3">
             <p className="font-heading text-sm font-semibold tracking-[0.04em] text-primary">
               AI-powered collaboration
             </p>
@@ -64,7 +64,7 @@ export default function MarketingPage() {
             </ul>
           </div>
 
-          <div className="animate-in fade-in slide-in-from-right-3 fill-mode-both duration-700 [animation-delay:100ms]">
+          <div className="animate-in duration-700 fill-mode-both [animation-delay:100ms] fade-in slide-in-from-right-3">
             <HeroProductPreview />
           </div>
         </div>

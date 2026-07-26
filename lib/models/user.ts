@@ -22,15 +22,23 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
+    // Email/password users have this. Google-only users do not (until forgot-password later).
     passwordHash: {
       type: String,
-      required: true,
-      select: false, // don't return hash in queries by default
+      required: function (this: { googleId?: string }) {
+        return !this.googleId
+      },
+      select: false,
+    },
+    // Google's stable user id ("sub"). Sparse unique = only index docs that have it.
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
   },
-
   {
-    timestamps: true, // createdAt, updatedAt
+    timestamps: true,
   }
 )
 

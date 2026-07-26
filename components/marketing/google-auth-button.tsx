@@ -8,11 +8,18 @@ type GoogleAuthButtonProps = {
   label?: string
 }
 
-/** UI stub — real Google OAuth in Phase 2. */
+/**
+ * Full browser navigation — not axios/fetch.
+ * OAuth needs the browser to follow Google's redirects and store cookies.
+ */
 export function GoogleAuthButton({
   className,
   label = "Continue with Google",
 }: GoogleAuthButtonProps) {
+  const startGoogleLogin = () => {
+    window.location.href = "/api/auth/google"
+  }
+
   return (
     <button
       type="button"
@@ -21,7 +28,7 @@ export function GoogleAuthButton({
         "h-11 w-full gap-2.5 text-sm font-medium",
         className
       )}
-      onClick={() => console.log("oauth:google:coming-in-phase-2")}
+      onClick={startGoogleLogin}
     >
       <svg className="size-4 shrink-0" viewBox="0 0 24 24" aria-hidden>
         <path
@@ -46,14 +53,20 @@ export function GoogleAuthButton({
   )
 }
 
-export function AuthDivider({ label = "or continue with" }: { label?: string }) {
+export function AuthDivider({
+  label = "or continue with",
+}: {
+  label?: string
+}) {
   return (
     <div className="relative my-6">
       <div className="absolute inset-0 flex items-center" aria-hidden>
         <div className="w-full border-t border-border" />
       </div>
-      <div className="relative flex justify-center text-xs uppercase tracking-wide">
-        <span className="bg-background px-3 text-muted-foreground">{label}</span>
+      <div className="relative flex justify-center text-xs tracking-wide uppercase">
+        <span className="bg-background px-3 text-muted-foreground">
+          {label}
+        </span>
       </div>
     </div>
   )

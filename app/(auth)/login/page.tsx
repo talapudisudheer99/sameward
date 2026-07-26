@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -16,12 +17,18 @@ import {
 } from "@/components/marketing/google-auth-button"
 import { Form } from "@/components/ui/form"
 import { api } from "@/lib/api/axios"
-import loginSchema, {
-  type LoginSchema,
-} from "@/lib/schemas/auth/login-schema"
+import loginSchema, { type LoginSchema } from "@/lib/schemas/auth/login-schema"
 
 export default function LoginPage() {
   const router = useRouter()
+
+  // Google callback sends failures here as /login?error=...
+  useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get("error")
+    if (error) {
+      toast.error(error)
+    }
+  })
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),

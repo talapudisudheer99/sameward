@@ -23,7 +23,7 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#0B1220] p-10 text-slate-50 xl:p-14 lg:flex">
+      <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#0B1220] p-10 text-slate-50 lg:flex xl:p-14">
         <Link
           href="/"
           className="relative z-10 flex w-fit items-center gap-2.5"
@@ -35,7 +35,7 @@ export function AuthShell({
         </Link>
 
         <div className="relative z-10 max-w-md">
-          <h2 className="font-heading text-4xl font-bold leading-[1.15] tracking-tight">
+          <h2 className="font-heading text-4xl leading-[1.15] font-bold tracking-tight">
             {panelTitle}
           </h2>
           <p className="mt-5 text-base leading-relaxed text-slate-300">
@@ -91,7 +91,7 @@ export function AuthShell({
         </div>
 
         <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10">
-          <div className="w-full max-w-[400px] animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="w-full max-w-[400px] animate-in duration-500 fade-in slide-in-from-bottom-2">
             <h1 className="font-heading text-3xl font-bold tracking-tight">
               {title}
             </h1>
