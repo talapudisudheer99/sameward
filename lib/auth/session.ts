@@ -17,7 +17,7 @@ import {
  * Same input always gives the same output, but you cannot go backwards.
  * The browser holds the raw token; the DB only holds this hash.
  */
-function hashToken(token: string): string {
+export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex")
 }
 

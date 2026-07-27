@@ -84,6 +84,7 @@ export default function SignUpPage() {
         message,
       })
       toast.error(message)
+      return
     }
   }
 

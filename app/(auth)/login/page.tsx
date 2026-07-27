@@ -28,7 +28,7 @@ export default function LoginPage() {
     if (error) {
       toast.error(error)
     }
-  })
+  }, [])
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -119,7 +119,7 @@ export default function LoginPage() {
             <button
               type="button"
               className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => toast.message("Forgot password — coming soon")}
+              onClick={() => router.push("/forgot-password")}
             >
               Forgot password?
             </button>
