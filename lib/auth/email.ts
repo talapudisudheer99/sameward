@@ -34,3 +34,31 @@ export async function sendPasswordResetEmail(options: {
     throw new Error(error.message)
   }
 }
+
+export async function sendVerificationEmail(options: {
+  to: string
+  verifyUrl: string
+}) {
+  const from = process.env.EMAIL_FROM
+
+  if (!from) {
+    throw new Error("Missing EMAIL_FROM")
+  }
+
+  const resend = getResend()
+
+  const { error } = await resend.emails.send({
+    from,
+    to: options.to,
+    subject: "Verify your TeamHub email address",
+    html: `
+      <p>Click the link below to verify your email address:</p>
+      <p><a href="${options.verifyUrl}">Verify email address</a></p>
+      <p>This link expires in 24 hours. If you did not create a TeamHub account, ignore this email.</p>
+    `,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}

@@ -22,7 +22,6 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    // Email/password users have this. Google-only users do not (until forgot-password later).
     passwordHash: {
       type: String,
       required: function (this: { googleId?: string }) {
@@ -30,11 +29,14 @@ const userSchema = new Schema(
       },
       select: false,
     },
-    // Google's stable user id ("sub"). Sparse unique = only index docs that have it.
     googleId: {
       type: String,
       unique: true,
       sparse: true,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -44,6 +46,12 @@ const userSchema = new Schema(
 
 export type UserDocument = InferSchemaType<typeof userSchema> & {
   _id: Types.ObjectId
+}
+
+// Next.js hot-reload keeps an old Model in `models.User` without new fields.
+// That silently strips `emailVerified` on create/update. Clear it in dev.
+if (process.env.NODE_ENV !== "production" && models.User) {
+  delete models.User
 }
 
 export const User: Model<UserDocument> =

@@ -5,6 +5,7 @@ import { createSession } from "@/lib/auth/session" // creates session row + sets
 import { connectDB } from "@/lib/db/mongoose" // opens / reuses the Mongo connection
 import { User } from "@/lib/models/user" // Mongoose model for the users collection
 import signupSchema from "@/lib/schemas/auth/signup-schema" // Zod schema shared with the form
+import { createAndSendVerification } from "@/lib/auth/email-verification"
 
 /**
  * POST /api/auth/signup
@@ -61,20 +62,26 @@ export async function POST(request: Request) {
       fullName,
       email,
       passwordHash, // store hash only — never `password`
+      emailVerified: false,
     })
 
-    // --- 5) Log the new user in: session row + Set-Cookie on this response ---
+    // Soft gate: if Resend fails, still create the session so signup isn't blocked
+    try {
+      await createAndSendVerification(String(user._id), email)
+    } catch (error) {
+      console.error("Verification email failed:", error)
+    }
+
     await createSession(String(user._id))
 
-    // --- 6) Success response (safe fields only) ---
     return NextResponse.json(
       {
-        id: String(user._id), // ObjectId → string for JSON
+        id: String(user._id),
         fullName: user.fullName,
         email: user.email,
-        // passwordHash intentionally omitted
+        emailVerified: false,
       },
-      { status: 201 } // 201 = created
+      { status: 201 }
     )
   } catch (error: unknown) {
     // race: two signups with same email at once can hit unique index

@@ -116,12 +116,14 @@ export async function GET(request: Request) {
         }
 
         user.googleId = profile.sub
+        user.emailVerified = true // Google proved the inbox
         await user.save()
       } else {
         user = await User.create({
           fullName,
           email,
           googleId: profile.sub,
+          emailVerified: true,
           // no passwordHash — Approach 3
         })
       }

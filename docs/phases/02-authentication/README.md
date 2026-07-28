@@ -1,9 +1,11 @@
 # Phase 2 — Authentication
 
-**Status:** 🔜 Next (Phase 1 complete — UI/shell)  
+**Status:** ✅ Core done → **2B Hardening in progress**  
 **Prev:** [← Phase 1](../01-product-shell/README.md) · **Next:** [Phase 3 — Workspaces →](../03-workspaces-members/README.md)
 
-**Full step-by-step plan:** [E2E-FLOW.md](./E2E-FLOW.md)
+**Plans:**
+- Core E2E: [E2E-FLOW.md](./E2E-FLOW.md)
+- Production gaps: [HARDENING.md](./HARDENING.md)
 
 ---
 

@@ -76,6 +76,7 @@ export async function getCurrentUser() {
     id: String(user._id),
     fullName: user.fullName,
     email: user.email,
+    emailVerified: user.emailVerified === true,
   }
 }
 
