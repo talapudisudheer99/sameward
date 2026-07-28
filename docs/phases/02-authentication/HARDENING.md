@@ -43,7 +43,7 @@ Ordered for **learning + risk**. Do one feature at a time.
 | **F1** | Defense in depth — real session check | Critical | Sessions exist | ✅ Done |
 | **F2** | Email verification on signup | Critical | Resend | ✅ Done (soft gate) |
 | **F3** | Rate limiting on auth APIs | Critical | — | ✅ Done |
-| **F4** | Log out all devices | High | Sessions | ⬜ |
+| **F4** | Log out all devices | High | Sessions | ✅ Done |
 | **F5** | Remember me (wire or remove) | High | Sessions / cookies | ⬜ |
 | **F6** | Audit / security logging | High | — | ⬜ |
 | **F7** | Production config checklist | High | Deploy later | ⬜ |
@@ -259,9 +259,75 @@ On localhost this may be `::1` / `127.0.0.1` — fine for learning.
 
 ---
 
-### F4 Log out all devices — preview
+### F4 Log out all devices — ✅ Done
 
-Settings: list sessions or one button → `Session.deleteMany({ userId })` → clear current cookie → login.
+#### Business requirement
+
+If a laptop/phone is stolen or a session feels unsafe, the user can kill **every** login at once — not only the current browser.
+
+#### Why we can do this easily
+
+We already store DB sessions (`tokenHash` → `userId`).  
+Normal logout deletes **one** row (current cookie).  
+Logout-all deletes **all** rows for that `userId`.
+
+(We already do `Session.deleteMany` on password reset — same idea.)
+
+#### Normal logout vs logout-all
+
+| Action | DB | Cookie | Other devices |
+|--------|----|--------|----------------|
+| **Log out** (today) | Delete current session only | Cleared | Still logged in |
+| **Log out all devices** | `deleteMany({ userId })` | Cleared | Next request → login (session gone) |
+
+#### PO choice for F4 (keep it simple)
+
+**One button:** “Log out all devices”  
+Not a full session list yet (Chrome / iPhone / …) — that needs extra fields (`userAgent`, `ip`, `lastSeen`) we don’t store today.
+
+Stretch later: enrich Session model + settings page listing devices.
+
+#### End-to-end flow
+
+```text
+1) User is logged in (has session cookie)
+2) Clicks “Log out all devices” (sidebar or account area)
+3) POST /api/auth/logout-all
+4) Server:
+     a) getCurrentUser() — must be logged in (401 if not)
+     b) Session.deleteMany({ userId: user.id })
+     c) Clear teamhub_session cookie (same as destroySession cookie clear)
+5) Client: toast → router.replace("/login")
+6) Other device still has old cookie → next /workspace call:
+     getCurrentUser → no session row → null → requireUser → /login
+```
+
+#### Where the button lives (UI)
+
+| Option | Choice |
+|--------|--------|
+| **A (recommended)** | Second action under sidebar Log out: “Log out all devices” |
+| B | Full `/settings` page |
+
+**PO default: A** — no new settings page yet; matches current shell.
+
+#### Security notes
+
+- Must require a valid session (`getCurrentUser`) — can’t logout-all anonymously  
+- Optional later: re-enter password before logout-all (step-up auth) — out of scope for F4  
+- Rate limiting: light limit optional; not critical (authenticated + low volume)
+
+#### Interview angle
+
+> “Because sessions live in the database keyed by userId, logout-all is deleteMany for that user. Other devices keep a cookie until the next request, then server-side session lookup fails and they’re redirected to login.”
+
+#### Out of scope for F4
+
+- Per-device session list  
+- Remember me (F5)  
+- Audit log of logout-all (F6)
+
+---
 
 ### F5 Remember me — preview
 

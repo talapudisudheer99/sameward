@@ -7,8 +7,8 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 2 — Auth hardening (2B) |
-| **Current feature** | **F3 Rate limiting** (flow discussion) |
-| **Current technology** | In-memory fixed-window limiter, 429 responses |
+| **Current feature** | **F5 Remember me** (next) |
+| **Current technology** | Session cookies, optional longer TTL |
 | **Last updated** | 2026-07-28 |
 
 ## Phase status
@@ -32,8 +32,8 @@
 |---|---------|--------|
 | F1 | Defense in depth (real session check) | ✅ Done |
 | F2 | Email verification | ✅ Done (soft gate) |
-| F3 | Rate limiting | ⬜ |
-| F4 | Log out all devices | ⬜ |
+| F3 | Rate limiting | ✅ Done |
+| F4 | Log out all devices | ✅ Done |
 | F5 | Remember me | ⬜ |
 | F6 | Audit / security logging | ⬜ |
 | F7 | Production config checklist | ⬜ |

@@ -99,3 +99,13 @@ export async function destroySession(): Promise<void> {
 
   cookiesStore.delete(SESSION_COOKIE_NAME)
 }
+
+/** Kill every session for this user (all devices), then clear this browser's cookie */
+export async function destroyAllSessions(userId: string): Promise<void> {
+  await connectDB()
+
+  await Session.deleteMany({ userId })
+
+  const cookieStore = await cookies()
+  cookieStore.delete(SESSION_COOKIE_NAME)
+}

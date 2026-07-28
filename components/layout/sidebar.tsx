@@ -8,6 +8,7 @@ import { TeamHubLogo } from "@/components/layout/teamhub-logo"
 import { LogoutButton } from "@/components/layout/logout-button"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { LogoutAllDevicesButton } from "@/components/layout/logout-all-devices-button"
 
 interface NavItem {
   label: string
@@ -77,6 +78,7 @@ export default function Sidebar() {
       {/* mt-auto pins logout to the bottom of the sidebar column */}
       <div className="mt-auto border-t border-sidebar-border pt-3">
         <LogoutButton />
+        <LogoutAllDevicesButton />
       </div>
     </div>
   )
