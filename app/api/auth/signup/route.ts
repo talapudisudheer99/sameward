@@ -6,6 +6,7 @@ import { connectDB } from "@/lib/db/mongoose" // opens / reuses the Mongo connec
 import { User } from "@/lib/models/user" // Mongoose model for the users collection
 import signupSchema from "@/lib/schemas/auth/signup-schema" // Zod schema shared with the form
 import { createAndSendVerification } from "@/lib/auth/email-verification"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/auth/rate-limit"
 
 /**
  * POST /api/auth/signup
@@ -14,6 +15,17 @@ import { createAndSendVerification } from "@/lib/auth/email-verification"
  * Login is the mirror image: parse → validate → find user → verifyPassword → createSession.
  */
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const limited = rateLimit({
+    key: `signup:${ip}`,
+    limit: 5,
+    windowMs: 60 * 60 * 1000,
+  })
+
+  if (!limited.ok) {
+    return tooManyRequestsResponse(limited.retryAfterSeconds)
+  }
+
   try {
     await connectDB() // ensure DB is ready before any query
 

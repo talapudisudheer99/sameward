@@ -7,8 +7,8 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 2 — Auth hardening (2B) |
-| **Current feature** | **F2 Email verification** (flow discussion) |
-| **Current technology** | Resend, verify tokens, User.emailVerified |
+| **Current feature** | **F3 Rate limiting** (flow discussion) |
+| **Current technology** | In-memory fixed-window limiter, 429 responses |
 | **Last updated** | 2026-07-28 |
 
 ## Phase status

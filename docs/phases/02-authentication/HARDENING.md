@@ -42,7 +42,7 @@ Ordered for **learning + risk**. Do one feature at a time.
 |---|---------|----------|------------|--------|
 | **F1** | Defense in depth — real session check | Critical | Sessions exist | ✅ Done |
 | **F2** | Email verification on signup | Critical | Resend | ✅ Done (soft gate) |
-| **F3** | Rate limiting on auth APIs | Critical | — | ⬜ |
+| **F3** | Rate limiting on auth APIs | Critical | — | ✅ Done |
 | **F4** | Log out all devices | High | Sessions | ⬜ |
 | **F5** | Remember me (wire or remove) | High | Sessions / cookies | ⬜ |
 | **F6** | Audit / security logging | High | — | ⬜ |
@@ -171,9 +171,93 @@ Rate limiting, logout-all-devices, remember-me.
 
 ---
 
-### F3 Rate limiting — preview
+### F3 Rate limiting — CURRENT (discuss before code)
 
-Limit attempts per IP (and maybe per email) on signup/signin/forgot/google start.
+#### Business requirement
+
+Stop abuse of auth endpoints: password guessing, signup spam, and email bombing (forgot/resend).
+
+#### Why this feature
+
+Without limits, anyone can:
+
+- Brute-force passwords on `/api/auth/signin`
+- Flood Resend via forgot-password / resend-verification
+- Create thousands of junk accounts via signup
+
+#### PO decisions (TeamHub learning)
+
+| Decision | Choice | Why |
+|----------|--------|-----|
+| Storage (now) | **In-memory Map** on the Node process | Simple to learn; no Redis yet |
+| Storage (production later) | Redis / Upstash | Shared across serverless instances |
+| Identity key | **IP address** (primary) | Works before we know the user |
+| Extra key (login/forgot) | Optional: also limit by **email** | Stops one IP rotating emails / one email from many IPs |
+| On limit hit | HTTP **429** + clear message | Standard; frontend can toast it |
+
+#### Which routes to protect
+
+| Route | Limit (starting point) | Why |
+|-------|------------------------|-----|
+| `POST /api/auth/signin` | 10 / 15 min / IP | Brute force |
+| `POST /api/auth/signup` | 5 / hour / IP | Junk accounts |
+| `POST /api/auth/forgot-password` | 5 / hour / IP | Email bombing |
+| `POST /api/auth/resend-verification` | 5 / hour / IP | Email bombing |
+| `GET /api/auth/google` | 20 / 15 min / IP | OAuth start spam |
+
+**Do not rate-limit heavily (F3):**
+
+- `logout`, `me` — authenticated, low abuse value  
+- `verify-email` GET — token is unguessable; user must click email  
+- `google/callback` — must complete OAuth; Google already throttles somewhat  
+- `reset-password` — token is unguessable (optional light limit later)
+
+#### End-to-end flow
+
+```text
+1) Request hits e.g. POST /api/auth/signin
+2) First line in handler (after we can read IP):
+     rateLimit({ key: `signin:${ip}`, limit: 10, windowMs: 15 * 60 * 1000 })
+3) If over limit → 429 { message: "Too many attempts. Try again later." }
+4) If under limit → continue existing login logic
+5) (Optional) count only failed logins later — F3 counts all attempts for simplicity
+```
+
+#### Helper shape (conceptual)
+
+```ts
+// lib/auth/rate-limit.ts
+rateLimit({ key, limit, windowMs })
+  → { ok: true }
+  → { ok: false, retryAfterSeconds }
+```
+
+Each route calls it once at the top.
+
+#### How we get IP in App Router
+
+```ts
+request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  ?? "unknown"
+```
+
+On localhost this may be `::1` / `127.0.0.1` — fine for learning.
+
+#### Soft spots (teach in interview)
+
+- In-memory resets when server restarts  
+- Multiple Vercel instances each have their own Map → use Redis in production  
+- Attackers can change IP (VPN) — limits reduce abuse, don’t eliminate it  
+
+#### Interview angle
+
+> “We rate-limit sensitive auth endpoints by IP with a fixed window. Learning env uses an in-memory store; production would use Redis so limits work across serverless instances. Clients get 429 when exceeded.”
+
+#### Out of scope for F3
+
+- CAPTCHA, account lockout emails, Redis setup, audit log DB (F6)
+
+---
 
 ### F4 Log out all devices — preview
 

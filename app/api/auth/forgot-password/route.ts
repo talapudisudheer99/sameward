@@ -8,6 +8,7 @@ import { connectDB } from "@/lib/db/mongoose"
 import { PasswordResetToken } from "@/lib/models/password-reset-token"
 import { User } from "@/lib/models/user"
 import forgotPasswordSchema from "@/lib/schemas/auth/forgot-password-schema"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/auth/rate-limit"
 
 const RESET_MAX_AGE_MS = 1000 * 60 * 30 // 30 minutes
 
@@ -15,6 +16,17 @@ const RESET_MAX_AGE_MS = 1000 * 60 * 30 // 30 minutes
 const OK_MESSAGE = "If an account exists for that email, we sent a reset link."
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const limited = rateLimit({
+    key: `forgot-password:${ip}`,
+    limit: 5,
+    windowMs: 60 * 60 * 1000,
+  })
+
+  if (!limited.ok) {
+    return tooManyRequestsResponse(limited.retryAfterSeconds)
+  }
+
   try {
     let body: unknown
     try {
