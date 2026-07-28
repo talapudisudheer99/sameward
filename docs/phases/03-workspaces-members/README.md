@@ -45,13 +45,22 @@ UI form
 
 ## 6. Folder structure (target)
 
+**Canonical rules:** [docs/architecture/folder-structure.md](../../architecture/folder-structure.md)
+
+Phase 3 placement:
+
 ```
 app/api/workspaces/route.ts
 app/api/workspaces/[workspaceId]/route.ts
 app/api/workspaces/[workspaceId]/members/route.ts
-lib/db/mongodb.ts
-models/   # or lib/models
+lib/models/workspace.ts
+lib/models/membership.ts
+lib/schemas/workspace/
+components/workspace/          # as UI grows
+components/dialogs/workspace/
 ```
+
+Do not invent a separate Express `backend/` folder — stay in this Next modular layout.
 
 ## 7. Backend (Next + MongoDB)
 

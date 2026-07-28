@@ -23,7 +23,7 @@ docs/
 | Folder | Purpose |
 |--------|---------|
 | **`auth/`** | Everything about authentication — flows, routes, FE, hardening, prod, debug |
-| **`architecture/`** | Why the product/stack exists (not day-to-day feature how-tos) |
+| **`architecture/`** | Vision, stack, **folder structure**, data flow |
 | **`phases/`** | Learning roadmap; each phase README points to real refs when done |
 | **`guides/`** | Tech primers (Mongoose, …) |
 | **`tracking/`** | Where we are + interview Qs |
@@ -37,6 +37,7 @@ docs/
 | Goal | Open |
 |------|------|
 | “How does auth work?” | [auth/README.md](./auth/README.md) |
+| “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | “Why this stack?” | [architecture/stack.md](./architecture/stack.md) |
