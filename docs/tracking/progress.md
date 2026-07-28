@@ -6,9 +6,9 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 2 — Auth hardening (2B) |
-| **Current feature** | **F7 Production config checklist** (next) |
-| **Current technology** | Deploy env / Secure cookies / OAuth URIs |
+| **Current phase** | Phase 3 — Workspaces & members (next) |
+| **Current feature** | Auth complete — see [`docs/auth/`](../auth/README.md) |
+| **Current technology** | — |
 | **Last updated** | 2026-07-28 |
 
 ## Phase status
@@ -18,33 +18,26 @@
 | 0 | Foundation | ✅ Done | RSC, layouts, theme, hydration |
 | 1 | Product shell | ✅ Done | Marketing, auth UI, workspace empty state |
 | 2 | Authentication (core) | ✅ Done | Email/password, Google, forgot/reset, sessions, proxy |
-| 2B | Auth hardening | 🔄 In progress | See `HARDENING.md` |
-| 3 | Workspaces & members | ⬜ Not started | After 2B (or parallel by agreement) |
+| 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
+| 3 | Workspaces & members | ⬜ Not started | Next |
 | 4 | State & data layer | ⬜ Not started | Redux + RTK Query |
 | 5 | Collaboration core | ⬜ Not started | |
 | 6 | Realtime | ⬜ Not started | |
 | 7 | AI & integrations | ⬜ Not started | |
 | 8 | Quality & deployment | ⬜ Not started | |
 
-## Auth hardening backlog
+## Auth hardening (F1–F7) — all done
 
-| # | Feature | Status |
-|---|---------|--------|
-| F1 | Defense in depth (real session check) | ✅ Done |
-| F2 | Email verification | ✅ Done (soft gate) |
-| F3 | Rate limiting | ✅ Done |
-| F4 | Log out all devices | ✅ Done |
-| F5 | Remember me | ✅ Done |
-| F6 | Audit / security logging | ✅ Done |
-| F7 | Production config checklist | ⬜ |
+See [auth/HARDENING.md](../auth/HARDENING.md).
 
 ## Completed concepts (auth)
 
 - httpOnly session cookies vs localStorage  
 - Hash passwords; never store plaintext  
-- Proxy/middleware as a **gate**, not full authz  
+- Proxy as a **gate**, not full authz  
 - OAuth code flow + `state`  
-- Password reset tokens (hash in DB, raw in email)  
+- Password reset / verify tokens (hash in DB, raw in email)  
+- Soft email verification, rate limits, audit events, remember-me TTLs  
 
 ## Interview questions covered
 
@@ -52,14 +45,15 @@
 - httpOnly cookie vs JWT in localStorage  
 - Why Google users may have no `passwordHash`  
 - Why reset tokens are hashed at rest  
+- Proxy vs `requireUser` (defense in depth)  
 
 ## Session log
 
 | Date | What we did | Outcome |
 |------|-------------|---------|
-| 2026-07-27 | Forgot/reset password shipped + pushed | Core auth complete |
-| 2026-07-27 | Agreed hardening backlog + roles | `HARDENING.md`; F1 flow next |
-| 2026-07-28 | F1 requireUser + app layout | Fake cookie → login on refresh |
+| 2026-07-27 | Forgot/reset password | Core auth |
+| 2026-07-28 | Hardening F1–F7 | Auth production-shaped |
+| 2026-07-28 | Docs refactor | Single source: `docs/auth/` |
 
 ## GitHub
 
@@ -67,8 +61,7 @@
 |------|--------|
 | Remote | ✅ `talapudisudheer99/teamhub-ai` |
 | Branch | `learn/phase-0-foundation` |
-| Latest auth push | Forgot/reset password |
 
 ---
 
-[← Docs hub](../README.md) · [Hardening plan →](../phases/02-authentication/HARDENING.md)
+[← Docs hub](../README.md) · [Auth reference →](../auth/README.md)

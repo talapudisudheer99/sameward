@@ -1,59 +1,37 @@
 # Phase 2 — Authentication
 
-**Status:** ✅ Core done → **2B Hardening in progress**  
+**Status:** ✅ Done (core + hardening F1–F7)  
 **Prev:** [← Phase 1](../01-product-shell/README.md) · **Next:** [Phase 3 — Workspaces →](../03-workspaces-members/README.md)
 
-**Plans:**
-- Core E2E: [E2E-FLOW.md](./E2E-FLOW.md)
-- Production gaps: [HARDENING.md](./HARDENING.md)
+---
+
+## Where to read (source of truth)
+
+All auth reference docs live in **[`docs/auth/`](../../auth/README.md)** — flows, API routes, frontend, lib/models, hardening, production, debugging.
+
+Do **not** look for old mentoring drafts under this folder; they were merged into `docs/auth/`.
 
 ---
 
-## 1. Business requirement
+## What this phase delivered
 
-Only signed-in users access TeamHub workspaces. Auth is the gate to the product.
-
-## 2. What you will build
-
-- Wire existing `/signup` + `/login` forms to real APIs
-- Password hashing
-- HTTP-only session cookies
-- MongoDB `users` (+ `sessions`)
-- `middleware.ts` protecting `/workspace`
-- Logout
-
-Google OAuth = stretch after email/password.
-
-## 3. Architecture
-
-```
-Form → Zod → Route Handler → MongoDB → Set-Cookie
-         ↑
-    middleware checks cookie on /workspace
-```
-
-## 4. Why these technologies
-
-| Choice | Why |
-|--------|-----|
-| httpOnly cookie | Safer than localStorage JWT for XSS |
-| Middleware | Fast redirect for pages |
-| Hash on server | Never store plain passwords |
-| Shared Zod schemas | Same rules client + API |
-
-## 5. Concepts covered
-
-- [ ] Cookies & sessions
-- [ ] Password hashing
-- [ ] Middleware matchers
-- [ ] Protected routes
-- [ ] Defense in depth (middleware + API)
-- [ ] OAuth (stretch)
-
-## 6. Definition of done
-
-See [E2E-FLOW.md](./E2E-FLOW.md) — signup/login/logout + protected `/workspace` + interview-ready explanation.
+- Email signup / signin / logout with DB sessions (httpOnly cookie)
+- Google OAuth (same session mechanism)
+- Forgot / reset password (Resend)
+- Soft email verification
+- Hardening: defense in depth, rate limits, logout-all, remember-me, audit, production checklist
 
 ---
 
-[Docs hub](../../README.md)
+## Concepts (interview)
+
+- [x] httpOnly cookies & hashed sessions  
+- [x] Password hashing  
+- [x] Proxy as a gate (not full authz)  
+- [x] Defense in depth (`requireUser`)  
+- [x] OAuth code + state  
+- [x] Soft vs hard email gates  
+
+---
+
+[Docs hub](../../README.md) · [Auth reference](../../auth/README.md)

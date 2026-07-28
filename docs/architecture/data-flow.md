@@ -33,14 +33,17 @@ This is the production mental model for TeamHub AI.
 8. UI updates without full page reload
 ```
 
-## Auth path (Phase 2+)
+## Auth path (done — see docs/auth)
 
 ```
-Browser → POST /api/auth/login
-       → Set-Cookie (httpOnly session)
-       → Middleware checks cookie on /app/*
-       → Route Handlers re-check identity (never trust UI alone)
+Browser → POST /api/auth/signin
+       → Set-Cookie teamhub_session (httpOnly)
+       → proxy.ts checks cookie presence on /workspace/*
+       → app/(app)/layout requireUser() re-checks DB session
+       → APIs use getCurrentUser when needed
 ```
+
+Full flows: [../auth/E2E-FLOWS.md](../auth/E2E-FLOWS.md)
 
 ## Realtime path (Phase 6+)
 
