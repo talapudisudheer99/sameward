@@ -7,6 +7,7 @@ const loginSchema = z.object({
     .toLowerCase()
     .email({ message: "Email is required" }),
   password: z.string().min(1, { message: "Password is required" }),
+  rememberMe: z.boolean(),
 })
 
 export default loginSchema

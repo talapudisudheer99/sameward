@@ -7,8 +7,8 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 2 — Auth hardening (2B) |
-| **Current feature** | **F5 Remember me** (next) |
-| **Current technology** | Session cookies, optional longer TTL |
+| **Current feature** | **F6 Audit / security logging** (next) |
+| **Current technology** | Auth event logs |
 | **Last updated** | 2026-07-28 |
 
 ## Phase status
@@ -34,7 +34,7 @@
 | F2 | Email verification | ✅ Done (soft gate) |
 | F3 | Rate limiting | ✅ Done |
 | F4 | Log out all devices | ✅ Done |
-| F5 | Remember me | ⬜ |
+| F5 | Remember me | ✅ Done |
 | F6 | Audit / security logging | ⬜ |
 | F7 | Production config checklist | ⬜ |
 

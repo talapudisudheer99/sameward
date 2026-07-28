@@ -44,7 +44,7 @@ Ordered for **learning + risk**. Do one feature at a time.
 | **F2** | Email verification on signup | Critical | Resend | ✅ Done (soft gate) |
 | **F3** | Rate limiting on auth APIs | Critical | — | ✅ Done |
 | **F4** | Log out all devices | High | Sessions | ✅ Done |
-| **F5** | Remember me (wire or remove) | High | Sessions / cookies | ⬜ |
+| **F5** | Remember me (wire or remove) | High | Sessions / cookies | ✅ Done |
 | **F6** | Audit / security logging | High | — | ⬜ |
 | **F7** | Production config checklist | High | Deploy later | ⬜ |
 
@@ -329,9 +329,11 @@ Stretch later: enrich Session model + settings page listing devices.
 
 ---
 
-### F5 Remember me — preview
+### F5 Remember me — ✅ Done
 
-Checked → longer `maxAge` / session `expiresAt`; unchecked → shorter. Or remove checkbox if we keep one fixed lifetime.
+Login checkbox → `rememberMe` boolean → `createSession` picks TTL only:
+- `false` → 1 day · `true` → 30 days · omitted (signup/Google) → 7 days  
+Cookie `maxAge` and DB `expiresAt` always use the same seconds.
 
 ### F6 Audit logging — preview
 

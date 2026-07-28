@@ -8,7 +8,7 @@ import { User } from "@/lib/models/user"
 
 import {
   SESSION_COOKIE_NAME,
-  SESSION_MAX_AGE_SECONDS,
+  getSessionMaxAgeSeconds,
   sessionCookieOptions,
 } from "./cookies"
 
@@ -26,15 +26,33 @@ export function hashToken(token: string): string {
  * 1. invent a random token
  * 2. save its hash + owner + expiry in Mongo
  * 3. send the raw token to the browser as an httpOnly cookie
+ *
+ * rememberMe:
+ *   true  → 30 days
+ *   false → 1 day
+ *   omitted (signup / Google) → 7 days
  */
-export async function createSession(userId: string): Promise<void> {
+export async function createSession(
+  userId: string,
+  rememberMe?: boolean
+): Promise<void> {
   await connectDB()
 
   // 32 random bytes -> 64 hex characters. Unguessable, unlike an incrementing id.
   const token = randomBytes(32).toString("hex")
 
+  // Pick lifetime — cookie maxAge and DB expiresAt must use the SAME seconds.
+  let maxAgeSeconds: number
+  if (rememberMe === true) {
+    maxAgeSeconds = getSessionMaxAgeSeconds("long")
+  } else if (rememberMe === false) {
+    maxAgeSeconds = getSessionMaxAgeSeconds("short")
+  } else {
+    maxAgeSeconds = getSessionMaxAgeSeconds("medium")
+  }
+
   // Date.now() is milliseconds, our max age is seconds, hence * 1000.
-  const expiresAt = new Date(Date.now() + SESSION_MAX_AGE_SECONDS * 1000)
+  const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000)
 
   await Session.create({
     tokenHash: hashToken(token),
@@ -44,7 +62,11 @@ export async function createSession(userId: string): Promise<void> {
 
   // `cookies()` is async in Next 16 — it must be awaited.
   const cookieStore = await cookies()
-  cookieStore.set(SESSION_COOKIE_NAME, token, sessionCookieOptions)
+  cookieStore.set(
+    SESSION_COOKIE_NAME,
+    token,
+    sessionCookieOptions(maxAgeSeconds)
+  )
 }
 
 /**

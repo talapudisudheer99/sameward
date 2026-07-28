@@ -35,6 +35,7 @@ export default function LoginPage() {
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
     mode: "onChange",
   })
@@ -113,6 +114,7 @@ export default function LoginPage() {
               <input
                 type="checkbox"
                 className="size-4 rounded border-border accent-primary"
+                {...form.register("rememberMe")}
               />
               Remember me
             </label>

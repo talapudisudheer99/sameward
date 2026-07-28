@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { email, password } = parsed.data
+    const { email, password, rememberMe } = parsed.data
 
     const user = await User.findOne({ email }).select("+passwordHash")
 
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       )
     }
 
-    await createSession(user._id.toString())
+    await createSession(user._id.toString(), rememberMe)
 
     return NextResponse.json(
       {
