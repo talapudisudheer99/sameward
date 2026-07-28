@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
 import { verifyPassword } from "@/lib/auth/password"
 import {
   getClientIp,
@@ -21,8 +22,16 @@ export async function POST(request: Request) {
 
   // Must return — otherwise 429 is created and thrown away
   if (!limited.ok) {
+    await logAuthEvent({
+      event: "rate_limit.hit",
+      success: false,
+      ip,
+      reason: "signin",
+    })
     return tooManyRequestsResponse(limited.retryAfterSeconds)
   }
+
+  let emailForLog: string | undefined
 
   try {
     await connectDB()
@@ -46,11 +55,19 @@ export async function POST(request: Request) {
     }
 
     const { email, password, rememberMe } = parsed.data
+    emailForLog = email
 
     const user = await User.findOne({ email }).select("+passwordHash")
 
     // Same message for: no user, Google-only (no password), or wrong password
     if (!user || !user.passwordHash) {
+      await logAuthEvent({
+        event: "signin.failure",
+        success: false,
+        email,
+        ip,
+        reason: "invalid_credentials",
+      })
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
@@ -59,6 +76,14 @@ export async function POST(request: Request) {
 
     const isPasswordValid = await verifyPassword(password, user.passwordHash)
     if (!isPasswordValid) {
+      await logAuthEvent({
+        event: "signin.failure",
+        success: false,
+        email,
+        userId: user._id.toString(),
+        ip,
+        reason: "invalid_credentials",
+      })
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
@@ -66,6 +91,14 @@ export async function POST(request: Request) {
     }
 
     await createSession(user._id.toString(), rememberMe)
+
+    await logAuthEvent({
+      event: "signin.success",
+      success: true,
+      email: user.email,
+      userId: user._id.toString(),
+      ip,
+    })
 
     return NextResponse.json(
       {
@@ -77,6 +110,13 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error(error)
+    await logAuthEvent({
+      event: "signin.failure",
+      success: false,
+      email: emailForLog,
+      ip,
+      reason: "internal_error",
+    })
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

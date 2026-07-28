@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
 import { createAndSendVerification } from "@/lib/auth/email-verification"
+import {
+  getClientIp,
+  rateLimit,
+  tooManyRequestsResponse,
+} from "@/lib/auth/rate-limit"
 import { getCurrentUser } from "@/lib/auth/session"
-import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/auth/rate-limit"
 
 export async function POST(request: Request) {
   const ip = getClientIp(request)
@@ -13,6 +18,12 @@ export async function POST(request: Request) {
   })
 
   if (!limited.ok) {
+    await logAuthEvent({
+      event: "rate_limit.hit",
+      success: false,
+      ip,
+      reason: "resend_verification",
+    })
     return tooManyRequestsResponse(limited.retryAfterSeconds)
   }
 

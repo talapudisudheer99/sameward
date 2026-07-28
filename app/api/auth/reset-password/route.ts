@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
 import { hashPassword } from "@/lib/auth/password"
+import { getClientIp } from "@/lib/auth/rate-limit"
 import { hashToken } from "@/lib/auth/session"
 import { connectDB } from "@/lib/db/mongoose"
 import { PasswordResetToken } from "@/lib/models/password-reset-token"
@@ -9,6 +11,8 @@ import { User } from "@/lib/models/user"
 import resetPasswordSchema from "@/lib/schemas/auth/reset-password-schema"
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+
   try {
     let body: unknown
 
@@ -39,6 +43,12 @@ export async function POST(request: Request) {
     })
 
     if (!resetToken) {
+      await logAuthEvent({
+        event: "reset_password.failure",
+        success: false,
+        ip,
+        reason: "invalid_or_expired_token",
+      })
       return NextResponse.json(
         { message: "Invalid or expired reset link" },
         { status: 400 }
@@ -47,6 +57,13 @@ export async function POST(request: Request) {
 
     if (resetToken.expiresAt.getTime() < Date.now()) {
       await PasswordResetToken.deleteOne({ _id: resetToken._id })
+      await logAuthEvent({
+        event: "reset_password.failure",
+        success: false,
+        userId: resetToken.userId.toString(),
+        ip,
+        reason: "invalid_or_expired_token",
+      })
       return NextResponse.json(
         { message: "Invalid or expired reset link" },
         { status: 400 }
@@ -57,6 +74,13 @@ export async function POST(request: Request) {
 
     if (!user) {
       await PasswordResetToken.deleteOne({ _id: resetToken._id })
+      await logAuthEvent({
+        event: "reset_password.failure",
+        success: false,
+        userId: resetToken.userId.toString(),
+        ip,
+        reason: "user_not_found",
+      })
       return NextResponse.json(
         { message: "Invalid or expired reset link" },
         { status: 400 }
@@ -72,6 +96,14 @@ export async function POST(request: Request) {
     // Old sessions should not stay valid after a password change
     await Session.deleteMany({ userId: user._id })
 
+    await logAuthEvent({
+      event: "reset_password.success",
+      success: true,
+      email: user.email,
+      userId: user._id.toString(),
+      ip,
+    })
+
     // Client navigates to /login — API only returns JSON (no redirect here)
     return NextResponse.json(
       { message: "Password reset successfully" },
@@ -79,6 +111,12 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error("Reset password failed:", error)
+    await logAuthEvent({
+      event: "reset_password.failure",
+      success: false,
+      ip,
+      reason: "internal_error",
+    })
 
     return NextResponse.json(
       { message: "Something went wrong" },

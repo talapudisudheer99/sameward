@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
+import { getClientIp } from "@/lib/auth/rate-limit"
 import { createSession } from "@/lib/auth/session"
 import { connectDB } from "@/lib/db/mongoose"
 import { User } from "@/lib/models/user"
@@ -27,11 +29,18 @@ function redirectToLogin(request: Request, message: string) {
 }
 
 export async function GET(request: Request) {
+  const ip = getClientIp(request)
   const clientId = process.env.GOOGLE_CLIENT_ID
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET
   const redirectUri = process.env.GOOGLE_REDIRECT_URI
 
   if (!clientId || !clientSecret || !redirectUri) {
+    await logAuthEvent({
+      event: "google.failure",
+      success: false,
+      ip,
+      reason: "oauth_not_configured",
+    })
     return redirectToLogin(request, "Google OAuth is not configured")
   }
 
@@ -41,10 +50,22 @@ export async function GET(request: Request) {
   const oauthError = searchParams.get("error")
 
   if (oauthError) {
+    await logAuthEvent({
+      event: "google.failure",
+      success: false,
+      ip,
+      reason: "cancelled",
+    })
     return redirectToLogin(request, "Google sign-in was cancelled")
   }
 
   if (!code || !state) {
+    await logAuthEvent({
+      event: "google.failure",
+      success: false,
+      ip,
+      reason: "missing_code_or_state",
+    })
     return redirectToLogin(request, "Missing Google auth code")
   }
 
@@ -54,6 +75,12 @@ export async function GET(request: Request) {
   const stateCookie = cookieStore.get("google_oauth_state")?.value
 
   if (!stateCookie || stateCookie !== state) {
+    await logAuthEvent({
+      event: "google.failure",
+      success: false,
+      ip,
+      reason: "invalid_state",
+    })
     return redirectToLogin(request, "Invalid Google sign-in state")
   }
 
@@ -75,6 +102,12 @@ export async function GET(request: Request) {
 
     if (!tokenRes.ok || !tokenData.access_token) {
       console.error("Google token error:", tokenData)
+      await logAuthEvent({
+        event: "google.failure",
+        success: false,
+        ip,
+        reason: "token_exchange_failed",
+      })
       return redirectToLogin(request, "Could not verify Google account")
     }
 
@@ -90,6 +123,12 @@ export async function GET(request: Request) {
 
     if (!profileRes.ok || !profile.sub || !profile.email) {
       console.error("Google profile error:", profile)
+      await logAuthEvent({
+        event: "google.failure",
+        success: false,
+        ip,
+        reason: "profile_fetch_failed",
+      })
       return redirectToLogin(request, "Could not read Google profile")
     }
 
@@ -109,6 +148,14 @@ export async function GET(request: Request) {
       if (user) {
         // Only link if Google says the email is verified
         if (!profile.email_verified) {
+          await logAuthEvent({
+            event: "google.failure",
+            success: false,
+            email,
+            userId: user._id.toString(),
+            ip,
+            reason: "google_email_not_verified",
+          })
           return redirectToLogin(
             request,
             "Google email is not verified. Use email login or verify with Google."
@@ -132,12 +179,26 @@ export async function GET(request: Request) {
     // 4) Same session cookie as email signup/login
     await createSession(user._id.toString())
 
+    await logAuthEvent({
+      event: "google.success",
+      success: true,
+      email: user.email,
+      userId: user._id.toString(),
+      ip,
+    })
+
     const response = NextResponse.redirect(new URL("/workspace", request.url))
 
     response.cookies.delete("google_oauth_state")
     return response
   } catch (error) {
     console.error("Google callback failed:", error)
+    await logAuthEvent({
+      event: "google.failure",
+      success: false,
+      ip,
+      reason: "internal_error",
+    })
     return redirectToLogin(request, "Google sign-in failed")
   }
 }

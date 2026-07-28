@@ -45,7 +45,7 @@ Ordered for **learning + risk**. Do one feature at a time.
 | **F3** | Rate limiting on auth APIs | Critical | — | ✅ Done |
 | **F4** | Log out all devices | High | Sessions | ✅ Done |
 | **F5** | Remember me (wire or remove) | High | Sessions / cookies | ✅ Done |
-| **F6** | Audit / security logging | High | — | ⬜ |
+| **F6** | Audit / security logging | High | — | ✅ Done |
 | **F7** | Production config checklist | High | Deploy later | ⬜ |
 
 ### Why this order
@@ -335,9 +335,11 @@ Login checkbox → `rememberMe` boolean → `createSession` picks TTL only:
 - `false` → 1 day · `true` → 30 days · omitted (signup/Google) → 7 days  
 Cookie `maxAge` and DB `expiresAt` always use the same seconds.
 
-### F6 Audit logging — preview
+### F6 Audit logging — ✅ Done
 
-Structured logs (or `auth_events` collection) on fail/success for login, reset, OAuth.
+Option C: Mongo `AuthEvent` + JSON `console.log` in non-production via `logAuthEvent()`.  
+Wired on signin/signup, logout, logout-all, forgot/reset password, Google, verify-email, and rate-limit hits.  
+Best-effort only — logging failures never break auth.
 
 ### F7 Production config — preview
 

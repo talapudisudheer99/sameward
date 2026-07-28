@@ -2,13 +2,18 @@ import { randomBytes } from "node:crypto"
 
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
 import { sendPasswordResetEmail } from "@/lib/auth/email"
+import {
+  getClientIp,
+  rateLimit,
+  tooManyRequestsResponse,
+} from "@/lib/auth/rate-limit"
 import { hashToken } from "@/lib/auth/session"
 import { connectDB } from "@/lib/db/mongoose"
 import { PasswordResetToken } from "@/lib/models/password-reset-token"
 import { User } from "@/lib/models/user"
 import forgotPasswordSchema from "@/lib/schemas/auth/forgot-password-schema"
-import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/auth/rate-limit"
 
 const RESET_MAX_AGE_MS = 1000 * 60 * 30 // 30 minutes
 
@@ -24,6 +29,12 @@ export async function POST(request: Request) {
   })
 
   if (!limited.ok) {
+    await logAuthEvent({
+      event: "rate_limit.hit",
+      success: false,
+      ip,
+      reason: "forgot_password",
+    })
     return tooManyRequestsResponse(limited.retryAfterSeconds)
   }
 
@@ -55,6 +66,14 @@ export async function POST(request: Request) {
 
     // Always look successful to the client
     if (!user) {
+      // Server-side only: note unknown email — client still gets OK_MESSAGE
+      await logAuthEvent({
+        event: "forgot_password.requested",
+        success: true,
+        email,
+        ip,
+        reason: "email_not_found",
+      })
       return NextResponse.json({ message: OK_MESSAGE }, { status: 200 })
     }
 
@@ -77,9 +96,24 @@ export async function POST(request: Request) {
       resetUrl,
     })
 
+    await logAuthEvent({
+      event: "forgot_password.requested",
+      success: true,
+      email: user.email,
+      userId: user._id.toString(),
+      ip,
+      reason: "email_sent",
+    })
+
     return NextResponse.json({ message: OK_MESSAGE }, { status: 200 })
   } catch (error) {
     console.error("Forgot password failed:", error)
+    await logAuthEvent({
+      event: "forgot_password.requested",
+      success: false,
+      ip,
+      reason: "internal_error",
+    })
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 }

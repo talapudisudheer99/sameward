@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto"
 
 import { NextResponse } from "next/server"
 
+import { logAuthEvent } from "@/lib/auth/audit"
 import {
   getClientIp,
   rateLimit,
@@ -17,6 +18,12 @@ export async function GET(request: Request) {
   })
 
   if (!limited.ok) {
+    await logAuthEvent({
+      event: "rate_limit.hit",
+      success: false,
+      ip,
+      reason: "google",
+    })
     return tooManyRequestsResponse(limited.retryAfterSeconds)
   }
 

@@ -7,8 +7,8 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 2 — Auth hardening (2B) |
-| **Current feature** | **F6 Audit / security logging** (next) |
-| **Current technology** | Auth event logs |
+| **Current feature** | **F7 Production config checklist** (next) |
+| **Current technology** | Deploy env / Secure cookies / OAuth URIs |
 | **Last updated** | 2026-07-28 |
 
 ## Phase status
@@ -35,7 +35,7 @@
 | F3 | Rate limiting | ✅ Done |
 | F4 | Log out all devices | ✅ Done |
 | F5 | Remember me | ✅ Done |
-| F6 | Audit / security logging | ⬜ |
+| F6 | Audit / security logging | ✅ Done |
 | F7 | Production config checklist | ⬜ |
 
 ## Completed concepts (auth)
