@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-import { logAuthEvent } from "@/lib/auth/audit"
+import { logAuthEvent } from "@/lib/auth/auth-audit-logger"
 import { createAndSendVerification } from "@/lib/auth/email-verification"
 import {
   getClientIp,

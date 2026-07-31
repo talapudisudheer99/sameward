@@ -1,8 +1,12 @@
+
+
 import { Manrope, Plus_Jakarta_Sans } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ReduxProvider } from "@/components/providers/redux-provide"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const heading = Manrope({
@@ -29,8 +33,12 @@ export default function RootLayout({
       <body>
         {/* Toaster must sit inside ThemeProvider so it can follow light/dark theme */}
         <ThemeProvider>
-          {children}
-          <Toaster richColors closeButton position="top-right" />
+          <ReduxProvider>
+            <TooltipProvider delay={300}>
+              {children}
+              <Toaster richColors closeButton position="top-right" />
+            </TooltipProvider>
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>

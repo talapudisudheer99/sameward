@@ -62,3 +62,43 @@ export async function sendVerificationEmail(options: {
     throw new Error(error.message)
   }
 }
+
+export async function sendWorkspaceInviteEmail(options: {
+  to: string
+  inviteUrl: string
+  inviteFrom: string
+  workspaceName?: string
+}) {
+  const from = process.env.EMAIL_FROM
+  if (!from) {
+    throw new Error("Missing EMAIL_FROM")
+  }
+
+  const resend = getResend()
+
+  const { error } = await resend.emails.send({
+    from,
+    to: options.to,
+    subject: `You're invited to ${options.workspaceName ?? "a TeamHub workspace"}`,
+    html: `
+      <p><strong>${options.inviteFrom}</strong> invited you to join
+      <strong>${options.workspaceName ?? "a workspace"}</strong> on TeamHub.</p>
+      <p><a href="${options.inviteUrl}">Accept invitation</a></p>
+      <p>This link expires in 7 days. If you weren’t expecting this, you can ignore it.</p>
+    `,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  // Local/dev: Resend may succeed while mail is delayed/spam —
+  // log the link so you can open /invite/[token] while building accept.
+  if (process.env.NODE_ENV !== "production") {
+    console.info("[workspace-invite]", {
+      to: options.to,
+      inviteUrl: options.inviteUrl,
+      workspace: options.workspaceName,
+    })
+  }
+}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-import { logAuthEvent } from "@/lib/auth/audit"
+import { logAuthEvent } from "@/lib/auth/auth-audit-logger"
 import { destroySession, getCurrentUser } from "@/lib/auth/session"
 import { getClientIp } from "@/lib/auth/rate-limit"
 

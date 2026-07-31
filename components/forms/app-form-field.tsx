@@ -29,6 +29,7 @@ type AppFormFieldProps<TFieldValues extends FieldValues> = {
   className?: string
   inputClassName?: string
   showIcon?: boolean
+  maxLength?: number
 }
 
 export function AppFormField<TFieldValues extends FieldValues>({
@@ -43,6 +44,7 @@ export function AppFormField<TFieldValues extends FieldValues>({
   className,
   inputClassName,
   showIcon = true,
+  maxLength,
 }: AppFormFieldProps<TFieldValues>) {
   const [visible, setVisible] = useState(false)
 
@@ -84,6 +86,7 @@ export function AppFormField<TFieldValues extends FieldValues>({
                   inputClassName
                 )}
                 value={field.value ?? ""}
+                maxLength={maxLength}
               />
               {type === "password" ? (
                 <button

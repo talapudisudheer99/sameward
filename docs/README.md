@@ -22,9 +22,10 @@ docs/
 
 | Folder | Purpose |
 |--------|---------|
-| **`auth/`** | Everything about authentication — flows, routes, FE, hardening, prod, debug |
+| **`auth/`** | Completed auth — flows, routes, FE, hardening, prod, debug |
+| **`workspaces/`** | Phase 3 module — vision, stories, flows, tasks |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |
-| **`phases/`** | Learning roadmap; each phase README points to real refs when done |
+| **`phases/`** | Learning roadmap stubs |
 | **`guides/`** | Tech primers (Mongoose, …) |
 | **`tracking/`** | Where we are + interview Qs |
 | **`design/`** | UI tokens |
@@ -37,11 +38,12 @@ docs/
 | Goal | Open |
 |------|------|
 | “How does auth work?” | [auth/README.md](./auth/README.md) |
+| “Workspaces & members?” | [workspaces/README.md](./workspaces/README.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | “Why this stack?” | [architecture/stack.md](./architecture/stack.md) |
-| “Next feature to build?” | [phases/03-workspaces-members](./phases/03-workspaces-members/README.md) |
+| “Next feature to build?” | [workspaces/TASKS.md](./workspaces/TASKS.md) |
 | Mentorship rules | [MENTORSHIP.md](./MENTORSHIP.md) |
 
 ---
@@ -53,7 +55,7 @@ docs/
 | [0 Foundation](./phases/00-foundation/README.md) | Scaffold, RSC, theme | ✅ |
 | [1 Product shell](./phases/01-product-shell/README.md) | Landing + app shell | ✅ |
 | [2 Authentication](./phases/02-authentication/README.md) | Sessions, OAuth, hardening | ✅ → [auth/](./auth/README.md) |
-| [3 Workspaces](./phases/03-workspaces-members/README.md) | Multi-tenant CRUD | ⬜ Next |
+| [3 Workspaces](./phases/03-workspaces-members/README.md) | Multi-tenant CRUD | ✅ v1 → [workspaces/](./workspaces/README.md) |
 | [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | ⬜ |
 | [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels, docs, boards | ⬜ |
 | [6 Realtime](./phases/06-realtime/README.md) | Socket.IO | ⬜ |

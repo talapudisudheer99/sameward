@@ -19,7 +19,7 @@ export default async function AppLayout({
           <Sidebar />
         </aside>
         <main className="flex-1 overflow-auto p-6 md:p-8">{children}</main>
-      </div>
+      </div> 
     </div>
   )
 }

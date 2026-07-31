@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto"
 
 import { NextResponse } from "next/server"
 
-import { logAuthEvent } from "@/lib/auth/audit"
+import { logAuthEvent } from "@/lib/auth/auth-audit-logger"
 import { sendPasswordResetEmail } from "@/lib/auth/email"
 import {
   getClientIp,

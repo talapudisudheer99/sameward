@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server" // helper to build JSON HTTP responses
 
-import { logAuthEvent } from "@/lib/auth/audit"
+import { logAuthEvent } from "@/lib/auth/auth-audit-logger"
 import { hashPassword } from "@/lib/auth/password" // bcrypt hash — never store plain password
 import { createSession } from "@/lib/auth/session" // creates session row + sets the cookie
 import { connectDB } from "@/lib/db/mongoose" // opens / reuses the Mongo connection

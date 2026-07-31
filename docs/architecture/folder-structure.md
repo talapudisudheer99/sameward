@@ -100,11 +100,16 @@ app/api/
 │   ├── reset-password/route.ts
 │   ├── verify-email/route.ts
 │   └── resend-verification/route.ts
-└── workspaces/                # Phase 3+ (example)
-    ├── route.ts               # GET list / POST create
-    └── [workspaceId]/
-        ├── route.ts           # GET / PATCH / DELETE one
-        └── members/route.ts   # membership actions
+├── workspaces/                # Phase 3 v1
+│   ├── route.ts               # GET list / POST create
+│   └── [workspaceId]/
+│       ├── route.ts           # GET / PATCH / DELETE one
+│       └── members/
+│           ├── route.ts       # GET list / POST invite
+│           ├── me/route.ts    # DELETE leave
+│           └── [userId]/route.ts  # DELETE remove / PATCH role
+└── invites/
+    └── [token]/route.ts       # GET preview / POST accept
 ```
 
 **Rules**
@@ -125,22 +130,25 @@ components/
 ├── buttons/                   # Shared submit/cancel patterns
 ├── layout/                    # App chrome: sidebar, logout, banners, logo
 ├── marketing/                 # Landing / auth shell chrome
-├── dialogs/                   # Modals grouped by domain
-│   └── workspace/
-├── sharable/                  # Tiny shared widgets (loader, …)
+├── dialogs/
+│   ├── confirm-dialog.tsx     # Shared confirm (leave / delete / remove / demote)
+│   └── workspace/             # create, invite, rename
+├── workspace/                 # list, members-table, display helpers
+├── invite/                    # accept-invite-card
+├── sharable/                  # loader, overflow-text, …
 └── theme-provider.tsx
 ```
 
-**Growth rule for features (Phase 3+)**
+**Growth rule for features**
 
 Prefer **domain folders** when a feature has several UI pieces:
 
 ```text
 components/
-  workspace/                   # list, card, empty state, settings panels
-  members/                     # invite form, member row
+  workspace/                   # list, members table, display helpers
+  invite/                      # accept card
   channels/                    # later
-````
+```
 
 | Put here | Example |
 |----------|---------|
@@ -164,10 +172,10 @@ lib/
 │   ├── user.ts
 │   ├── session.ts
 │   ├── …auth tokens / AuthEvent
-│   └── workspace.ts           # Phase 3+
+│   └── workspace/             # workspace, membership, workspace-invite, workspace-event
 ├── schemas/                   # Zod — shared by forms + APIs
 │   ├── auth/
-│   └── workspace/
+│   └── workspace/             # workspace-schema, add-member-schema, role-update-schema
 ├── auth/                      # Auth domain services (done)
 │   ├── session.ts
 │   ├── cookies.ts
@@ -176,15 +184,23 @@ lib/
 │   ├── rate-limit.ts
 │   ├── audit.ts
 │   └── email*.ts
+├── workspaces/                # Phase 3 helpers
+│   ├── create-workspace.ts
+│   ├── slugify.ts
+│   ├── invite.ts
+│   ├── workspace-audit-events.ts
+│   └── workspace-audit-logger.ts
 ├── api/
 │   └── axios.ts               # Browser HTTP client
 ├── types/                     # Shared TS types (non-Zod) when needed
 └── utils.ts                   # cn() and tiny pure helpers
 ```
 
+**Also:** `store/api/workspaces-api.ts` — RTK Query for all workspace/member/invite client calls.
+
 **Rules**
 - **Models** = persistence shape. **Schemas** = request/form validation. Both can exist for one domain.
-- Domain helpers grow as folders: `lib/auth/*` today; later `lib/workspaces/*` (create, authorize membership) if handlers get fat.
+- Domain helpers live in `lib/<domain>/` when logic is more than thin route orchestration (`lib/auth/*`, `lib/workspaces/*`).
 - Do **not** put React components in `lib/`.
 - Do **not** import `lib/models` from Client Components — keep DB on the server.
 
@@ -228,22 +244,23 @@ That is a **modular monolith** inside one Next app — production-common for Saa
 
 ---
 
-## 8. Phase 3 example (workspaces) — follow this shape
-
-When we build workspaces, default placement:
+## 8. Phase 3 (workspaces) — shipped layout
 
 ```text
-app/(app)/workspace/…              # UI routes (list, detail later)
-app/api/workspaces/route.ts
-app/api/workspaces/[workspaceId]/route.ts
-lib/models/workspace.ts
-lib/models/membership.ts           # if separate collection
-lib/schemas/workspace/…
-components/dialogs/workspace/…
-components/workspace/…             # as UI grows
+app/(app)/workspace/…                    # A/B list, D detail, E members
+app/(invite)/invite/[token]/…           # Accept invite (outside app shell)
+app/api/workspaces/…                     # CRUD-ish + members + leave/remove/role
+app/api/invites/[token]/…               # Preview + accept
+lib/models/workspace/…                   # workspace, membership, invite, event
+lib/schemas/workspace/…                  # create/rename, emails[], role
+lib/workspaces/…                         # create, slugify, invite, audit
+store/api/workspaces-api.ts
+components/dialogs/workspace/…           # create, invite, rename
+components/workspace/…                   # list, members-table
+components/invite/…                      # accept card
 ```
 
-Optional later: `lib/workspaces/create-workspace.ts` if create flow spans invites + audit + roles.
+Full inventory: [`docs/workspaces/`](../workspaces/README.md).
 
 ---
 
@@ -274,4 +291,4 @@ Before coding:
 
 ---
 
-[← Docs hub](../README.md) · [Stack](./stack.md) · [Auth reference](../auth/README.md) · [Phase 3](../phases/03-workspaces-members/README.md)
+[← Docs hub](../README.md) · [Stack](./stack.md) · [Auth reference](../auth/README.md) · [Workspaces module](../workspaces/README.md) · [Phase 3](../phases/03-workspaces-members/README.md)

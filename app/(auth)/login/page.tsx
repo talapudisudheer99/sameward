@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isAxiosError } from "axios"
 import { useForm } from "react-hook-form"
@@ -19,16 +19,26 @@ import { Form } from "@/components/ui/form"
 import { api } from "@/lib/api/axios"
 import loginSchema, { type LoginSchema } from "@/lib/schemas/auth/login-schema"
 
-export default function LoginPage() {
+/** Only same-origin relative paths — blocks open redirects */
+function safeNextPath(next: string | null): string {
+  if (next && next.startsWith("/") && !next.startsWith("//")) {
+    return next
+  }
+  return "/workspace"
+}
+
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextPath = safeNextPath(searchParams.get("next"))
 
   // Google callback sends failures here as /login?error=...
   useEffect(() => {
-    const error = new URLSearchParams(window.location.search).get("error")
+    const error = searchParams.get("error")
     if (error) {
       toast.error(error)
     }
-  }, [])
+  }, [searchParams])
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -53,7 +63,8 @@ export default function LoginPage() {
       await api.post("/api/auth/signin", data)
 
       toast.success("Welcome back")
-      router.replace("/workspace")
+      // Honor ?next= (e.g. /invite/[token] after invite email)
+      router.replace(nextPath)
       router.refresh()
     } catch (error) {
       let message
@@ -146,5 +157,14 @@ export default function LoginPage() {
       <AuthDivider />
       <GoogleAuthButton />
     </AuthShell>
+  )
+}
+
+/** Suspense required for useSearchParams (production static bailout) */
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }
