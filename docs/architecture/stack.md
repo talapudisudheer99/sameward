@@ -74,4 +74,4 @@ Always ask: *What problem does buying this solve that we shouldn’t build?*
 
 ---
 
-[← Product vision](./product-vision.md) · [Docs hub](../README.md) · [Concept map →](./concept-dependency-map.md)
+[← Product vision](./product-vision.md) · [Docs hub](../README.md) · [Folder structure](./folder-structure.md) · [Concept map →](./concept-dependency-map.md)

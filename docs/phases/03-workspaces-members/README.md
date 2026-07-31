@@ -1,96 +1,51 @@
 # Phase 3 — Workspaces & Members
 
-**Status:** ⬜ Not started  
+**Status:** ✅ **v1 shipped + E2E verified** (deferred later items remain)  
 **Prev:** [← Phase 2](../02-authentication/README.md) · **Next:** [Phase 4 — State & data →](../04-state-data-layer/README.md)
 
 ---
 
-## 1. Business requirement
+## Source of truth
 
-TeamHub is **multi-tenant**: users belong to workspaces. Creating a workspace and inviting members is the core SaaS loop.
+All vision, stories, flows, tasks, and security rules live in:
 
-## 2. What you will build
+**[`docs/workspaces/`](../../workspaces/README.md)**
 
-- Create / list / get workspace APIs + UI
-- Membership model with roles
-- Invite member flow (basic)
+Start with [VISION](../../workspaces/VISION.md) → [USER-STORIES](../../workspaces/USER-STORIES.md) → [TASKS](../../workspaces/TASKS.md).
 
-## 3. Architecture
-
-```
-UI form
-  → (later RTK Query) POST /api/workspaces
-  → Route Handler validates + checks session
-  → MongoDB: workspaces + memberships
-  → JSON response → UI list update
-```
-
-## 4. Why MongoDB here
-
-| Advantage | Disadvantage |
-|-----------|--------------|
-| Flexible documents for evolving schemas | Easy to create inconsistent data without discipline |
-| Natural nesting / refs for memberships | Joins are manual (`$lookup` or app-level) |
-| Common in Node interview stories | Postgres is equally valid — we chose Mongo for this path |
-
-## 5. Concepts covered
-
-- [ ] REST CRUD
-- [ ] Status codes
-- [ ] Validation
-- [ ] MongoDB collections, ObjectIds, indexes
-- [ ] Relationships via references
-- [ ] Pagination / filtering basics
-- [ ] Error handling shapes
-
-## 6. Folder structure (target)
-
-```
-app/api/workspaces/route.ts
-app/api/workspaces/[workspaceId]/route.ts
-app/api/workspaces/[workspaceId]/members/route.ts
-lib/db/mongodb.ts
-models/   # or lib/models
-```
-
-## 7. Backend (Next + MongoDB)
-
-### Collections (initial)
-
-| Collection | Purpose |
-|------------|---------|
-| `users` | Identity |
-| `workspaces` | Tenant |
-| `memberships` | userId + workspaceId + role |
-
-### Example endpoints
-
-| Method | Path | Action |
-|--------|------|--------|
-| GET | `/api/workspaces` | List mine |
-| POST | `/api/workspaces` | Create |
-| GET | `/api/workspaces/:id` | Detail |
-| POST | `/api/workspaces/:id/members` | Invite / add |
-
-## 8. Micro-tasks
-
-Mentor assigns after auth is solid.
-
-## 9. Testing & production notes
-
-- Index `{ userId, workspaceId }` on memberships uniquely
-- Never trust `workspaceId` from client without membership check
-
-## 10. Interview questions (preview)
-
-1. How do you model many-to-many users↔workspaces in MongoDB?
-2. Why check auth in the Route Handler if middleware exists?
-3. Design pagination for a large workspace list.
-
-## 11. Definition of done
-
-Authenticated user can create a workspace and see membership; APIs reject cross-tenant access.
+Folder placement rules: [architecture/folder-structure.md](../../architecture/folder-structure.md).
 
 ---
 
-[Docs hub](../../README.md)
+## What v1 covers
+
+- Create / list / get workspace · Screens A–D  
+- Invite existing users → accept · Screen E · `/invite/[token]`  
+- Leave · remove · rename · owner-delete (no notify)  
+- Owner changes `member` ↔ `admin`  
+- Tenant isolation (non-member → 404)  
+- `WorkspaceEvent` audit (no UI)  
+
+**Not in v1:** transfer ownership · invite non-users · delete notify · audit UI · channels/docs/boards  
+
+---
+
+## Concepts practiced
+
+- [x] REST CRUD + status codes  
+- [x] Zod validation shared FE/API  
+- [x] Mongo refs + unique membership index  
+- [x] Tenant isolation (membership checks)  
+- [x] Thin handlers + `lib` helpers  
+- [x] Consent-based invite + hashed tokens  
+- [x] Best-effort tenant audit  
+
+---
+
+## Definition of done
+
+See [workspaces/TASKS.md](../../workspaces/TASKS.md) — authenticated user can create/list workspaces, invite/accept members, leave/remove/rename/delete, change roles (owner), and APIs reject cross-tenant access.
+
+---
+
+[Docs hub](../../README.md) · [Workspaces module](../../workspaces/README.md)

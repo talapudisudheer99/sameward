@@ -23,7 +23,7 @@ Feature code
   → Unit/integration tests
   → git push GitHub
   → Vercel build (Next.js)
-  → Env: MONGODB_URI, AUTH_SECRET, AI keys
+  → Env: MONGODB_URI, APP_URL, Google/Resend (see docs/auth/PRODUCTION.md)
   → Production URL
 ```
 

@@ -1,29 +1,26 @@
-# Feature Index
+# Feature index
 
-Product features mapped to learning phases. Use this when you remember a *feature* but not a *phase number*.
+Jump from a **product feature** to the right doc.
 
-| Feature | Phase | Guide |
-|---------|-------|-------|
-| Scaffold comprehension | 0 | [00-foundation](../phases/00-foundation/README.md) |
-| Landing page | 1 | [01-product-shell](../phases/01-product-shell/README.md) |
-| App shell (sidebar / nav) | 1 | [01-product-shell](../phases/01-product-shell/README.md) |
-| Sign up / login / logout | 2 | [02-authentication](../phases/02-authentication/README.md) |
-| Protected routes | 2 | [02-authentication](../phases/02-authentication/README.md) |
-| Roles (RBAC) | 2 | [02-authentication](../phases/02-authentication/README.md) |
-| Create / list workspaces | 3 | [03-workspaces-members](../phases/03-workspaces-members/README.md) |
-| Invite members | 3 | [03-workspaces-members](../phases/03-workspaces-members/README.md) |
-| Redux store setup | 4 | [04-state-data-layer](../phases/04-state-data-layer/README.md) |
-| RTK Query API slice | 4 | [04-state-data-layer](../phases/04-state-data-layer/README.md) |
-| Channels | 5 | [05-collaboration-core](../phases/05-collaboration-core/README.md) |
-| Documents | 5 | [05-collaboration-core](../phases/05-collaboration-core/README.md) |
-| Boards & cards | 5 | [05-collaboration-core](../phases/05-collaboration-core/README.md) |
-| Live chat | 6 | [06-realtime](../phases/06-realtime/README.md) |
-| Presence / typing | 6 | [06-realtime](../phases/06-realtime/README.md) |
-| Notifications | 6 | [06-realtime](../phases/06-realtime/README.md) |
-| AI assist | 7 | [07-ai-integrations](../phases/07-ai-integrations/README.md) |
-| File uploads (e.g. Cloudinary) | 7 | [07-ai-integrations](../phases/07-ai-integrations/README.md) |
-| Tests | 8 | [08-quality-deployment](../phases/08-quality-deployment/README.md) |
-| GitHub + Vercel deploy | 8 | [08-quality-deployment](../phases/08-quality-deployment/README.md) |
+| Feature | Status | Doc |
+|---------|--------|-----|
+| Landing / app shell | ✅ | [Phase 1](../phases/01-product-shell/README.md) |
+| Sign up / login / logout | ✅ | [**auth/**](../auth/README.md) |
+| Google OAuth | ✅ | [auth E2E](../auth/E2E-FLOWS.md) · [API](../auth/API-ROUTES.md) |
+| Sessions / cookies / proxy | ✅ | [auth Overview](../auth/OVERVIEW.md) |
+| Email verification (soft) | ✅ | [auth Hardening F2](../auth/HARDENING.md) |
+| Forgot / reset password | ✅ | [auth E2E](../auth/E2E-FLOWS.md) |
+| Rate limits / audit / remember-me / logout-all | ✅ | [auth Hardening](../auth/HARDENING.md) |
+| Create / list / rename / delete workspaces | ✅ v1 | [**workspaces/**](../workspaces/README.md) |
+| Invite → accept + members / leave / remove / roles | ✅ v1 | [workspaces stories](../workspaces/USER-STORIES.md) |
+| Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
+| Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen in [Phase 4](../phases/04-state-data-layer/README.md) |
+| Channels / docs / boards | ⬜ | [Phase 5](../phases/05-collaboration-core/README.md) |
+| Live chat / presence | ⬜ | [Phase 6](../phases/06-realtime/README.md) |
+| AI assist | ⬜ | [Phase 7](../phases/07-ai-integrations/README.md) |
+| Tests + Vercel deploy | ⬜ | [Phase 8](../phases/08-quality-deployment/README.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
+
+Workspace empty-state notes: [workspace-home.md](./workspace-home.md)
 
 ---
 
