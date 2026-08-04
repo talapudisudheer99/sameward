@@ -14,9 +14,9 @@ Jump from a **product feature** to the right doc.
 | Create / list / rename / delete workspaces | ✅ v1 | [**workspaces/**](../workspaces/README.md) |
 | Invite → accept + members / leave / remove / roles | ✅ v1 | [workspaces stories](../workspaces/USER-STORIES.md) |
 | Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
-| Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen in [Phase 4](../phases/04-state-data-layer/README.md) |
-| Channels / docs / boards | ⬜ | [Phase 5](../phases/05-collaboration-core/README.md) |
-| Live chat / presence | ⬜ | [Phase 6](../phases/06-realtime/README.md) |
+| Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen during channels |
+| Channels + live chat (Socket.IO) | 🔄 Spec locked | [**channels/**](../channels/README.md) |
+| Docs / boards | ⬜ | Later (after channels v1) |
 | AI assist | ⬜ | [Phase 7](../phases/07-ai-integrations/README.md) |
 | Tests + Vercel deploy | ⬜ | [Phase 8](../phases/08-quality-deployment/README.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 

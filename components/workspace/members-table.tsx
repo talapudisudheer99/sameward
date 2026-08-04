@@ -14,7 +14,7 @@ import {
   workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import { cn } from "@/lib/utils"
-import type { WorkspaceMemberListItem } from "@/store/api/workspaces-api"
+import type { WorkspaceMemberListItem } from "@/lib/types/workspace/workspace-types"
 
 export type MemberRoleOption = "member" | "admin"
 

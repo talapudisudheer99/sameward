@@ -33,7 +33,8 @@ export function LogoutAllDevicesButton() {
       let message
 
       if (isAxiosError(error)) {
-        message = error.response?.data?.message ?? "Could not log out from all devices"
+        message =
+          error.response?.data?.message ?? "Could not log out from all devices"
       } else {
         message = "Unable to reach the server. Please try again."
       }

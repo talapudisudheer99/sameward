@@ -16,7 +16,7 @@ export const baseApi = createApi({
     credentials: "include",
   }),
   // Cache labels — mutations invalidate these so lists refetch automatically
-  tagTypes: ["Workspace", "User"],
+  tagTypes: ["Workspace", "User", "Channel", "ChannelMember", "Message"],
   // Endpoints start empty; feature files use injectEndpoints
   endpoints: () => ({}),
 })

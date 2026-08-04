@@ -24,14 +24,8 @@ export function AuthShell({
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#0B1220] p-10 text-slate-50 lg:flex xl:p-14">
-        <Link
-          href="/"
-          className="relative z-10 flex w-fit items-center gap-2.5"
-        >
-          <TeamHubLogo className="size-8" />
-          <span className="font-heading text-sm font-semibold tracking-tight">
-            TeamHub AI
-          </span>
+        <Link href="/" className="relative z-10 flex w-fit items-center">
+          <TeamHubLogo variant="horizontal" size={32} tone="onDark" />
         </Link>
 
         <div className="relative z-10 max-w-md">
@@ -82,11 +76,8 @@ export function AuthShell({
 
       <div className="flex flex-col bg-background">
         <div className="flex items-center px-5 py-4 lg:hidden">
-          <Link href="/" className="flex items-center gap-2">
-            <TeamHubLogo className="size-7" />
-            <span className="font-heading text-sm font-semibold">
-              TeamHub AI
-            </span>
+          <Link href="/" className="flex items-center">
+            <TeamHubLogo variant="horizontal" size={28} />
           </Link>
         </div>
 

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { cn } from "@/lib/utils"
-import { useInviteWorkspaceMembersMutation } from "@/store/api/workspaces-api"
+import { useInviteWorkspaceMembersMutation } from "@/store/api/workspace/workspaces-api"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -178,9 +178,7 @@ export default function InviteMemberDialog({
 
   const busy = isLoading || userLoading
   const canSubmit =
-    emailVerified &&
-    (emails.length > 0 || draft.trim().length > 0) &&
-    !busy
+    emailVerified && (emails.length > 0 || draft.trim().length > 0) && !busy
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

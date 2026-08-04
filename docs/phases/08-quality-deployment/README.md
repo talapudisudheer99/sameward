@@ -22,10 +22,14 @@ Production software must be **testable**, **fast enough**, and **shippable**. Gi
 Feature code
   → Unit/integration tests
   → git push GitHub
-  → Vercel build (Next.js)
-  → Env: MONGODB_URI, APP_URL, Google/Resend (see docs/auth/PRODUCTION.md)
+  → Railway: Next.js service (UI + REST)
+  → Railway: Socket.IO service (server/realtime)
+  → Env: MONGODB_URI, APP_URL, REALTIME URLs/secrets, Google/Resend/S3
+     (see docs/auth/PRODUCTION.md + docs/architecture/deploy.md)
   → Production URL
 ```
+
+**PO deploy lock (Option B):** [docs/architecture/deploy.md](../../architecture/deploy.md) — one platform, **two processes/folders**.
 
 ## 4. Why these technologies
 

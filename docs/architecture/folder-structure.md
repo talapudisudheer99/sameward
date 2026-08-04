@@ -262,6 +262,10 @@ components/invite/…                      # accept card
 
 Full inventory: [`docs/workspaces/`](../workspaces/README.md).
 
+### Channels module (next — planned)
+
+See [`docs/channels/LIB-AND-MODELS.md`](../channels/LIB-AND-MODELS.md) for target paths (`lib/models/channel/`, `server/realtime/`, `store/api/channels-api.ts`).
+
 ---
 
 ## 9. Interview talking points

@@ -1,5 +1,4 @@
-
-
+import type { Metadata } from "next"
 import { Manrope, Plus_Jakarta_Sans } from "next/font/google"
 
 import "./globals.css"
@@ -18,6 +17,15 @@ const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
 })
+
+export const metadata: Metadata = {
+  title: {
+    default: "TeamHub AI",
+    template: "%s · TeamHub AI",
+  },
+  description: "Team collaboration — workspaces, channels, and realtime chat.",
+  applicationName: "TeamHub AI",
+}
 
 export default function RootLayout({
   children,

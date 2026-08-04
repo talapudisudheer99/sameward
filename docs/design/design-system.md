@@ -1,8 +1,8 @@
 # TeamHub AI — Visual Identity & Design System v1.0
 
-> Source of truth for UI. Implement via CSS variables in `app/globals.css` + fonts in `app/layout.tsx`.
->
-> Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)
+> Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)  
+> Logo system: [references/teamhub-logo-system.png](./references/teamhub-logo-system.png)  
+> Channels chat components: [references/channels-mockups-dialogs.png](./references/channels-mockups-dialogs.png)
 
 ## Brand summary
 
@@ -20,6 +20,33 @@ TeamHub AI is a collaboration platform for teams that spend their workday in one
 **Voice:** “Everything has its place.” — not “Look how futuristic our AI is.”
 
 **Accent:** Electric Teal `#0F9D94` (dark: `#19B6AC`) — one accent only.
+
+## Logo
+
+**Mark:** Teal hexagon with three white team silhouettes (collaboration).  
+**Wordmark:** `TeamHub` in Ink `#111827` + `AI` in Electric Teal.  
+**Component:** `components/layout/teamhub-logo.tsx`
+
+| Variant | Use |
+|---------|-----|
+| `mark` | Favicon-style, collapsed chrome |
+| `horizontal` | Headers, sidebar, marketing (default for nav) |
+| `stacked` | Centered / tight vertical spaces |
+| `tone="onDark"` | Navy marketing panels (white TeamHub + teal AI) |
+
+Clear space ≈ mark height on all sides. Do not stretch or recolor the mark off-token.
+
+**Where it ships in the app**
+
+| Surface | Status |
+|---------|--------|
+| App sidebar | ✅ `TeamHubLogo` horizontal |
+| Marketing header | ✅ |
+| Auth shell (dark + mobile) | ✅ |
+| Invite layout | ✅ |
+| Browser favicon | ✅ `app/icon.svg` |
+| Create-workspace dialog header icon | ✅ `TeamHubLogo` mark |
+| Emails (Resend HTML) | Text-only “TeamHub” for now (no embedded SVG logo) |
 
 ## Design tokens
 

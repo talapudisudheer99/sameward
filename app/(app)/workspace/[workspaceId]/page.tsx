@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import {
   ChevronRight,
-  FolderKanban,
+  Hash,
   LogOut,
   Pencil,
   SearchX,
@@ -37,7 +37,7 @@ import {
   useDeleteWorkspaceMutation,
   useGetWorkspaceByIdQuery,
   useLeaveWorkspaceMutation,
-} from "@/store/api/workspaces-api"
+} from "@/store/api/workspace/workspaces-api"
 
 function isNotFoundError(error: unknown): boolean {
   return (
@@ -119,6 +119,7 @@ export default function WorkspaceDetailPage() {
   const isOwner = role === "owner"
   const canInvite = manage && emailVerified
   const membersHref = `/workspace/${workspaceId}/members`
+  const channelsHref = `/workspace/${workspaceId}/channels`
 
   const onLeaveConfirm = async () => {
     try {
@@ -137,9 +138,7 @@ export default function WorkspaceDetailPage() {
       toast.success(`${data.name} deleted`)
       router.replace("/workspace")
     } catch (err) {
-      toast.error(
-        getErrorMessage(err, "Couldn’t delete workspace. Try again.")
-      )
+      toast.error(getErrorMessage(err, "Couldn’t delete workspace. Try again."))
       throw err
     }
   }
@@ -262,7 +261,7 @@ export default function WorkspaceDetailPage() {
       {/* Everyone can open members (read-only for role=member) */}
       <Link
         href={membersHref}
-        className="mt-8 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="mt-8 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         <div className="flex -space-x-2" aria-hidden>
           <div
@@ -295,20 +294,27 @@ export default function WorkspaceDetailPage() {
         />
       </Link>
 
-      <div className="mt-6 flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
+      <Link
+        href={channelsHref}
+        className="mt-4 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
         <div
-          className="mb-5 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
           aria-hidden
         >
-          <FolderKanban className="size-7" strokeWidth={1.5} />
+          <Hash className="size-4" strokeWidth={2} />
         </div>
-        <h2 className="font-heading text-lg font-semibold text-foreground">
-          Channels, docs, and boards will live here
-        </h2>
-        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Everything your team creates will be organized in this workspace.
-        </p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-foreground">Channels</p>
+          <p className="text-xs text-muted-foreground">
+            Team chat — open #general and create topic channels
+          </p>
+        </div>
+        <ChevronRight
+          className="size-4 shrink-0 text-muted-foreground"
+          strokeWidth={2}
+        />
+      </Link>
 
       {/* Danger zone — leave (everyone) · delete (owner only) */}
       <div className="mt-10 space-y-6 border-t border-border pt-6">

@@ -22,13 +22,13 @@ import MembersTable, {
 } from "@/components/workspace/members-table"
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { cn } from "@/lib/utils"
+import type { WorkspaceMemberListItem } from "@/lib/types/workspace/workspace-types"
 import {
   useGetWorkspaceByIdQuery,
   useGetWorkspaceMembersQuery,
   useRemoveWorkspaceMemberMutation,
   useUpdateWorkspaceMemberRoleMutation,
-  type WorkspaceMemberListItem,
-} from "@/store/api/workspaces-api"
+} from "@/store/api/workspace/workspaces-api"
 
 function canManageMembers(role: string | undefined): boolean {
   const r = role?.toLowerCase()
@@ -62,9 +62,7 @@ export default function WorkspaceMembersPage() {
   const [inviteOpen, setInviteOpen] = useState(false)
   const [memberToRemove, setMemberToRemove] =
     useState<WorkspaceMemberListItem | null>(null)
-  const [pendingDemote, setPendingDemote] = useState<PendingDemote | null>(
-    null
-  )
+  const [pendingDemote, setPendingDemote] = useState<PendingDemote | null>(null)
   const [roleUpdatingUserId, setRoleUpdatingUserId] = useState<string | null>(
     null
   )
@@ -73,10 +71,11 @@ export default function WorkspaceMembersPage() {
   const [removeMember] = useRemoveWorkspaceMemberMutation()
   const [updateMemberRole] = useUpdateWorkspaceMemberRoleMutation()
 
-  const { data: workspace, isLoading, isError } = useGetWorkspaceByIdQuery(
-    { workspaceId },
-    { skip: !workspaceId }
-  )
+  const {
+    data: workspace,
+    isLoading,
+    isError,
+  } = useGetWorkspaceByIdQuery({ workspaceId }, { skip: !workspaceId })
 
   const { data: membersData, isLoading: membersLoading } =
     useGetWorkspaceMembersQuery({ workspaceId }, { skip: !workspaceId })
@@ -201,7 +200,7 @@ export default function WorkspaceMembersPage() {
         <ChevronRight className="size-3.5 shrink-0 opacity-60" aria-hidden />
         <Link
           href={`/workspace/${workspaceId}`}
-          className="min-w-0 max-w-[40%] truncate transition-colors hover:text-foreground sm:max-w-[50%]"
+          className="max-w-[40%] min-w-0 truncate transition-colors hover:text-foreground sm:max-w-[50%]"
           title={workspace.name}
         >
           {workspace.name}

@@ -36,12 +36,9 @@ export default function Sidebar() {
     <div className="flex h-full flex-col gap-6 bg-sidebar p-4 text-sidebar-foreground">
       <Link
         href="/workspace"
-        className="flex items-center gap-2.5 rounded-[var(--radius)] px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+        className="flex items-center rounded-[var(--radius)] px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
       >
-        <TeamHubLogo />
-        <span className="font-heading text-sm font-semibold tracking-tight">
-          TeamHub
-        </span>
+        <TeamHubLogo variant="horizontal" size={28} />
       </Link>
 
       <nav className="flex flex-col gap-1" aria-label="App">

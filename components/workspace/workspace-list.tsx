@@ -9,7 +9,7 @@ import {
   workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import { cn } from "@/lib/utils"
-import { WorkspaceListItem } from "@/store/api/workspaces-api"
+import type { WorkspaceListItem } from "@/lib/types/workspace/workspace-types"
 
 interface WorkspaceRowProps {
   workspace: WorkspaceListItem
@@ -21,7 +21,7 @@ function WorkspaceRow({ workspace }: WorkspaceRowProps) {
   return (
     <Link
       href={`/workspace/${workspace.id}`}
-      className="group flex items-center gap-4 rounded-lg border border-border bg-card px-4 py-3.5 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group flex items-center gap-4 rounded-lg border border-border bg-card px-4 py-3.5 transition-colors hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
       <div
         className={cn(
@@ -33,7 +33,10 @@ function WorkspaceRow({ workspace }: WorkspaceRowProps) {
         {workspaceInitials(workspace.name)}
       </div>
 
-      <span className="min-w-0 flex-1 truncate font-medium text-foreground" title={workspace.name}>
+      <span
+        className="min-w-0 flex-1 truncate font-medium text-foreground"
+        title={workspace.name}
+      >
         {workspace.name}
       </span>
 

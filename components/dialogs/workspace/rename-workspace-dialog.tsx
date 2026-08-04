@@ -22,7 +22,7 @@ import { Form } from "@/components/ui/form"
 import workSpaceSchema, {
   type WorkSpaceSchema,
 } from "@/lib/schemas/workspace/workspace-schema"
-import { useUpdateWorkspaceMutation } from "@/store/api/workspaces-api"
+import { useUpdateWorkspaceMutation } from "@/store/api/workspace/workspaces-api"
 
 type WorkspaceFormValues = z.infer<typeof workSpaceSchema>
 

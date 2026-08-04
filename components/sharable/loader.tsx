@@ -16,9 +16,7 @@ const Loader = ({ className, fullPage = false }: LoaderProps) => {
     <Loader2
       className={cn(
         "animate-spin",
-        fullPage
-          ? "size-6 text-muted-foreground"
-          : "mr-2 h-4 w-4",
+        fullPage ? "size-6 text-muted-foreground" : "mr-2 h-4 w-4",
         className
       )}
     />
@@ -26,7 +24,7 @@ const Loader = ({ className, fullPage = false }: LoaderProps) => {
 
   if (fullPage) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
+      <div className="flex h-full min-h-[50vh] flex-1 items-center justify-center">
         {spinner}
       </div>
     )

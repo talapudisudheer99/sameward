@@ -17,12 +17,9 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-5 sm:px-8 lg:px-10">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex shrink-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <TeamHubLogo className="size-8" />
-          <span className="font-heading text-sm font-semibold tracking-tight text-foreground">
-            TeamHub AI
-          </span>
+          <TeamHubLogo variant="horizontal" size={32} />
         </Link>
 
         <nav

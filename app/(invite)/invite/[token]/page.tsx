@@ -12,7 +12,7 @@ import { useCurrentUser } from "@/hooks/use-current-user"
 import {
   useAcceptInviteMutation,
   useGetInviteByTokenQuery,
-} from "@/store/api/workspaces-api"
+} from "@/store/api/workspace/workspaces-api"
 
 function getErrorStatus(error: unknown): number | undefined {
   if (
@@ -39,11 +39,7 @@ export default function AcceptInvitePage() {
   const router = useRouter()
   const token = typeof params.token === "string" ? params.token : ""
 
-  const {
-    user,
-    isLoading: authLoading,
-    isAuthenticated,
-  } = useCurrentUser()
+  const { user, isLoading: authLoading, isAuthenticated } = useCurrentUser()
 
   const {
     data: invite,
@@ -86,7 +82,11 @@ export default function AcceptInvitePage() {
       return { kind: "not_found" }
     }
 
-    if (inviteLoading || (inviteFetching && !invite && !inviteIsError) || authLoading) {
+    if (
+      inviteLoading ||
+      (inviteFetching && !invite && !inviteIsError) ||
+      authLoading
+    ) {
       return { kind: "loading" }
     }
 

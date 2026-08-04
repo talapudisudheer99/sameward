@@ -1,50 +1,21 @@
 import { baseApi } from "@/store/api/base-api"
+import type {
+  AcceptInviteResult,
+  InvitePreview,
+  WorkspaceInviteFailure,
+  WorkspaceInviteResult,
+  WorkspaceListItem,
+  WorkspaceMemberListItem,
+} from "@/lib/types/workspace/workspace-types"
 
-/** Matches GET /api/workspaces and POST /api/workspaces response items */
-export type WorkspaceListItem = {
-  id: string
-  name: string
-  slug: string
-  role: string
-}
-
-export type WorkspaceMemberListItem = {
-  userId: string
-  fullName: string
-  email: string
-  role: string
-}
-
-/** POST .../members invite batch (membership created only after accept) */
-export type WorkspaceInviteResult = {
-  email: string
-  inviteId: string
-}
-
-export type WorkspaceInviteFailure = {
-  email: string
-  reason:
-    | "not_found"
-    | "already_member"
-    | "invite_failed"
-    | "email_send_failed"
-    | string
-}
-
-/** GET /api/invites/[token] — pending invite preview */
-export type InvitePreview = {
-  email: string
-  workspaceId: string
-  workspaceName: string
-  expiresAt: string
-  status: "pending"
-}
-
-/** POST /api/invites/[token] — accept result */
-export type AcceptInviteResult = {
-  workspaceId: string
-  role: string
-}
+export type {
+  AcceptInviteResult,
+  InvitePreview,
+  WorkspaceInviteFailure,
+  WorkspaceInviteResult,
+  WorkspaceListItem,
+  WorkspaceMemberListItem,
+} from "@/lib/types/workspace/workspace-types"
 
 export const workspacesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -183,16 +154,18 @@ export const workspacesApi = baseApi.injectEndpoints({
      * Owner-only: delete workspace + cascade memberships & invites.
      * Hook: useDeleteWorkspaceMutation({ workspaceId })
      */
-    deleteWorkspace: builder.mutation<{ ok: boolean }, { workspaceId: string }>({
-      query: ({ workspaceId }) => ({
-        url: `workspaces/${workspaceId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: (_result, _error, { workspaceId }) => [
-        { type: "Workspace", id: "LIST" },
-        { type: "Workspace", id: workspaceId },
-      ],
-    }),
+    deleteWorkspace: builder.mutation<{ ok: boolean }, { workspaceId: string }>(
+      {
+        query: ({ workspaceId }) => ({
+          url: `workspaces/${workspaceId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: (_result, _error, { workspaceId }) => [
+          { type: "Workspace", id: "LIST" },
+          { type: "Workspace", id: workspaceId },
+        ],
+      }
+    ),
 
     /**
      * DELETE /api/workspaces/[workspaceId]/members/[userId]

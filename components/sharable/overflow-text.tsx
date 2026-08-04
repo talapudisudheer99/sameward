@@ -30,7 +30,8 @@ export default function OverflowText({
   title,
 }: OverflowTextProps) {
   const tip =
-    title ?? (variant === "ellipsis" || variant === "title" ? children : undefined)
+    title ??
+    (variant === "ellipsis" || variant === "title" ? children : undefined)
 
   return (
     <Comp className={cn(overflowTextVariants[variant], className)} title={tip}>

@@ -17,11 +17,7 @@ import { WorkspaceAuditEvent } from "@/lib/workspaces/workspace-audit-events"
 import { logWorkspaceEvent } from "@/lib/workspaces/workspace-audit-logger"
 
 type InviteFailureReason =
-  | "not_found"
-  | "already_member"
-  | "invite_failed"
-  | "email_send_failed"
-
+  "not_found" | "already_member" | "invite_failed" | "email_send_failed"
 
 /**
  * POST /api/workspaces/[workspaceId]/members

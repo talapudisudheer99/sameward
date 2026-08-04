@@ -18,8 +18,11 @@ export default async function AppLayout({
         <aside className="hidden w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
           <Sidebar />
         </aside>
-        <main className="flex-1 overflow-auto p-6 md:p-8">{children}</main>
-      </div> 
+        {/* relative: channels layout uses absolute inset-0 to full-bleed the chat */}
+        <main className="relative flex min-h-0 flex-1 flex-col overflow-auto p-6 md:p-8">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

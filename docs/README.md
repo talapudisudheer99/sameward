@@ -12,6 +12,8 @@ docs/
   README.md          ← you are here (hub)
   MENTORSHIP.md      ← how we work
   auth/              ← ✅ completed auth (single source of truth)
+  workspaces/        ← ✅ Phase 3 workspaces
+  channels/          ← 🔄 channels + realtime chat (next)
   architecture/      ← product vision, stack, data flow
   design/            ← design system tokens
   guides/            ← reusable tech notes (e.g. Mongoose)
@@ -24,6 +26,7 @@ docs/
 |--------|---------|
 | **`auth/`** | Completed auth — flows, routes, FE, hardening, prod, debug |
 | **`workspaces/`** | Phase 3 module — vision, stories, flows, tasks |
+| **`channels/`** | Channels + realtime chat (Phase 5+6 merged) |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |
 | **`phases/`** | Learning roadmap stubs |
 | **`guides/`** | Tech primers (Mongoose, …) |
@@ -39,11 +42,13 @@ docs/
 |------|------|
 | “How does auth work?” | [auth/README.md](./auth/README.md) |
 | “Workspaces & members?” | [workspaces/README.md](./workspaces/README.md) |
+| “Channels & live chat?” | [channels/README.md](./channels/README.md) |
+| “Next feature to build?” | [channels/TASKS.md](./channels/TASKS.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | “Why this stack?” | [architecture/stack.md](./architecture/stack.md) |
-| “Next feature to build?” | [workspaces/TASKS.md](./workspaces/TASKS.md) |
+| “Where do we deploy?” | [architecture/deploy.md](./architecture/deploy.md) — **Railway** Option B (Next + Socket.IO, separate folders) |
 | Mentorship rules | [MENTORSHIP.md](./MENTORSHIP.md) |
 
 ---
@@ -56,9 +61,9 @@ docs/
 | [1 Product shell](./phases/01-product-shell/README.md) | Landing + app shell | ✅ |
 | [2 Authentication](./phases/02-authentication/README.md) | Sessions, OAuth, hardening | ✅ → [auth/](./auth/README.md) |
 | [3 Workspaces](./phases/03-workspaces-members/README.md) | Multi-tenant CRUD | ✅ v1 → [workspaces/](./workspaces/README.md) |
-| [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | ⬜ |
-| [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels, docs, boards | ⬜ |
-| [6 Realtime](./phases/06-realtime/README.md) | Socket.IO | ⬜ |
+| [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | 🟡 Partial (used in workspaces) |
+| [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels first; docs/boards later | 🔄 → [channels/](./channels/README.md) |
+| [6 Realtime](./phases/06-realtime/README.md) | Chat sockets folded into channels | 📦 → [channels/SOCKETS.md](./channels/SOCKETS.md) |
 | [7 AI](./phases/07-ai-integrations/README.md) | External AI APIs | ⬜ |
 | [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests, Vercel | ⬜ |
 

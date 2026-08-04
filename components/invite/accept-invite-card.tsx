@@ -17,7 +17,7 @@ import {
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { InvitePreview } from "@/store/api/workspaces-api"
+import type { InvitePreview } from "@/lib/types/workspace/workspace-types"
 
 export type { InvitePreview }
 
@@ -160,10 +160,7 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
         actions={
           <Link
             href={state.loginHref}
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "h-10 gap-2 px-5"
-            )}
+            className={cn(buttonVariants({ size: "lg" }), "h-10 gap-2 px-5")}
           >
             <LogIn className="size-4" />
             Sign in to accept
@@ -258,10 +255,10 @@ function InviteShell({
   return (
     <section className="flex w-full max-w-md flex-col items-center text-center">
       {icon}
-      <h1 className="font-heading w-full text-2xl font-bold tracking-tight break-words text-foreground [overflow-wrap:anywhere] md:text-3xl">
+      <h1 className="w-full font-heading text-2xl font-bold tracking-tight [overflow-wrap:anywhere] break-words text-foreground md:text-3xl">
         {title}
       </h1>
-      <p className="mt-3 w-full text-sm leading-relaxed break-words text-muted-foreground [overflow-wrap:anywhere] md:text-base">
+      <p className="mt-3 w-full text-sm leading-relaxed [overflow-wrap:anywhere] break-words text-muted-foreground md:text-base">
         {description}
       </p>
       <div className="mt-8 flex w-full justify-center">{actions}</div>

@@ -69,7 +69,8 @@ This is the **SaaS core loop**: create team space → invite people → collabor
 - Billing / plans per workspace
 - Complex permission matrices
 - Guest links, SSO, SCIM, allowed email domains
-- Channels / docs / boards (Phase 5+)
+- Docs / boards (later)  
+- Channels & live chat → [`docs/channels/`](../channels/README.md) (next module)
 
 ---
 

@@ -10,8 +10,7 @@ export const overflowTextVariants = {
   /** One line + ellipsis. Hover via title shows full text. */
   ellipsis: "min-w-0 truncate",
   /** Page titles: wrap long tokens, cap at 2 lines */
-  title:
-    "min-w-0 max-w-full break-words [overflow-wrap:anywhere] line-clamp-2",
+  title: "min-w-0 max-w-full break-words [overflow-wrap:anywhere] line-clamp-2",
   /** Body / descriptions that may include long names */
   wrap: "min-w-0 max-w-full break-words [overflow-wrap:anywhere]",
 } as const

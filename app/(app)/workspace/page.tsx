@@ -7,7 +7,7 @@ import CreateWorkSpaceDialog from "@/components/dialogs/workspace/create-work-sp
 import Loader from "@/components/sharable/loader"
 import WorkspaceList from "@/components/workspace/workspace-list"
 import { Button } from "@/components/ui/button"
-import { useGetWorkspacesQuery } from "@/store/api/workspaces-api"
+import { useGetWorkspacesQuery } from "@/store/api/workspace/workspaces-api"
 
 export default function WorkspacePage() {
   const [open, setOpen] = useState(false)

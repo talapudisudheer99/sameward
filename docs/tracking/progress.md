@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 3 — Workspaces & members |
-| **Current feature** | **v1 shipped + E2E verified** — later: transfer ownership / non-user invites / audit UI |
-| **Current technology** | Next.js App Router · Mongo/Mongoose · Zod · RTK Query · WorkspaceEvent audit |
-| **Last updated** | 2026-07-31 |
+| **Current phase** | Phase 5+6 — **Channels & realtime chat** (merged) |
+| **Current feature** | Slice 3 done (T11–T12) → next **T13** Socket.IO scaffold |
+| **Current technology** | Next.js · Mongo · Zod · RTK · **separate Socket.IO service** (next) |
+| **Last updated** | 2026-08-03 |
 
 ## Phase status
 
@@ -19,68 +19,35 @@
 | 1 | Product shell | ✅ Done | Marketing, auth UI, workspace empty state |
 | 2 | Authentication (core) | ✅ Done | Email/password, Google, forgot/reset, sessions, proxy |
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
-| 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | Create→invite→lifecycle→roles→audit — [`docs/workspaces/`](../workspaces/README.md). Deferred: transfer ownership, non-user invites, audit UI |
-| 4 | State & data layer | 🟡 Partial | RTK Query already used for workspaces; Phase 4 can deepen |
-| 5 | Collaboration core | ⬜ Not started | |
-| 6 | Realtime | ⬜ Not started | |
+| 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
+| 4 | State & data layer | 🟡 Partial | RTK already used; deepen as needed during channels |
+| 5 | Collaboration core | 🔄 **Channels docs locked** | Full module: [`docs/channels/`](../channels/README.md). Docs/boards later |
+| 6 | Realtime | 📦 **Folded into channels** | Chat sockets/typing/presence in channels v1 |
 | 7 | AI & integrations | ⬜ Not started | |
 | 8 | Quality & deployment | ⬜ Not started | |
 
-## Phase 3 v1 — what shipped
+## Channels v1 — PO locks (Jul 31)
 
-| Slice | Coverage |
-|-------|----------|
-| 1–4 | Models, create/list/get-one, Screens A–D, 404 isolation |
-| 5 / 5b | Members list, chip invite, accept page, emailVerified gate |
-| 3.5 | Leave, remove, rename, owner-delete (no notify) |
-| 3.6 | Owner changes member ↔ admin after join |
-| 7 | `WorkspaceEvent` audit on success mutations (no UI) |
-
-**Not in v1:** non-user invites · transfer ownership · delete notify · audit UI · channels/docs/boards
-
-## Auth hardening (F1–F7) — all done
-
-See [auth/HARDENING.md](../auth/HARDENING.md).
-
-## Completed concepts (auth + workspaces)
-
-- httpOnly session cookies vs localStorage  
-- Hash passwords; never store plaintext  
-- Proxy as a **gate**, not full authz  
-- OAuth code flow + `state`  
-- Password reset / verify tokens (hash in DB, raw in email)  
-- Soft email verification, rate limits, audit events, remember-me TTLs  
-- Membership as tenant gate (workspace id ≠ entitlement)  
-- Invite → accept (consent) vs instant-add  
-- Best-effort tenant audit (`WorkspaceEvent`)  
-
-## Interview questions covered
-
-- Why Zod on client **and** server  
-- httpOnly cookie vs JWT in localStorage  
-- Why Google users may have no `passwordHash`  
-- Why reset tokens are hashed at rest  
-- Proxy vs `requireUser` (defense in depth)  
-- Why invite-accept instead of instant membership  
-- Why cross-tenant returns **404** not 403  
+1. Separate Socket.IO service  
+2. Public + private day one  
+3. Hybrid `#general`  
+4. Text + files (10MB · 3 files · jpeg/png/webp/gif/pdf)  
+5. Typing + basic presence  
+6. Create channel = owner \| admin  
 
 ## Session log
 
 | Date | What we did | Outcome |
 |------|-------------|---------|
-| 2026-07-27 | Forgot/reset password | Core auth |
-| 2026-07-28 | Hardening F1–F7 | Auth production-shaped |
-| 2026-07-28 | Docs refactor | Single source: `docs/auth/` |
-| 2026-07-28 | Phase 3 module docs | `docs/workspaces/` vision → tasks |
-| 2026-07-29 | Workspaces UI mockups approved | A–E |
-| 2026-07-29 | **PO defaults locked** | Cross-tenant → **404**; existing users only; owner/admin invite |
-| 2026-07-29–30 | Slices 1–4 | Models, create/list/get-one, RTK, Screens A–D |
-| 2026-07-30 | Members + invite locks | Chips; invite→accept; inviter emailVerified |
-| 2026-07-31 | Invite-accept demo ✅ | T21–T23 |
-| 2026-07-31 | Lifecycle + roles ✅ | Leave/remove/rename/delete + role PATCH |
-| 2026-07-31 | Workspace audit ✅ | T50–T51 wired |
-| 2026-07-31 | Docs sync ✅ | `docs/workspaces/` = exact v1 inventory |
-| 2026-07-31 | Full E2E verified by user | Ready to push |
+| 2026-07-27–30 | Auth + workspaces foundation | Auth done; workspaces slices 1–5 |
+| 2026-07-31 | Workspaces lifecycle, roles, audit, docs, E2E, push | Phase 3 v1 shipped (`e7eb47c`) |
+| 2026-07-31 | Channels research + PO locks | Merged Phase 5 chat + Phase 6; created `docs/channels/` |
+| 2026-08-01 | AWS S3 account ready | Bucket `teamhub-ai-dev-sudheer-2026` · `ap-south-1` · env keys set |
+| 2026-08-02 | Channels UI + RTK (T6–T10) | List/create/private members shell tested |
+| 2026-08-03 | T11 messages REST | GET cursor + POST text (+ idempotent); T12 next |
+| 2026-08-03 | T12 RTK transcript | getMessages + createMessage wired; Slice 3 done |
+| 2026-08-04 | Deploy Option B + Step A | Railway lock; `server/realtime` + `/health` |
+| 2026-08-04 | Step B Socket.IO attach | Same port; smoke id matched server |
 
 ## GitHub
 
@@ -91,4 +58,4 @@ See [auth/HARDENING.md](../auth/HARDENING.md).
 
 ---
 
-[← Docs hub](../README.md) · [Auth reference →](../auth/README.md) · [Workspaces →](../workspaces/README.md)
+[← Docs hub](../README.md) · [Channels →](../channels/README.md) · [Workspaces →](../workspaces/README.md)
