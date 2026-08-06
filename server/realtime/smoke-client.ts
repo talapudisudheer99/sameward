@@ -1,20 +1,25 @@
 import { io } from "socket.io-client"
 
+import { loadEnvLocal } from "./load-env"
+import { channelRoomName } from "@/lib/channels/channel-room"
+
+loadEnvLocal()
+
 /**
- * Auth smoke for Step C.
- *
- * Without SMOKE_SESSION_TOKEN → expects connect_error "unauthorized" (pass).
- * With SMOKE_SESSION_TOKEN=<raw teamhub_session value> → expects connect + optional join.
+ * Auth + optional join + optional message:new emit smoke (T14–T15).
  *
  * Terminal A: npm run realtime
- * Terminal B: npm run realtime:smoke
- * Auth pass:  SMOKE_SESSION_TOKEN=... npm run realtime:smoke
- * Join test:  SMOKE_SESSION_TOKEN=... SMOKE_CHANNEL_ID=... npm run realtime:smoke
+ * Terminal B:
+ *   npm run realtime:smoke
+ *   SMOKE_SESSION_TOKEN=... npm run realtime:smoke
+ *   SMOKE_SESSION_TOKEN=... SMOKE_CHANNEL_ID=... npm run realtime:smoke
+ *     → joins, then POSTs /internal/emit and expects message:new
  */
 const url = process.env.REALTIME_URL ?? "http://localhost:4001"
 const token = process.env.SMOKE_SESSION_TOKEN
 const channelId = process.env.SMOKE_CHANNEL_ID
-const CONNECT_TIMEOUT_MS = 8_000
+const secret = process.env.REALTIME_INTERNAL_SECRET
+const CONNECT_TIMEOUT_MS = 10_000
 const expectAuth = Boolean(token)
 
 console.log(`[smoke] connecting to ${url}`)
@@ -30,7 +35,7 @@ const socket = io(url, {
 
 const failTimer = setTimeout(() => {
   console.error(
-    `[smoke] timed out after ${CONNECT_TIMEOUT_MS}ms — is realtime running? Mongo up?`
+    `[smoke] timed out after ${CONNECT_TIMEOUT_MS}ms — is realtime running? Mongo up? secret set?`
   )
   socket.close()
   process.exit(1)
@@ -48,6 +53,32 @@ function fail(message: string): void {
   console.error(`[smoke] FAIL: ${message}`)
   socket.close()
   process.exit(1)
+}
+
+async function emitTestMessage(room: string, payload: unknown): Promise<void> {
+  if (!secret) {
+    fail(
+      "REALTIME_INTERNAL_SECRET missing in .env.local — needed to test message:new"
+    )
+    return
+  }
+
+  const res = await fetch(`${url}/internal/emit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-realtime-secret": secret,
+    },
+    body: JSON.stringify({
+      room,
+      event: "message:new",
+      payload,
+    }),
+  })
+
+  if (!res.ok) {
+    fail(`internal emit HTTP ${res.status}: ${await res.text()}`)
+  }
 }
 
 socket.on("connect", () => {
@@ -68,7 +99,28 @@ socket.on("connect", () => {
 })
 
 socket.on("channel:joined", (payload: { channelId: string }) => {
-  pass(`joined channel:${payload.channelId}`)
+  const room = channelRoomName(payload.channelId)
+  const testPayload = {
+    id: "smoke-msg-1",
+    channelId: payload.channelId,
+    authorId: "smoke",
+    authorName: "Smoke",
+    body: "smoke message:new",
+    attachments: [],
+    createdAt: new Date().toISOString(),
+  }
+
+  console.log(`[smoke] joined ${room} — waiting for message:new via /internal/emit`)
+
+  socket.once("message:new", (msg: { id?: string; body?: string }) => {
+    if (msg?.id !== testPayload.id) {
+      fail(`unexpected message:new id=${String(msg?.id)}`)
+      return
+    }
+    pass(`received message:new id=${msg.id} body=${msg.body}`)
+  })
+
+  void emitTestMessage(room, testPayload)
 })
 
 socket.on(

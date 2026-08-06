@@ -2,10 +2,9 @@ import type { Socket } from "socket.io"
 
 import { connectDB } from "@/lib/db/mongoose"
 import { resolveChannelAccess } from "@/lib/channels/access"
+import { channelRoomName } from "@/lib/channels/channel-room"
 
-export function channelRoomName(channelId: string): string {
-  return `channel:${channelId}`
-}
+export { channelRoomName }
 
 type JoinPayload = { channelId?: string }
 

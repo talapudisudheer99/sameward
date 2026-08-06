@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 
 import { getCurrentUser } from "@/lib/auth/session"
 import { requireChannelAccess } from "@/lib/channels/access"
+import { notifyRealtime } from "@/lib/channels/notify-realtime"
+import { channelRoomName } from "@/lib/channels/channel-room"
 import { Message } from "@/lib/models/channel/message"
 import { User } from "@/lib/models/user"
 import messageSchema from "@/lib/schemas/channel/message-schema"
@@ -213,9 +215,16 @@ export async function POST(
         ...(clientMessageId ? { clientMessageId } : {}),
       })
 
-      // notifyRealtime → message:new later (T15)
+      const json = toMessageJson(message, user.fullName)
 
-      return NextResponse.json(toMessageJson(message, user.fullName), {
+      // Fan-out after write — best-effort; Mongo row already exists
+      await notifyRealtime({
+        room: channelRoomName(channelId),
+        event: "message:new",
+        payload: json,
+      })
+
+      return NextResponse.json(json, {
         status: 201,
       })
     } catch (error: unknown) {

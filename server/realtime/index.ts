@@ -3,17 +3,17 @@ import { Server } from "socket.io"
 
 import { loadEnvLocal } from "./load-env"
 import { authenticateSocket } from "./auth"
+import { tryHandleInternalEmit } from "./internal-http"
 import { registerRoomHandlers } from "./rooms"
 
 loadEnvLocal()
 
 /**
- * Step C — HTTP + Socket.IO + handshake auth + channel rooms.
+ * T14–T15 — HTTP + Socket.IO + auth + rooms + /internal/emit
  *
  * Run: npm run realtime
  * Health: GET http://localhost:4001/health
- * Smoke (reject anon): npm run realtime:smoke
- * Smoke (with session): SMOKE_SESSION_TOKEN=<raw> npm run realtime:smoke
+ * Emit:  POST /internal/emit (x-realtime-secret)
  */
 const port = Number(process.env.REALTIME_PORT) || 4001
 const appOrigin =
@@ -21,24 +21,7 @@ const appOrigin =
   process.env.APP_URL ??
   "http://localhost:3000"
 
-const httpServer = createServer((req, res) => {
-  const pathname = new URL(req.url ?? "/", "http://localhost").pathname
-
-  if (req.method === "GET" && pathname === "/health") {
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" })
-    res.end(
-      JSON.stringify({
-        ok: true,
-        service: "realtime",
-        ts: new Date().toISOString(),
-      })
-    )
-    return
-  }
-
-  res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" })
-  res.end(JSON.stringify({ ok: false, message: "Not found" }))
-})
+const httpServer = createServer()
 
 const io = new Server(httpServer, {
   cors: {
@@ -47,7 +30,6 @@ const io = new Server(httpServer, {
   },
 })
 
-// Front desk: reject before connection unless session is valid
 io.use(authenticateSocket)
 
 io.on("connection", (socket) => {
@@ -64,12 +46,38 @@ io.on("connection", (socket) => {
   })
 })
 
+// After Socket.IO attaches — leave /socket.io to Engine.IO; handle our routes only.
+httpServer.on("request", (req, res) => {
+  void (async () => {
+    if (res.headersSent) return
+
+    const pathname = new URL(req.url ?? "/", "http://localhost").pathname
+    if (pathname.startsWith("/socket.io")) return
+
+    if (req.method === "GET" && pathname === "/health") {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" })
+      res.end(
+        JSON.stringify({
+          ok: true,
+          service: "realtime",
+          ts: new Date().toISOString(),
+        })
+      )
+      return
+    }
+
+    if (await tryHandleInternalEmit(req, res, io)) return
+
+    res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" })
+    res.end(JSON.stringify({ ok: false, message: "Not found" }))
+  })()
+})
+
 httpServer.listen(port, () => {
   console.log(`[realtime] listening on http://localhost:${port}`)
   console.log(`[realtime] health: GET http://localhost:${port}/health`)
-  console.log(
-    `[realtime] socket.io + auth middleware (cors origin=${appOrigin})`
-  )
+  console.log(`[realtime] emit:   POST http://localhost:${port}/internal/emit`)
+  console.log(`[realtime] socket.io + auth (cors origin=${appOrigin})`)
 })
 
 httpServer.on("error", (err: NodeJS.ErrnoException) => {
