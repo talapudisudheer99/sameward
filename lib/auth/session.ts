@@ -1,25 +1,20 @@
-import { createHash, randomBytes } from "node:crypto" // Node's built-in crypto — no package to install
+import { randomBytes } from "node:crypto" // Node's built-in crypto — no package to install
 
 import { cookies } from "next/headers" // read/write cookies inside Route Handlers
 
 import { connectDB } from "@/lib/db/mongoose"
 import { Session } from "@/lib/models/session"
-import { User } from "@/lib/models/user"
 
 import {
   SESSION_COOKIE_NAME,
   getSessionMaxAgeSeconds,
   sessionCookieOptions,
 } from "./cookies"
+import { hashToken, resolveUserFromSessionToken } from "./session-user"
 
-/**
- * Turn the raw token into a fixed-length fingerprint.
- * Same input always gives the same output, but you cannot go backwards.
- * The browser holds the raw token; the DB only holds this hash.
- */
-export function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex")
-}
+// Re-export so existing `@/lib/auth/session` imports keep working.
+export { hashToken, resolveUserFromSessionToken }
+export type { SessionUser } from "./session-user"
 
 /**
  * Called after a successful signup or login.
@@ -72,34 +67,14 @@ export async function createSession(
 /**
  * "Who is making this request?" — used by /api/auth/me and protected routes.
  * Returns null when there is no valid session.
+ * Cookie read is Next-only; identity lookup is shared with realtime via session-user.
  */
 export async function getCurrentUser() {
-  await connectDB()
-
   const cookieStore = await cookies()
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value // undefined when no cookie
   if (!token) return null
 
-  // Look up by hash, because the hash is what we stored.
-  const session = await Session.findOne({ tokenHash: hashToken(token) })
-  if (!session) return null // cookie is fake, or session was deleted by logout
-
-  // Mongo's TTL cleaner runs about once a minute, so also check the date ourselves.
-  if (session.expiresAt.getTime() < Date.now()) {
-    await Session.deleteOne({ _id: session._id })
-    return null
-  }
-
-  const user = await User.findById(session.userId)
-  if (!user) return null // user deleted but session left behind
-
-  // Return only safe fields — never the passwordHash.
-  return {
-    id: String(user._id),
-    fullName: user.fullName,
-    email: user.email,
-    emailVerified: user.emailVerified === true,
-  }
+  return resolveUserFromSessionToken(token)
 }
 
 /**

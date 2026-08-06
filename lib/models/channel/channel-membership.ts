@@ -4,8 +4,8 @@ import {
   models,
   type InferSchemaType,
   type Model,
-  type Types,
-} from "mongoose"
+} from "@/lib/db/mongoose-ns"
+import type { Types } from "mongoose"
 
 /**
  * Extra key for a *private* channel.

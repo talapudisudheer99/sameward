@@ -4,8 +4,8 @@ import {
   model,
   type InferSchemaType,
   type Model,
-  type Types,
-} from "mongoose"
+} from "@/lib/db/mongoose-ns"
+import type { Types } from "mongoose"
 
 const userSchema = new Schema(
   {

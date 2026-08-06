@@ -52,7 +52,7 @@ Check off when reviewed.
 
 - [x] **T13 / Step A** Scaffold realtime process + `GET /health` (reviewed Aug 4) — [STEP-A-REALTIME-SCAFFOLD.md](./STEP-A-REALTIME-SCAFFOLD.md)
 - [x] **T13 / Step B** Attach Socket.IO + smoke connect (reviewed Aug 4) — [STEP-B-SOCKET-ATTACH.md](./STEP-B-SOCKET-ATTACH.md)
-- [ ] **T14** Handshake auth + `channel:join` authz
+- [x] **T14** Handshake auth + `channel:join` authz (`server/realtime/auth.ts`, `rooms.ts`)
 - [ ] **T15** `notifyRealtime` after POST message → `message:new`
 - [ ] **T16** `SocketProvider` + live append + reconnect gap fetch
 - [ ] Demo: two browsers, live text

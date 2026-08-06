@@ -34,8 +34,7 @@ export async function canAccessChannel(
 }
 
 export type ChannelAccessGate =
-  | { ok: true; channel: ChannelDocument }
-  | { ok: false; response: NextResponse }
+  { ok: true; channel: ChannelDocument } | { ok: false; response: NextResponse }
 
 /**
  * HTTP gate for routes that need “allowed in this channel” (messages, get channel, …).
@@ -96,6 +95,42 @@ export async function requireChannelAccess(
         { status: 404 }
       ),
     }
+  }
+
+  return { ok: true, channel }
+}
+
+export type ChannelAccessResult =
+  | { ok: true; channel: ChannelDocument }
+  | { ok: false; reason: "invalid_id" | "not_found" | "forbidden" }
+
+/**
+ * Socket-safe gate (no NextResponse): channel exists + workspace member + canAccessChannel.
+ * Used by realtime `channel:join`.
+ */
+export async function resolveChannelAccess(
+  userId: string,
+  channelId: string
+): Promise<ChannelAccessResult> {
+  if (!channelId || !Types.ObjectId.isValid(channelId)) {
+    return { ok: false, reason: "invalid_id" }
+  }
+
+  const channel = await Channel.findById(channelId)
+  if (!channel) {
+    return { ok: false, reason: "not_found" }
+  }
+
+  const membership = await Membership.findOne({
+    workspaceId: channel.workspaceId,
+    userId,
+  })
+  if (!membership) {
+    return { ok: false, reason: "forbidden" }
+  }
+
+  if (!(await canAccessChannel(userId, channel))) {
+    return { ok: false, reason: "forbidden" }
   }
 
   return { ok: true, channel }
