@@ -5,6 +5,7 @@ import { loadEnvLocal } from "./load-env"
 import { authenticateSocket } from "./auth"
 import { tryHandleInternalEmit } from "./internal-http"
 import { registerRoomHandlers } from "./rooms"
+import { registerTypingHandlers } from "./typing"
 
 loadEnvLocal()
 
@@ -38,6 +39,7 @@ io.on("connection", (socket) => {
   )
 
   registerRoomHandlers(socket)
+  registerTypingHandlers(socket)
 
   socket.on("disconnect", (reason) => {
     console.log(

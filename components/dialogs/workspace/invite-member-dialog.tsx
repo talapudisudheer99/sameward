@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
 import { useInviteWorkspaceMembersMutation } from "@/store/api/workspace/workspaces-api"
 

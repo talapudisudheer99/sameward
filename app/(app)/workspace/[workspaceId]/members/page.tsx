@@ -20,7 +20,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import MembersTable, {
   type MemberRoleOption,
 } from "@/components/workspace/members-table"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
 import type { WorkspaceMemberListItem } from "@/lib/types/workspace/workspace-types"
 import {

@@ -166,13 +166,17 @@ export const channelsApi = baseApi.injectEndpoints({
     /**
      * POST …/messages — text only for now (attachments ignored until S3).
      * clientMessageId makes retries idempotent.
+     * Cache: append on success (socket message:new also upserts — dedupe by id).
      */
+
     createMessage: builder.mutation<
       CreateMessageResponse,
       {
         workspaceId: string
         channelId: string
-      } & CreateMessageRequest
+        body: string
+        clientMessageId?: string
+      }
     >({
       query: ({ workspaceId, channelId, body, clientMessageId }) => ({
         url: `workspaces/${workspaceId}/channels/${channelId}/messages`,
@@ -182,9 +186,26 @@ export const channelsApi = baseApi.injectEndpoints({
           ...(clientMessageId ? { clientMessageId } : {}),
         } satisfies CreateMessageRequest,
       }),
-      invalidatesTags: (_result, _error, { channelId }) => [
-        { type: "Message", id: channelId },
-      ],
+
+      async onQueryStarted(
+        { workspaceId, channelId },
+        { dispatch, queryFulfilled }
+      ) {
+        try {
+          const { data } = await queryFulfilled
+
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getMessages",
+              { workspaceId, channelId, limit: 50 },
+              (draft) => {
+                if (draft.messages.some((m) => m.id === data.id)) return
+                draft.messages.push(data)
+              }
+            )
+          )
+        } catch {}
+      },
     }),
   }),
 })

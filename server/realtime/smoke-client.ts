@@ -110,7 +110,9 @@ socket.on("channel:joined", (payload: { channelId: string }) => {
     createdAt: new Date().toISOString(),
   }
 
-  console.log(`[smoke] joined ${room} — waiting for message:new via /internal/emit`)
+  console.log(
+    `[smoke] joined ${room} — waiting for message:new via /internal/emit`
+  )
 
   socket.once("message:new", (msg: { id?: string; body?: string }) => {
     if (msg?.id !== testPayload.id) {

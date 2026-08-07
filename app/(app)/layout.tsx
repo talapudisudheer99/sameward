@@ -1,5 +1,6 @@
 import Sidebar from "@/components/layout/sidebar"
 import VerifyEmailBanner from "@/components/layout/verify-email-banner"
+import { SocketProvider } from "@/components/providers/socket-provider"
 import { requireUser } from "@/lib/auth/require-user"
 
 export default async function AppLayout({
@@ -20,7 +21,7 @@ export default async function AppLayout({
         </aside>
         {/* relative: channels layout uses absolute inset-0 to full-bleed the chat */}
         <main className="relative flex min-h-0 flex-1 flex-col overflow-auto p-6 md:p-8">
-          {children}
+          <SocketProvider>{children}</SocketProvider>
         </main>
       </div>
     </div>

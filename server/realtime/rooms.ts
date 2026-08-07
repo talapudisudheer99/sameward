@@ -3,6 +3,7 @@ import type { Socket } from "socket.io"
 import { connectDB } from "@/lib/db/mongoose"
 import { resolveChannelAccess } from "@/lib/channels/access"
 import { channelRoomName } from "@/lib/channels/channel-room"
+import { emitTypingStop } from "./typing"
 
 export { channelRoomName }
 
@@ -66,6 +67,9 @@ export function registerRoomHandlers(socket: Socket): void {
   socket.on("channel:leave", async (payload: JoinPayload = {}) => {
     const channelId = payload.channelId
     if (!channelId || typeof channelId !== "string") return
+
+    // Clear typing before leave so peers drop the indicator immediately.
+    emitTypingStop(socket, channelId)
 
     await socket.leave(channelRoomName(channelId))
     socket.emit("channel:left", { channelId })

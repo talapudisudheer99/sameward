@@ -54,14 +54,14 @@ Check off when reviewed.
 - [x] **T13 / Step B** Attach Socket.IO + smoke connect (reviewed Aug 4) — [STEP-B-SOCKET-ATTACH.md](./STEP-B-SOCKET-ATTACH.md)
 - [x] **T14** Handshake auth + `channel:join` authz (`server/realtime/auth.ts`, `rooms.ts`)
 - [x] **T15** `notifyRealtime` after POST message → `message:new` (`internal-http.ts`, `notify-realtime.ts`)
-- [ ] **T16** `SocketProvider` + live append + reconnect gap fetch
+- [x] **T16** `SocketProvider` + live append + reconnect gap fetch
 - [ ] Demo: two browsers, live text
 
 ---
 
 ## Slice 5 — Typing + presence
 
-- [ ] **T17** Typing events + UI
+- [x] **T17** Typing events + UI
 - [ ] **T18** Workspace presence + UI
 
 ---

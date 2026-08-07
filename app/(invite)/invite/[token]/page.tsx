@@ -8,7 +8,7 @@ import AcceptInviteCard, {
   type AcceptInviteViewState,
 } from "@/components/invite/accept-invite-card"
 import Loader from "@/components/sharable/loader"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import {
   useAcceptInviteMutation,
   useGetInviteByTokenQuery,

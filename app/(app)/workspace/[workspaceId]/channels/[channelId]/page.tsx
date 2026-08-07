@@ -10,7 +10,7 @@ import ChannelChatShell, {
 } from "@/components/channel/channel-chat-shell"
 import Loader from "@/components/sharable/loader"
 import { buttonVariants } from "@/components/ui/button"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { ChannelVisibilityEnum } from "@/lib/types/channel/channel-types"
 import { MembershipRole } from "@/lib/types/workspace/workspace-types"
 import { cn } from "@/lib/utils"
@@ -29,14 +29,21 @@ import {
   useGetWorkspaceByIdQuery,
   useGetWorkspaceMembersQuery,
 } from "@/store/api/workspace/workspaces-api"
+import {
+  useChannelRealtime,
+  MESSAGE_PAGE_LIMIT,
+} from "@/hooks/channels/use-channel-realtime"
+import { useChannelTyping } from "@/hooks/channels/use-channel-typing"
+import { useRef, useEffect } from "react"
+import { useSocket } from "@/components/providers/socket-provider"
 
 /**
- * Chat page — channels + messages RTK (T6–T8, T12).
- * Socket live append / S3 uploads: later slices.
+ * Chat page — channels + messages RTK + live socket (T16) + typing (T17).
  */
 export default function ChannelChatPage() {
   const router = useRouter()
   const { workspaceId, channelId } = useChannelRouteIds()
+  const { socket } = useSocket()
   const { user } = useCurrentUser()
   const currentUserId = user?.id ?? ""
 
@@ -51,6 +58,20 @@ export default function ChannelChatPage() {
     channels.find((channel) => channel.id === channelId) ?? null
   const isPrivate = activeChannel?.visibility === ChannelVisibilityEnum.Private
 
+  const realtimeEnabled = Boolean(workspaceId && channelId && activeChannel)
+
+  const { reconnecting } = useChannelRealtime({
+    workspaceId,
+    channelId,
+    enabled: realtimeEnabled,
+  })
+
+  const { typingLabel } = useChannelTyping({
+    channelId,
+    currentUserId,
+    enabled: realtimeEnabled,
+  })
+
   const {
     data: workspaceData,
     isLoading: isWorkspaceLoading,
@@ -63,7 +84,7 @@ export default function ChannelChatPage() {
     isLoading: isMessagesLoading,
     isError: isMessagesError,
   } = useGetMessagesQuery(
-    { workspaceId, channelId, limit: 50 },
+    { workspaceId, channelId, limit: MESSAGE_PAGE_LIMIT },
     { skip: !workspaceId || !channelId }
   )
 
@@ -107,6 +128,43 @@ export default function ChannelChatPage() {
   const [deleteChannel] = useDeleteChannelMutation()
   const [addChannelMembers] = useAddChannelMembersMutation()
   const [removeChannelMember] = useRemoveChannelMemberMutation()
+
+  const lastTypingEmit = useRef(0)
+  const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  /** Stop typing immediately. after send message */
+  function stopTyping(): void {
+    clearTimeout(stopTimer.current)
+    stopTimer.current = undefined
+    lastTypingEmit.current = 0
+    socket?.emit("typing:stop", { channelId })
+  }
+
+  /** Throttle start (~1.5s); idle 3s → stop. Payload is channelId only. */
+  function onTyping(): void {
+    const now = Date.now()
+
+    if (now - lastTypingEmit.current >= 1500) {
+      socket?.emit("typing:start", { channelId })
+      lastTypingEmit.current = now
+    }
+
+    clearTimeout(stopTimer.current)
+    stopTimer.current = setTimeout(() => {
+      socket?.emit("typing:stop", { channelId })
+      lastTypingEmit.current = 0
+    }, 3000)
+  }
+
+  // Channel switch: clear idle timer + tell peers we stopped on the old channel
+  useEffect(() => {
+    return () => {
+      clearTimeout(stopTimer.current)
+      stopTimer.current = undefined
+      lastTypingEmit.current = 0
+      socket?.emit("typing:stop", { channelId })
+    }
+  }, [channelId, socket])
 
   const role = workspaceData?.role?.toLowerCase()
   const canManage =
@@ -176,8 +234,9 @@ export default function ChannelChatPage() {
         inviteCandidates={inviteCandidates}
         currentUserId={currentUserId}
         canManage={canManage}
-        reconnecting={false}
-        typingLabel={null}
+        reconnecting={reconnecting}
+        typingLabel={typingLabel}
+        onTyping={onTyping}
         isSending={isSending}
         onCreateChannel={async (data) => {
           try {
@@ -276,7 +335,8 @@ export default function ChannelChatPage() {
               body: text,
               clientMessageId: crypto.randomUUID(),
             }).unwrap()
-            // List refetches via Message tag invalidation — no success toast (chat UX)
+            // Clear typing so peers don't keep seeing you after send
+            stopTyping()
           } catch {
             toast.error("Could not send message")
             throw new Error("send failed") // composer keeps draft

@@ -31,7 +31,7 @@ import {
   workspaceInitials,
   workspaceTileColor,
 } from "@/components/workspace/workspace-display"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
 import {
   useDeleteWorkspaceMutation,
