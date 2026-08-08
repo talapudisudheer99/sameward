@@ -48,10 +48,10 @@ const messageSchema = new Schema(
       required: true,
       index: true,
     },
-    // May be "" if the message is attachments-only (validate in API)
+    // May be "" if the message is attachments-only — required in API (Zod), not
+    // here: Mongoose treats "" as missing, which would reject attachments-only.
     body: {
       type: String,
-      required: true,
       default: "",
       maxlength: 4000,
       trim: true,

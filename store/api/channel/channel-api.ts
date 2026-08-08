@@ -6,6 +6,7 @@ import type {
   ChannelMemberRow,
   ChannelVisibility,
 } from "@/lib/types/channel/channel-types"
+import type { Attachment } from "@/lib/types/upload/upload-types"
 import { baseApi } from "@/store/api/base-api"
 
 /**
@@ -175,14 +176,16 @@ export const channelsApi = baseApi.injectEndpoints({
         workspaceId: string
         channelId: string
         body: string
+        attachments?: Attachment[]
         clientMessageId?: string
       }
     >({
-      query: ({ workspaceId, channelId, body, clientMessageId }) => ({
+      query: ({ workspaceId, channelId, body, attachments, clientMessageId }) => ({
         url: `workspaces/${workspaceId}/channels/${channelId}/messages`,
         method: "POST",
         body: {
           body,
+          ...(attachments && attachments.length > 0 ? { attachments } : {}),
           ...(clientMessageId ? { clientMessageId } : {}),
         } satisfies CreateMessageRequest,
       }),

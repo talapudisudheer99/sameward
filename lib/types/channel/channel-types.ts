@@ -2,6 +2,7 @@
  * Shared channel/chat types — match API JSON (no Mongoose in Client Components).
  * `lib/types/<module>/…`
  */
+import type { Attachment } from "@/lib/types/upload/upload-types"
 
 export type ChannelVisibility = "public" | "private"
 
@@ -19,13 +20,6 @@ export type ChannelListItem = {
   isDefault: boolean
 }
 
-export type ChatAttachment = {
-  url: string
-  name: string
-  mime: string
-  sizeBytes: number
-}
-
 /**
  * One message in the transcript / POST response.
  * Matches GET/POST …/messages JSON (server fields).
@@ -37,7 +31,7 @@ export type ChatMessage = {
   authorId: string
   authorName: string
   body: string
-  attachments: ChatAttachment[]
+  attachments: Attachment[]
   createdAt: string // ISO
   pending?: boolean
   failed?: boolean
@@ -49,9 +43,10 @@ export type MessagesListResponse = {
   nextCursor: string | null
 }
 
-/** POST …/messages body (T12 text-only; attachments ignored until S3) */
+/** POST …/messages body — text and/or attachments (uploaded to S3 first). */
 export type CreateMessageRequest = {
   body: string
+  attachments?: Attachment[]
   clientMessageId?: string
 }
 

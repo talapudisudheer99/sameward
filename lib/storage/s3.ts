@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto"
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 /**
@@ -12,6 +16,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
  */
 
 const PRESIGN_PUT_TTL_SECONDS = 60
+const PRESIGN_GET_TTL_SECONDS = 60 * 60 // 1 hour — long enough to view/scroll
 
 let cachedClient: S3Client | null = null
 
@@ -83,9 +88,25 @@ export function buildAttachmentKey(params: {
   return `workspaces/${params.workspaceId}/channels/${params.channelId}/${randomUUID()}-${safe}`
 }
 
+function objectHost(): string {
+  return `${getBucket()}.s3.${getRegion()}.amazonaws.com`
+}
+
 /** Canonical https URL for an object (viewing a PRIVATE object needs a presigned GET — added in T22). */
 export function objectUrl(key: string): string {
-  return `https://${getBucket()}.s3.${getRegion()}.amazonaws.com/${key}`
+  return `https://${objectHost()}/${key}`
+}
+
+/**
+ * Is this URL one of our own bucket objects? Guards the message POST so a
+ * client can't attach arbitrary external URLs (we only signed our bucket).
+ */
+export function isManagedObjectUrl(url: string): boolean {
+  try {
+    return new URL(url).host === objectHost()
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -106,4 +127,35 @@ export async function presignAttachmentPut(params: {
   return getSignedUrl(getClient(), command, {
     expiresIn: PRESIGN_PUT_TTL_SECONDS,
   })
+}
+
+/** Recover the object key from one of our canonical object URLs. */
+export function objectKeyFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url)
+    if (parsed.host !== objectHost()) return null
+    return decodeURIComponent(parsed.pathname.replace(/^\//, "")) || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Turn a stored canonical (private) object URL into a short-lived viewable URL.
+ * Mongo keeps the canonical URL as the source of truth; we sign a GET only when
+ * sending data to the client. Best-effort: on any failure, return the input so
+ * one bad attachment never breaks a whole message list.
+ */
+export async function presignAttachmentGet(url: string): Promise<string> {
+  const key = objectKeyFromUrl(url)
+  if (!key) return url
+  try {
+    const command = new GetObjectCommand({ Bucket: getBucket(), Key: key })
+    return await getSignedUrl(getClient(), command, {
+      expiresIn: PRESIGN_GET_TTL_SECONDS,
+    })
+  } catch (error) {
+    console.error("presignAttachmentGet failed:", error)
+    return url
+  }
 }

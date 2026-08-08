@@ -4,7 +4,7 @@
  * Vendor-agnostic on purpose: callers only see "get a URL, PUT the bytes".
  */
 
-type Attachment = {
+export type Attachment = {
   url: string
   name: string
   mime: string
@@ -23,7 +23,7 @@ export type PresignFileInput = {
  * - `uploadUrl` — PUT the raw bytes here (short-lived).
  * - `url` — canonical object URL to persist on the message.
  * - `key` — S3 object key (kept for presigned GET / delete later).
- * Extends ChatAttachment so, after upload, we drop `key`/`uploadUrl` to get the
+ * Extends Attachment so, after upload, we drop `key`/`uploadUrl` to get the
  * exact `{ url, name, mime, sizeBytes }` the message POST expects.
  */
 export type PresignedUpload = Attachment & {

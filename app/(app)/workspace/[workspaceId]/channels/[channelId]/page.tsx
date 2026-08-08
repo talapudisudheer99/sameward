@@ -35,8 +35,10 @@ import {
 } from "@/hooks/channels/use-channel-realtime"
 import { useChannelTyping } from "@/hooks/channels/use-channel-typing"
 import { useWorkspacePresence } from "@/hooks/workspace/user-workspace-presence"
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { useSocket } from "@/components/providers/socket-provider"
+import { usePresignChannelUploadsMutation } from "@/store/api/upload/upload-api"
+import { uploadFilesToS3 } from "@/lib/storage/upload-client"
 
 /**
  * Chat page — channels + messages RTK + live socket (T16) + typing (T17).
@@ -136,6 +138,8 @@ export default function ChannelChatPage() {
     }))
 
   const [createMessage, { isLoading: isSending }] = useCreateMessageMutation()
+  const [presignUploads] = usePresignChannelUploadsMutation()
+  const [isUploading, setIsUploading] = useState(false)
   const [createChannel] = useCreateChannelMutation()
   const [updateChannel] = useUpdateChannelMutation()
   const [deleteChannel] = useDeleteChannelMutation()
@@ -250,7 +254,7 @@ export default function ChannelChatPage() {
         reconnecting={reconnecting}
         typingLabel={typingLabel}
         onTyping={onTyping}
-        isSending={isSending}
+        isSending={isSending || isUploading}
         onCreateChannel={async (data) => {
           try {
             const created = await createChannel({
@@ -332,27 +336,45 @@ export default function ChannelChatPage() {
           }
         }}
         onSendMessage={async ({ body, files }) => {
-          // T12 text-only — S3 later
-          if (files.length > 0) {
-            toast.message("File uploads come later")
-          }
           const text = body.trim()
-          if (!text) {
-            toast.error("Type a message to send")
+          if (!text && files.length === 0) {
+            toast.error("Type a message or attach a file")
             throw new Error("empty")
           }
+
           try {
+            // Lazy upload: presign + PUT to S3 only now, on Send.
+            let attachments
+            if (files.length > 0) {
+              setIsUploading(true)
+              try {
+                const { uploads } = await presignUploads({
+                  workspaceId,
+                  channelId,
+                  files: files.map((f) => ({
+                    name: f.name,
+                    mime: f.type,
+                    sizeBytes: f.size,
+                  })),
+                }).unwrap()
+                attachments = await uploadFilesToS3(uploads, files)
+              } finally {
+                setIsUploading(false)
+              }
+            }
+
             await createMessage({
               workspaceId,
               channelId,
               body: text,
+              attachments,
               clientMessageId: crypto.randomUUID(),
             }).unwrap()
             // Clear typing so peers don't keep seeing you after send
             stopTyping()
           } catch {
             toast.error("Could not send message")
-            throw new Error("send failed") // composer keeps draft
+            throw new Error("send failed") // composer keeps draft + files
           }
         }}
       />

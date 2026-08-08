@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { FileText, MessageCircle } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 
+import ChatAttachments from "@/components/channel/chat-attachments"
 import Loader from "@/components/sharable/loader"
-import OverflowText from "@/components/sharable/overflow-text"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/lib/types/channel/channel-types"
 
@@ -27,12 +27,6 @@ function formatTime(iso: string) {
   } catch {
     return ""
   }
-}
-
-function formatBytes(n: number) {
-  if (n < 1024) return `${n} B`
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`
 }
 
 /**
@@ -184,51 +178,7 @@ export default function ChatMessageList({
                 </span>
               )}
               {hasAttachments ? (
-                <ul
-                  className={cn(
-                    "flex flex-col gap-2",
-                    mine ? "items-end" : "items-start"
-                  )}
-                >
-                  {msg.attachments.map((att) => {
-                    const isImage = att.mime.startsWith("image/")
-                    return (
-                      <li
-                        key={`${msg.id}-${att.url}`}
-                        className={cn(
-                          "overflow-hidden rounded-xl border border-border bg-card text-left",
-                          mine && "border-primary/30"
-                        )}
-                      >
-                        {isImage ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={att.url}
-                            alt={att.name}
-                            className="max-h-48 max-w-full object-cover"
-                          />
-                        ) : (
-                          <a
-                            href={att.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted"
-                          >
-                            <FileText className="size-4 text-primary" />
-                            <span className="min-w-0">
-                              <OverflowText className="font-medium">
-                                {att.name}
-                              </OverflowText>
-                              <span className="block text-xs text-muted-foreground">
-                                {formatBytes(att.sizeBytes)}
-                              </span>
-                            </span>
-                          </a>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
+                <ChatAttachments attachments={msg.attachments} mine={mine} />
               ) : null}
             </div>
           </article>

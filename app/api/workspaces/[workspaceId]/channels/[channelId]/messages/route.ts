@@ -7,6 +7,7 @@ import { channelRoomName } from "@/lib/channels/channel-room"
 import { Message } from "@/lib/models/channel/message"
 import { User } from "@/lib/models/user"
 import messageSchema from "@/lib/schemas/channel/message-schema"
+import { isManagedObjectUrl, presignAttachmentGet } from "@/lib/storage/s3"
 
 const DEFAULT_LIMIT = 50
 const MAX_LIMIT = 100
@@ -26,8 +27,12 @@ type ChatMessageJson = {
   createdAt: string
 }
 
-/** Same JSON shape for GET history items and POST create/idempotent responses */
-function toMessageJson(
+/**
+ * Same JSON shape for GET history items and POST create/idempotent responses.
+ * Attachment `url`s are stored as canonical (private) URLs; we sign a
+ * short-lived GET here so the client can actually view them (T22).
+ */
+async function toMessageJson(
   doc: {
     _id: { toString(): string }
     channelId: { toString(): string }
@@ -42,19 +47,23 @@ function toMessageJson(
     createdAt: Date
   },
   authorName: string
-): ChatMessageJson {
+): Promise<ChatMessageJson> {
+  const attachments = await Promise.all(
+    (doc.attachments ?? []).map(async (a) => ({
+      url: await presignAttachmentGet(a.url),
+      name: a.name,
+      mime: a.mime,
+      sizeBytes: a.sizeBytes,
+    }))
+  )
+
   return {
     id: doc._id.toString(),
     channelId: doc.channelId.toString(),
     authorId: doc.authorId.toString(),
     authorName,
     body: doc.body,
-    attachments: (doc.attachments ?? []).map((a) => ({
-      url: a.url,
-      name: a.name,
-      mime: a.mime,
-      sizeBytes: a.sizeBytes,
-    })),
+    attachments,
     createdAt: doc.createdAt.toISOString(),
   }
 }
@@ -135,8 +144,10 @@ export async function GET(
       authors.map((a) => [a._id.toString(), a.fullName] as const)
     )
 
-    const messages = chronological.map((m) =>
-      toMessageJson(m, nameById.get(m.authorId.toString()) ?? "Unknown")
+    const messages = await Promise.all(
+      chronological.map((m) =>
+        toMessageJson(m, nameById.get(m.authorId.toString()) ?? "Unknown")
+      )
     )
 
     return NextResponse.json({ messages, nextCursor }, { status: 200 })
@@ -151,7 +162,8 @@ export async function GET(
 
 /**
  * POST /api/workspaces/[workspaceId]/channels/[channelId]/messages
- * Create a text message (T11). Attachments forced empty until S3.
+ * Create a message with text and/or attachments (already uploaded to S3).
+ * Attachment URLs must point at our bucket. Body OR attachments required (Zod).
  * Optional clientMessageId → idempotent (retry returns same row, 200).
  */
 export async function POST(
@@ -178,11 +190,9 @@ export async function POST(
       )
     }
 
-    // T11 text-only: wipe client attachments so Zod requires a non-empty body
-    const parsed = messageSchema.safeParse({
-      ...(typeof body === "object" && body !== null ? body : {}),
-      attachments: [],
-    })
+    const parsed = messageSchema.safeParse(
+      typeof body === "object" && body !== null ? body : {}
+    )
     if (!parsed.success) {
       return NextResponse.json(
         {
@@ -193,15 +203,25 @@ export async function POST(
       )
     }
 
-    const { body: text, clientMessageId } = parsed.data
+    const { body: text, attachments, clientMessageId } = parsed.data
+
+    // Only accept attachments that point at our own bucket — a client can't
+    // inject arbitrary external URLs (we only ever signed our bucket keys).
+    if (attachments.some((a) => !isManagedObjectUrl(a.url))) {
+      return NextResponse.json(
+        { message: "Invalid attachment URL" },
+        { status: 400 }
+      )
+    }
 
     // Fast path: client retried with the same clientMessageId
     if (clientMessageId) {
       const existing = await Message.findOne({ channelId, clientMessageId })
       if (existing) {
-        return NextResponse.json(toMessageJson(existing, user.fullName), {
-          status: 200,
-        })
+        return NextResponse.json(
+          await toMessageJson(existing, user.fullName),
+          { status: 200 }
+        )
       }
     }
 
@@ -211,11 +231,11 @@ export async function POST(
         channelId,
         authorId: user.id,
         body: text,
-        attachments: [],
+        attachments,
         ...(clientMessageId ? { clientMessageId } : {}),
       })
 
-      const json = toMessageJson(message, user.fullName)
+      const json = await toMessageJson(message, user.fullName)
 
       // Fan-out after write — best-effort; Mongo row already exists
       await notifyRealtime({
@@ -238,9 +258,10 @@ export async function POST(
       ) {
         const existing = await Message.findOne({ channelId, clientMessageId })
         if (existing) {
-          return NextResponse.json(toMessageJson(existing, user.fullName), {
-            status: 200,
-          })
+          return NextResponse.json(
+            await toMessageJson(existing, user.fullName),
+            { status: 200 }
+          )
         }
       }
 
