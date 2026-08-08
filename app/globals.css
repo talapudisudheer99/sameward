@@ -150,20 +150,43 @@
   .bg-hero-aurora {
     background:
       radial-gradient(
-        55% 50% at 82% 12%,
-        color-mix(in oklab, var(--brand-a) 26%, transparent) 0%,
-        transparent 62%
+        58% 52% at 84% 6%,
+        color-mix(in oklab, var(--brand-a) 34%, transparent) 0%,
+        transparent 60%
       ),
       radial-gradient(
-        45% 45% at 12% 18%,
-        color-mix(in oklab, var(--brand-b) 22%, transparent) 0%,
-        transparent 58%
+        48% 48% at 10% 14%,
+        color-mix(in oklab, var(--brand-b) 30%, transparent) 0%,
+        transparent 56%
       ),
       radial-gradient(
-        80% 70% at 50% 108%,
-        color-mix(in oklab, var(--brand-a) 14%, transparent) 0%,
+        90% 75% at 50% 112%,
+        color-mix(in oklab, var(--brand-a) 18%, transparent) 0%,
         transparent 72%
       );
+  }
+
+  /* Gradient-clipped text for hero headline emphasis */
+  .text-brand-gradient {
+    background-image: linear-gradient(
+      118deg,
+      var(--primary) 0%,
+      var(--brand-a) 52%,
+      var(--brand-b) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Soft radial glow placed behind the hero product preview */
+  .bg-hero-glow {
+    background: radial-gradient(
+      58% 58% at 50% 42%,
+      color-mix(in oklab, var(--brand-a) 38%, transparent) 0%,
+      color-mix(in oklab, var(--brand-b) 16%, transparent) 45%,
+      transparent 72%
+    );
   }
 
   /* Rich branded dark panel for the auth split-screen */

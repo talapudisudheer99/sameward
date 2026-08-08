@@ -18,12 +18,14 @@ export default function MarketingPage() {
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16 xl:gap-20">
           <div className="animate-in duration-500 fade-in slide-in-from-left-3">
-            <p className="font-heading text-sm font-semibold tracking-[0.04em] text-primary">
-              AI-powered collaboration
+            <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-secondary/60 px-3 py-1 font-heading text-xs font-semibold tracking-[0.04em] text-secondary-foreground backdrop-blur-sm">
+              <span className="size-1.5 rounded-full bg-linear-to-br from-(--brand-a) to-(--brand-b)" />
+              <span>AI-powered collaboration</span>
             </p>
 
             <h1 className="mt-6 max-w-lg font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl sm:leading-[1.08] lg:text-[3.5rem] lg:leading-[1.08]">
-              One place for your team to plan, create and ship
+              One place for your team to{" "}
+              <span className="text-brand-gradient">plan, create and ship</span>
             </h1>
 
             <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground sm:text-xl sm:leading-relaxed">
@@ -64,7 +66,11 @@ export default function MarketingPage() {
             </ul>
           </div>
 
-          <div className="animate-in duration-700 fill-mode-both [animation-delay:100ms] fade-in slide-in-from-right-3">
+          <div className="animate-in duration-700 fill-mode-both [animation-delay:100ms] fade-in slide-in-from-right-3 relative">
+            <div
+              aria-hidden
+              className="bg-hero-glow pointer-events-none absolute -inset-8 -z-10 blur-2xl"
+            />
             <HeroProductPreview />
           </div>
         </div>
