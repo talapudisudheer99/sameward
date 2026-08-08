@@ -77,9 +77,9 @@ Check off when reviewed.
 
 ## Slice 7 — Docs harden
 
-- [ ] **T23** Mark API/FRONTEND/SOCKETS/LIB as implemented (exact)
+- [x] **T23** Mark API/FRONTEND/SOCKETS/LIB as implemented (exact filenames synced Aug 9)
 - [x] **T24** Update [progress.md](../tracking/progress.md) (through files slice, Aug 9)
-- [ ] Manual E2E script in [E2E-FLOWS.md](./E2E-FLOWS.md)
+- [x] Manual E2E script in [E2E-FLOWS.md](./E2E-FLOWS.md)
 
 ---
 
@@ -115,7 +115,7 @@ Notes:
 - [x] Two clients live-chat in public + private
 - [x] File limits enforced (client + server-side)
 - [x] Typing + basic presence visible
-- [ ] Docs match shipped code exactly (Slice 7)
+- [x] Docs match shipped code exactly (Slice 7)
 
 ---
 

@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 5+6 — **Channels & realtime chat** (merged) |
-| **Current feature** | Files slice done (T19–T22: S3 presign/upload/preview) → next **Slice 7** docs harden, then Phase 7 AI |
+| **Current feature** | Phase 5+6 **complete** (chat text+files+realtime, docs hardened, E2E verified) → next **Phase 7** AI & integrations |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · **AWS S3** (presigned PUT/GET, private bucket) |
 | **Last updated** | 2026-08-09 |
 
@@ -21,7 +21,7 @@
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
 | 4 | State & data layer | 🟡 Partial | RTK already used; deepen as needed during channels |
-| 5 | Collaboration core | 🔄 **Chat live (text + files)** | Channels + REST + realtime + S3 attachments done; docs harden (Slice 7) next. [`docs/channels/`](../channels/README.md) |
+| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3 attachments; docs hardened (Slice 7). Edit/delete deferred to Slice 8. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence shipped (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ⬜ Not started | |
 | 8 | Quality & deployment | ⬜ Not started | |
@@ -60,6 +60,7 @@
 | 2026-08-09 | T21 composer upload flow | Lazy presign → `Promise.all` PUT → send with attachments; `upload-client.ts` |
 | 2026-08-09 | T22 attachments end-to-end | POST persists + bucket guard; presigned GET on read; grid + lightbox + real blob download |
 | 2026-08-09 | Backlog: message edit/delete | Deferred to Slice 8 (T25–T27); design locked (editedAt/deletedAt, soft delete) |
+| 2026-08-09 | Slice 7 docs harden (T23/T24 + E2E) | Synced API/SOCKETS/FRONTEND/LIB docs to exact shipped files; added manual E2E checklist → **Phase 5+6 closed, user E2E verified** |
 
 ## GitHub
 

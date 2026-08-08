@@ -1,6 +1,6 @@
 # Frontend — Channels & chat
 
-**Status:** UI shell landed (presentational) · RTK wiring is your assignment  
+**Status:** ✅ **Wired & shipped** — UI + RTK Query + live sockets + S3 attachments (E2E verified 2026-08-09)  
 **Routes:** `/workspace/[workspaceId]/channels` · `/workspace/[workspaceId]/channels/[channelId]`
 
 ---
@@ -26,14 +26,14 @@
 
 ## Chat UI building blocks
 
-| Piece | Behavior (UI done) |
+| Piece | Behavior (shipped) |
 |-------|---------------------|
-| Transcript | Bubbles + attachments; loading / error / empty; auto-scroll; `pending` / `failed` |
-| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` |
-| Attachments | Local chips; **upload in onSend** (S3 later — T12 text-only) |
-| Typing | Parent passes `typingLabel` |
-| Presence | `online` on `ChannelMemberRow` |
-| Reconnect | `reconnecting` prop → banner |
+| Transcript | Grouped bubbles hug content; attachments (image grid + lightbox + file cards); loading / error / empty; auto-scroll; `pending` / `failed` (`chat-message-list.tsx`, `chat-attachments.tsx`) |
+| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` · disabled while uploading |
+| Attachments | Local chips → **lazy presign + parallel S3 PUT in onSend**, then message POST (`lib/storage/upload-client.ts`) |
+| Typing | `use-channel-typing` → `typingLabel` |
+| Presence | `user-workspace-presence` → `online` on `ChannelMemberRow` |
+| Reconnect | `reconnecting` prop → banner + gap fetch |
 | Emoji | Button stub (disabled) — optional later |
 
 **Not v1 UI:** thread panel, reaction picker, DM inbox.
@@ -51,16 +51,17 @@
 
 ---
 
-## Client data (your work)
+## Client data (shipped)
 
 | Concern | Tool |
 |---------|------|
-| Channel list, CRUD, members | RTK Query → `store/api/channels-api.ts` |
-| Message history / send | RTK Query in `store/api/channel/channel-api.ts` (T12) |
-| Live append / typing / presence | Socket provider later (T13+) |
+| Channel list, CRUD, members | RTK Query → `store/api/workspace/workspaces-api.ts` |
+| Message history / send | RTK Query → `store/api/channel/channel-api.ts` |
+| Attachment presign | RTK Query → `store/api/upload/upload-api.ts` |
+| Live append / typing / presence | `components/providers/socket-provider.tsx` + hooks |
 | Active channel id | URL `channelId` |
 
-Shared types: `lib/types/channel/channel-types.ts` — align RTK response types with these.
+Shared types: `lib/types/channel/channel-types.ts` + `lib/types/upload/upload-types.ts`.
 
 ---
 

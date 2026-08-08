@@ -1,4 +1,4 @@
-# API routes — Channels (planned REST)
+# API routes — Channels (REST · ✅ implemented)
 
 Base: under `/api/workspaces/[workspaceId]/…`  
 All require session via `getCurrentUser()` unless noted.  
@@ -15,8 +15,8 @@ Proxy is **not** enough — enforce membership in handlers.
 | POST | `.../channels/:channelId/members` | owner \| admin | Add workspace members to private | ✅ |
 | DELETE | `.../channels/:channelId/members/:userId` | owner \| admin | Remove from private | ✅ |
 | GET | `.../channels/:channelId/messages` | allowed | History (cursor) | ✅ |
-| POST | `.../channels/:channelId/messages` | allowed | Create message (+ attachment refs) | ✅ (text only; attachments later) |
-| POST | upload helper (provider-specific) | member | File upload / presign | ⬜ |
+| POST | `.../channels/:channelId/messages` | allowed | Create message (text + attachment refs) | ✅ (text + attachments) |
+| POST | `.../channels/:channelId/uploads` | allowed | Batch presign PUT for attachments | ✅ (S3 presigned) |
 
 Live delivery is **not** REST — see [SOCKETS.md](./SOCKETS.md).
 
@@ -84,18 +84,33 @@ Workspace members only. Private channels only (public → **400**).
 
 **Who:** same access as GET messages. Non-access → **404**.
 
-**T11 body (text only):**
+**Body (text and/or attachments):**
 ```json
 {
   "body": "Hello",
+  "attachments": [
+    { "url": "s3://…canonical…", "name": "shot.png", "mime": "image/png", "sizeBytes": 12345 }
+  ],
   "clientMessageId": "optional-uuid"
 }
 ```
 
-- `attachments` from the client are **ignored** (forced to `[]`) until S3 upload.
-- `body` must be non-empty after trim (Zod).
+- Must have **`body` (non-empty after trim) OR ≥1 attachment** (Zod).
+- `attachments[].url` must pass `isManagedObjectUrl` (our bucket only) — external URLs rejected.
+- Server stores the **canonical private S3 URL**; read paths sign a short-lived presigned GET.
 - Optional `clientMessageId`: idempotent — retry returns the same message (**200**); first create **201**.
-- `notifyRealtime` skipped until T15.
+- On create, `notifyRealtime` fans out `message:new` (already-signed DTO) to `channel:{id}`.
+
+### `POST .../channels/:channelId/uploads`
+
+Batch presign — call once with all selected files; returns one presigned PUT per file.
+
+```json
+{ "files": [ { "name": "shot.png", "mime": "image/png", "sizeBytes": 12345 } ] }
+```
+
+- Same access check as messages; enforces max 3 files · ≤10MB · MIME allowlist (`lib/channels/attachment-limits.ts`).
+- **200:** `{ uploads: [ { key, uploadUrl, url, name, mime, sizeBytes } ] }` — client PUTs the file to `uploadUrl`, then sends `url` in the message.
 
 **201 / 200** (same shape as one history item):
 ```json
@@ -129,8 +144,9 @@ Non-access → **404** (same as workspaces).
 
 ## Status
 
-Channel CRUD + private members + messages REST (text): ✅  
-Upload + realtime notify: ⬜ until later slices.
+Channel CRUD + private members + messages REST (text + attachments): ✅  
+Batch presign uploads (S3 PUT) + presigned GET on read + realtime notify: ✅  
+Message edit/delete: ⬜ deferred to Slice 8 (`PATCH`/`DELETE …/messages/:id`).
 
 ---
 

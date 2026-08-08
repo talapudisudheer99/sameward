@@ -1,39 +1,52 @@
-# Lib & models — Channels (planned)
+# Lib & models — Channels (✅ as built)
 
-Follow [folder-structure.md](../architecture/folder-structure.md). Paths below are **targets** — create when the matching task starts.
+Follow [folder-structure.md](../architecture/folder-structure.md). Layout below matches the **shipped** tree (Aug 9, 2026).
 
 ## Layout
 
 ```text
 lib/models/channel/
-  channel.ts                 # ✅ T1 — workspaceId, name, slug, visibility, isDefault, createdBy
-  channel-membership.ts      # ✅ T2 — private-channel access only
-  message.ts                 # ✅ T3 — body + attachments metadata; socket announces later
+  channel.ts                 # ✅ workspaceId, name, slug, visibility, isDefault, createdBy
+  channel-membership.ts      # ✅ private-channel access only
+  message.ts                 # ✅ body (optional) + attachments[]; body not required (attachment-only ok)
 
 lib/schemas/channel/
-  channel-schema.ts          # create/rename + visibility
-  message-schema.ts
-  channel-members-schema.ts
-  attachment-meta-schema.ts
+  channel-schema.ts          # ✅ create/rename + visibility
+  message-schema.ts          # ✅ body-or-attachments; shares attachment-limits
+  channel-members-schema.ts  # ✅ add/remove private members
+  upload-schema.ts           # ✅ batch presign request (files[] name/mime/sizeBytes)
 
 lib/channels/
-  create-channel.ts
-  ensure-default-general.ts  # ✅ T4 — public #general, idempotent
-  access.ts                  # canAccessChannel + requireChannelAccess
-  notify-realtime.ts         # POST to realtime internal emit (Next → server/realtime)
+  create-channel.ts          # ✅
+  ensure-default-general.ts  # ✅ public #general, idempotent
+  access.ts                  # ✅ canAccessChannel + requireChannelAccess
+  require-private-channel-gate.ts # ✅
+  channel-slugify.ts         # ✅
+  channel-room.ts / workspace-room.ts # ✅ room-name helpers
+  notify-realtime.ts         # ✅ POST realtime /internal/emit (Next → server/realtime)
+  format-typing-label.ts     # ✅ "A is typing…" formatting
+  attachment-limits.ts       # ✅ shared 10MB / 3 files / MIME allowlist (client + server)
 
-# REST lives only under Next — do not put Socket.IO here
-# app/api/workspaces/.../messages/route.ts
+lib/storage/
+  s3.ts                      # ✅ presign PUT/GET, buildAttachmentKey, isManagedObjectUrl
+  upload-client.ts           # ✅ browser: PUT to S3 (Promise.all) → clean attachment metadata
+
+# REST lives only under Next
+# app/api/workspaces/.../channels/[channelId]/messages/route.ts   ✅ (text + attachments, presigned GET on read)
+# app/api/workspaces/.../channels/[channelId]/uploads/route.ts    ✅ (batch presign)
 
 server/realtime/             # Separate process — Railway service #2 (or local port)
-  index.ts                   # HTTP + Socket.IO listen, health
-  auth.ts                    # handshake → userId
-  rooms.ts                   # channel:join + canAccessChannel
-  presence.ts
-  internal-http.ts           # POST /internal/emit (REALTIME_INTERNAL_SECRET)
+  index.ts                   # ✅ HTTP + Socket.IO listen, health
+  auth.ts                    # ✅ handshake → userId
+  channel-handlers.ts        # ✅ channel:join/leave + canAccessChannel
+  typing-handlers.ts         # ✅ typing:start/stop
+  workspace-handlers.ts      # ✅ presence (ref-counted sockets)
+  internal-http.ts           # ✅ POST /internal/emit (REALTIME_INTERNAL_SECRET)
 
-store/api/channel/channel-api.ts
-components/providers/…       # SocketProvider (client) — later
+store/api/channel/channel-api.ts   # ✅ getMessages + createMessage
+store/api/upload/upload-api.ts     # ✅ presignChannelUploads
+components/providers/socket-provider.tsx  # ✅ global socket, join/leave, live append
+lib/types/upload/upload-types.ts   # ✅ Attachment + presign request/response types
 ```
 
 **Boundary:** `app/api` = truth writes · `server/realtime` = live fan-out · `lib/*` = shared.  
@@ -54,19 +67,20 @@ Deploy/migrate rules: [../architecture/deploy.md](../architecture/deploy.md).
 
 ---
 
-## Packages (install per slice — not yet)
+## Packages
 
-| Slice | Packages |
-|-------|----------|
-| Realtime skeleton | `socket.io`, `socket.io-client` |
-| Files | UploadThing **or** AWS S3 / R2 SDK — **PO lock before slice** |
-| Optional image compress | `browser-image-compression` (client) |
+| Slice | Packages | Status |
+|-------|----------|--------|
+| Realtime skeleton | `socket.io`, `socket.io-client` | ✅ installed |
+| Files | `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner` (PO lock: AWS S3) | ✅ installed |
+| Optional image compress | `browser-image-compression` (client) | ⬜ not used |
 
 ---
 
 ## Status
 
-Nothing in this tree is required to exist until [TASKS.md](./TASKS.md) says so. Keep this file in sync when files land.
+✅ **All channel lib/models/realtime files shipped and E2E-verified (Aug 9, 2026).**  
+Next additions land with Slice 8 (message edit/delete): `editedAt`/`deletedAt`/`deletedBy` on `message.ts` + `PATCH`/`DELETE` handlers.
 
 ---
 

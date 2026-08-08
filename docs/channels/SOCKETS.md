@@ -1,5 +1,19 @@
 # Sockets — separate Socket.IO service
 
+**Status:** ✅ **Implemented (T13–T18) · E2E verified 2026-08-09.** Files below are the shipped mapping.
+
+| Concept | Shipped file |
+|---------|--------------|
+| Listen + Socket.IO attach + health | `server/realtime/index.ts` |
+| Handshake auth → `socket.data.userId` | `server/realtime/auth.ts` |
+| `channel:join`/leave + access re-check | `server/realtime/channel-handlers.ts` |
+| Typing events | `server/realtime/typing-handlers.ts` |
+| Workspace presence (ref-counted sockets) | `server/realtime/workspace-handlers.ts` |
+| Internal emit endpoint (Next → realtime) | `server/realtime/internal-http.ts` |
+| Next-side notify caller | `lib/channels/notify-realtime.ts` |
+| Room name helpers | `lib/channels/channel-room.ts` · `lib/channels/workspace-room.ts` |
+| Client provider + hooks | `components/providers/socket-provider.tsx` · `hooks/channels/use-channel-typing.ts` · `hooks/workspace/user-workspace-presence.ts` |
+
 **PO lock:** TeamHub runs a **dedicated Socket.IO process** (not inside serverless Route Handlers).
 
 Next.js owns REST + UI. Realtime service owns persistent connections, rooms, typing, presence, and fan-out.
@@ -72,7 +86,7 @@ Clients **do not** invent messages only on socket. Send path = REST (or REST + a
 Option A: Next `POST http://realtime/internal/emit` with shared secret + `{ room, event, payload }`  
 Option B: Redis pub/sub (better when scaling)
 
-v1 may use **Option A**.
+**v1 ships Option A** — `internal-http.ts` (guarded by `REALTIME_INTERNAL_SECRET`), called from `notify-realtime.ts`.
 
 ---
 
@@ -101,16 +115,14 @@ v1 may use **Option A**.
 
 ---
 
-## Packages (install when slice starts)
+## Packages
 
-| Package | Where |
-|---------|--------|
-| `socket.io` | realtime service |
-| `socket.io-client` | Next client |
-| `@socket.io/redis-adapter` | **later** when scaling |
-| Upload provider SDK | Next (files slice) |
-
-Do **not** install until the matching TASKS slice begins.
+| Package | Where | Status |
+|---------|--------|--------|
+| `socket.io` | realtime service | ✅ installed |
+| `socket.io-client` | Next client | ✅ installed |
+| `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner` | Next (files slice) | ✅ installed |
+| `@socket.io/redis-adapter` | multi-instance | ⬜ later when scaling |
 
 ---
 
