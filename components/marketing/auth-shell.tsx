@@ -23,7 +23,7 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#0B1220] p-10 text-slate-50 lg:flex xl:p-14">
+      <aside className="bg-brand-panel relative hidden flex-col justify-between overflow-hidden p-10 text-slate-50 lg:flex xl:p-14">
         <Link href="/" className="relative z-10 flex w-fit items-center">
           <TeamHubLogo variant="horizontal" size={32} tone="onDark" />
         </Link>

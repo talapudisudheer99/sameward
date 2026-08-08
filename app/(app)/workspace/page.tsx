@@ -49,10 +49,10 @@ export default function WorkspacePage() {
 
   // ── Screen A — empty state ────────────────────────────────────────────────
   return (
-    <section className="flex min-h-[70vh] flex-col items-center justify-center px-4">
+    <section className="bg-brand-wash flex min-h-[70vh] flex-col items-center justify-center px-4">
       <div className="flex w-full max-w-lg flex-col items-center text-center">
         <div
-          className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-primary"
+          className="brand-tile mb-6 flex size-16 items-center justify-center rounded-[var(--radius)]"
           aria-hidden
         >
           <LayoutTemplate className="size-8" strokeWidth={1.5} />

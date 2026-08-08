@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useParams } from "next/navigation"
+import { Hash } from "lucide-react"
 
 import ChannelEmptyTip from "@/components/channel/channel-empty-tip"
 import ChannelMembersPanel from "@/components/channel/channel-members-panel"
@@ -83,13 +84,17 @@ export default function ChannelChatShell({
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [forChannelId, setForChannelId] = useState(activeChannel?.id)
 
   const isPrivate = activeChannel?.visibility === "private"
 
-  useEffect(() => {
-    // Default open members strip for private; reset when switching channels
-    setMembersOpen(activeChannel?.visibility === "private")
-  }, [activeChannel?.id, activeChannel?.visibility])
+  // Reset the members strip while switching channels (open by default for
+  // private). Adjusting state during render is the React-recommended pattern
+  // for "reset state when a prop changes" — no effect / cascading render.
+  if (forChannelId !== activeChannel?.id) {
+    setForChannelId(activeChannel?.id)
+    setMembersOpen(isPrivate)
+  }
 
   const showMembers = Boolean(membersOpen && isPrivate)
 
@@ -111,8 +116,14 @@ export default function ChannelChatShell({
               onCreateClick={() => setCreateOpen(true)}
             />
           ) : (
-            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-              Select a channel
+            <div className="bg-brand-wash flex flex-1 flex-col items-center justify-center gap-3 text-center text-sm text-muted-foreground">
+              <span
+                className="brand-tile flex size-11 items-center justify-center rounded-[var(--radius)]"
+                aria-hidden
+              >
+                <Hash className="size-5" strokeWidth={1.5} />
+              </span>
+              Select a channel to start chatting
             </div>
           )
         ) : (

@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { Hash } from "lucide-react"
 
 import Loader from "@/components/sharable/loader"
 import { buttonVariants } from "@/components/ui/button"
@@ -53,7 +54,13 @@ export default function ChannelsIndexPage() {
 
   if (isError) {
     return (
-      <div className="flex h-full flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+      <div className="bg-brand-wash flex h-full flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+        <div
+          className="flex size-12 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
+          aria-hidden
+        >
+          <Hash className="size-6" strokeWidth={1.5} />
+        </div>
         <h1 className="font-heading text-xl font-semibold">
           Couldn’t load channels
         </h1>
@@ -72,7 +79,13 @@ export default function ChannelsIndexPage() {
 
   if (!channels || channels.length === 0) {
     return (
-      <div className="flex h-full flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+      <div className="bg-brand-wash flex h-full flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+        <div
+          className="brand-tile flex size-12 items-center justify-center rounded-[var(--radius)]"
+          aria-hidden
+        >
+          <Hash className="size-6" strokeWidth={1.5} />
+        </div>
         <h1 className="font-heading text-xl font-semibold">No channels yet</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           This workspace doesn’t have any channels you can open.

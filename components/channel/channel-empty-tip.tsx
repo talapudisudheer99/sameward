@@ -17,9 +17,9 @@ export default function ChannelEmptyTip({
   onCreateClick,
 }: ChannelEmptyTipProps) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+    <div className="bg-brand-wash flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
       <div
-        className="flex size-12 items-center justify-center rounded-[var(--radius)] border border-border bg-muted text-muted-foreground"
+        className="brand-tile flex size-12 items-center justify-center rounded-[var(--radius)]"
         aria-hidden
       >
         <Hash className="size-6" strokeWidth={1.5} />

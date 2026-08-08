@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { FileText } from "lucide-react"
+import { FileText, MessageCircle } from "lucide-react"
 
 import Loader from "@/components/sharable/loader"
 import OverflowText from "@/components/sharable/overflow-text"
@@ -84,11 +84,19 @@ export default function ChatMessageList({
     return (
       <div
         className={cn(
-          "flex min-h-0 flex-1 items-center justify-center px-4 text-sm text-muted-foreground",
+          "bg-brand-wash flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-4 text-center",
           className
         )}
       >
-        No messages yet. Say hello.
+        <span
+          className="brand-tile flex size-11 items-center justify-center rounded-full"
+          aria-hidden
+        >
+          <MessageCircle className="size-5" strokeWidth={1.5} />
+        </span>
+        <p className="text-sm text-muted-foreground">
+          No messages yet. Say hello.
+        </p>
       </div>
     )
   }

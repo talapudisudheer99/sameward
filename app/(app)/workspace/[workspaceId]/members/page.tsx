@@ -91,7 +91,7 @@ export default function WorkspaceMembersPage() {
 
   if (isError || !workspace) {
     return (
-      <section className="flex min-h-[70vh] flex-col items-center justify-center px-4">
+      <section className="bg-brand-wash flex min-h-[70vh] flex-col items-center justify-center px-4">
         <div className="flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"

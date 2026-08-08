@@ -12,7 +12,7 @@ export default function MarketingPage() {
     <div className="relative overflow-hidden">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,oklch(0.95_0.03_190)_0%,transparent_60%)] dark:bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,oklch(0.28_0.04_190)_0%,transparent_60%)]"
+        className="bg-hero-aurora pointer-events-none absolute inset-0 -z-10"
       />
 
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
@@ -36,7 +36,7 @@ export default function MarketingPage() {
                 href="/signup"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "h-11 px-6 text-[0.95rem]"
+                  "btn-brand-gradient h-11 border-transparent px-6 text-[0.95rem] text-white shadow-sm transition hover:brightness-110"
                 )}
               >
                 Get started free

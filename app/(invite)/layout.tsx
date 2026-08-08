@@ -18,7 +18,7 @@ export default function InviteLayout({
           <TeamHubLogo variant="horizontal" size={28} />
         </Link>
       </header>
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <main className="bg-brand-wash flex flex-1 items-center justify-center px-4 py-12">
         {children}
       </main>
     </div>

@@ -33,7 +33,7 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full flex-col gap-6 bg-sidebar p-4 text-sidebar-foreground">
+    <div className="bg-brand-wash flex h-full flex-col gap-6 bg-sidebar p-4 text-sidebar-foreground">
       <Link
         href="/workspace"
         className="flex items-center rounded-[var(--radius)] px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
@@ -42,6 +42,9 @@ export default function Sidebar() {
       </Link>
 
       <nav className="flex flex-col gap-1" aria-label="App">
+        <p className="px-2 pb-1 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+          Menu
+        </p>
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive =

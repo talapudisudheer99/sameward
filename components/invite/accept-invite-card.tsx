@@ -62,7 +62,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "not_found") {
     return (
       <InviteShell
-        icon={<SearchX className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="neutral">
+            <SearchX className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite not found"
         description="This link is invalid or no longer exists. Ask your teammate to send a new invite."
         actions={
@@ -80,7 +84,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "expired") {
     return (
       <InviteShell
-        icon={<Clock className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="brand">
+            <Clock className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite expired"
         description="This invite link has expired. Ask the workspace owner or admin to send a new one."
         actions={
@@ -98,7 +106,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "accepted") {
     return (
       <InviteShell
-        icon={<CheckCircle2 className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="brand">
+            <CheckCircle2 className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite already used"
         description="This invite was already accepted. If you’re a member, open the workspace from your list."
         actions={
@@ -116,7 +128,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "error") {
     return (
       <InviteShell
-        icon={<SearchX className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="neutral">
+            <SearchX className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Something went wrong"
         description={state.message}
         actions={
@@ -174,12 +190,9 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
     return (
       <InviteShell
         icon={
-          <div
-            className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
-            aria-hidden
-          >
+          <StatusTile tone="neutral">
             <UserRoundX className="size-8" strokeWidth={1.5} />
-          </div>
+          </StatusTile>
         }
         title="Wrong account"
         description={`This invite is for ${invite.email}, but you’re signed in as ${state.currentEmail}. Sign out and sign in with the invited email.`}
@@ -238,6 +251,29 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
         </div>
       }
     />
+  )
+}
+
+/** Consistent icon tile for invite status states. */
+function StatusTile({
+  tone,
+  children,
+}: {
+  tone: "brand" | "neutral"
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "mb-6 flex size-16 items-center justify-center rounded-[var(--radius)]",
+        tone === "brand"
+          ? "brand-tile"
+          : "border border-border bg-card text-muted-foreground"
+      )}
+      aria-hidden
+    >
+      {children}
+    </div>
   )
 }
 

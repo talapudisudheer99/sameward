@@ -376,10 +376,15 @@ function ChannelStatus({
   const Icon = icon === "search" ? SearchX : Hash
 
   return (
-    <section className="flex h-full flex-1 flex-col items-center justify-center px-4">
+    <section className="bg-brand-wash flex h-full flex-1 flex-col items-center justify-center px-4">
       <div className="flex w-full max-w-md flex-col items-center text-center">
         <div
-          className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
+          className={cn(
+            "mb-6 flex size-16 items-center justify-center rounded-[var(--radius)]",
+            icon === "search"
+              ? "border border-border bg-card text-muted-foreground"
+              : "brand-tile"
+          )}
           aria-hidden
         >
           <Icon className="size-8" strokeWidth={1.5} />

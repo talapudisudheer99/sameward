@@ -23,10 +23,23 @@ function LogoMark({ size, className }: { size: number; className?: string }) {
       className={className}
       aria-hidden
     >
-      <path
-        d="M16 1.25 29 8.75v14.5L16 30.75 3 23.25V8.75L16 1.25Z"
-        className="fill-primary"
+      <defs>
+        <linearGradient id="teamhub-mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" style={{ stopColor: "var(--brand-a)" }} />
+          <stop offset="1" style={{ stopColor: "var(--primary)" }} />
+        </linearGradient>
+      </defs>
+
+      {/* Soft rounded squircle container — no sharp edges */}
+      <rect
+        x="2"
+        y="2"
+        width="28"
+        height="28"
+        rx="9"
+        fill="url(#teamhub-mark)"
       />
+
       {/* left */}
       <circle cx="9.8" cy="12.8" r="2" className="fill-primary-foreground" />
       <path
@@ -50,7 +63,7 @@ function LogoMark({ size, className }: { size: number; className?: string }) {
         y="21.1"
         width="1.6"
         height="3.4"
-        rx="0.55"
+        rx="0.8"
         className="fill-primary-foreground"
       />
     </svg>
@@ -58,8 +71,8 @@ function LogoMark({ size, className }: { size: number; className?: string }) {
 }
 
 /**
- * TeamHub AI brand mark — hexagon + team silhouettes.
- * Spec: docs/design/references/teamhub-logo-system.png
+ * TeamHub AI brand mark — soft rounded squircle + team silhouettes.
+ * Gradient (--brand-a → --primary) is theme-aware and follows the palette.
  */
 export function TeamHubLogo({
   className,
