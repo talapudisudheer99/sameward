@@ -4,13 +4,14 @@ import { Server } from "socket.io"
 import { loadEnvLocal } from "./load-env"
 import { authenticateSocket } from "./auth"
 import { tryHandleInternalEmit } from "./internal-http"
-import { registerRoomHandlers } from "./rooms"
-import { registerTypingHandlers } from "./typing"
+import { registerRoomHandlers } from "./channel-handlers"
+import { registerTypingHandlers } from "./typing-handlers"
+import { registerWorkspaceHandlers } from "./workspace-handlers"
 
 loadEnvLocal()
 
 /**
- * T14–T15 — HTTP + Socket.IO + auth + rooms + /internal/emit
+ * T14–T18 — HTTP + Socket.IO + auth + channel rooms + typing + presence + /internal/emit
  *
  * Run: npm run realtime
  * Health: GET http://localhost:4001/health
@@ -40,6 +41,7 @@ io.on("connection", (socket) => {
 
   registerRoomHandlers(socket)
   registerTypingHandlers(socket)
+  registerWorkspaceHandlers(io, socket)
 
   socket.on("disconnect", (reason) => {
     console.log(

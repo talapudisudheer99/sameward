@@ -3,7 +3,7 @@ import type { Socket } from "socket.io"
 import { connectDB } from "@/lib/db/mongoose"
 import { resolveChannelAccess } from "@/lib/channels/access"
 import { channelRoomName } from "@/lib/channels/channel-room"
-import { emitTypingStop } from "./typing"
+import { emitTypingStop } from "./typing-handlers"
 
 export { channelRoomName }
 

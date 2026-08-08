@@ -34,6 +34,7 @@ import {
   MESSAGE_PAGE_LIMIT,
 } from "@/hooks/channels/use-channel-realtime"
 import { useChannelTyping } from "@/hooks/channels/use-channel-typing"
+import { useWorkspacePresence } from "@/hooks/workspace/user-workspace-presence"
 import { useRef, useEffect } from "react"
 import { useSocket } from "@/components/providers/socket-provider"
 
@@ -72,6 +73,12 @@ export default function ChannelChatPage() {
     enabled: realtimeEnabled,
   })
 
+  // Workspace-wide online set → drives m.online dots + header count
+  const { isOnline } = useWorkspacePresence({
+    workspaceId,
+    enabled: Boolean(workspaceId),
+  })
+
   const {
     data: workspaceData,
     isLoading: isWorkspaceLoading,
@@ -108,7 +115,13 @@ export default function ChannelChatPage() {
     { skip: !workspaceId || !isPrivate }
   )
 
-  const channelMembers = channelMembersData?.members ?? []
+  const channelMembers = (channelMembersData?.members ?? []).map((m) => {
+    return {
+      ...m,
+      online: isOnline(m.userId),
+    }
+  })
+
   const workspaceMembers = workspaceMembersData?.members ?? []
 
   const channelMemberIds = new Set(channelMembers.map((m) => m.userId))

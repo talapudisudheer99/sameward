@@ -97,58 +97,85 @@ export default function ChatMessageList({
     <div
       ref={scrollerRef}
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4",
+        "flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-4",
         className
       )}
     >
-      {messages.map((msg) => {
+      {messages.map((msg, i) => {
         const mine = msg.authorId === currentUserId
+        const prev = messages[i - 1]
+        // Group consecutive messages by the same author within ~5 minutes
+        const grouped =
+          prev?.authorId === msg.authorId &&
+          new Date(msg.createdAt).getTime() -
+            new Date(prev?.createdAt ?? 0).getTime() <
+            5 * 60 * 1000
+        const hasAttachments = msg.attachments.length > 0
+
         return (
           <article
             key={msg.id}
             className={cn(
-              "flex max-w-[min(100%,28rem)] gap-2",
+              "flex max-w-[min(85%,32rem)] gap-2",
+              grouped ? "mt-0.5" : "mt-3",
               mine ? "ml-auto flex-row-reverse" : "mr-auto",
               msg.pending && "opacity-70"
             )}
           >
-            <span
-              className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium"
-              aria-hidden
-            >
-              {(msg.authorName || "?").slice(0, 1).toUpperCase()}
-            </span>
-            <div className={cn("min-w-0 space-y-1", mine && "text-right")}>
-              <div
-                className={cn(
-                  "flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-xs text-muted-foreground",
-                  mine && "flex-row-reverse"
-                )}
+            {grouped ? (
+              <span className="w-7 shrink-0" aria-hidden />
+            ) : (
+              <span
+                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium"
+                aria-hidden
               >
-                <span className="font-medium text-foreground">
-                  {msg.authorName}
-                </span>
-                <time dateTime={msg.createdAt}>
-                  {formatTime(msg.createdAt)}
-                </time>
-                {msg.pending ? <span>Sending…</span> : null}
-                {msg.failed ? (
-                  <span className="text-destructive">Failed</span>
-                ) : null}
-              </div>
+                {(msg.authorName || "?").slice(0, 1).toUpperCase()}
+              </span>
+            )}
+            <div
+              className={cn(
+                "flex min-w-0 flex-col gap-1",
+                mine ? "items-end" : "items-start"
+              )}
+            >
+              {grouped ? null : (
+                <div
+                  className={cn(
+                    "flex items-baseline gap-x-2 px-1 text-xs text-muted-foreground",
+                    mine && "flex-row-reverse"
+                  )}
+                >
+                  <span className="font-medium text-foreground">
+                    {msg.authorName}
+                  </span>
+                  <time dateTime={msg.createdAt}>
+                    {formatTime(msg.createdAt)}
+                  </time>
+                </div>
+              )}
               {msg.body ? (
                 <div
                   className={cn(
-                    "rounded-2xl px-3 py-2 text-left text-sm leading-relaxed",
+                    "w-fit max-w-full rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed",
                     mine
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground"
+                      ? "rounded-br-md bg-primary text-primary-foreground"
+                      : "rounded-bl-md bg-muted text-foreground"
                   )}
                 >
                   <p className="break-words whitespace-pre-wrap">{msg.body}</p>
                 </div>
               ) : null}
-              {msg.attachments.length > 0 ? (
+              {(msg.pending || msg.failed) && (
+                <span
+                  className={cn(
+                    "px-1 text-xs",
+                    msg.failed ? "text-destructive" : "text-muted-foreground"
+                  )}
+                >
+                  {msg.failed ? "Failed" : "Sending…"}
+                </span>
+              )}
+              {hasAttachments ? (
                 <ul
                   className={cn(
                     "flex flex-col gap-2",

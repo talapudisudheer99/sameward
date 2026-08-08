@@ -55,14 +55,14 @@ Check off when reviewed.
 - [x] **T14** Handshake auth + `channel:join` authz (`server/realtime/auth.ts`, `rooms.ts`)
 - [x] **T15** `notifyRealtime` after POST message → `message:new` (`internal-http.ts`, `notify-realtime.ts`)
 - [x] **T16** `SocketProvider` + live append + reconnect gap fetch
-- [ ] Demo: two browsers, live text
+- [x] Demo: two browsers, live text
 
 ---
 
 ## Slice 5 — Typing + presence
 
 - [x] **T17** Typing events + UI
-- [ ] **T18** Workspace presence + UI
+- [x] **T18** Workspace presence + UI (`workspace-handlers.ts`, `use-workspace-presence`)
 
 ---
 
