@@ -68,18 +68,34 @@ Check off when reviewed.
 
 ## Slice 6 — Files (after vendor lock)
 
-- [ ] **T19** Upload API / provider wiring
-- [ ] **T20** Enforce 10MB / 3 files / MIME allowlist server-side
-- [ ] **T21** Composer attachments + Attachment UI states
-- [ ] **T22** Live message with attachments
+- [x] **T19** Batch presign API `POST …/uploads` (auth + access) — `app/api/…/uploads/route.ts`, `lib/storage/s3.ts`, `store/api/upload/upload-api.ts`
+- [x] **T20** Enforce 10MB / 3 files / MIME allowlist server-side — shared `lib/channels/attachment-limits.ts` + `lib/schemas/channel/upload-schema.ts`
+- [x] **T21** Composer attachments + upload states — lazy upload (presign → `Promise.all` PUT → send), `lib/storage/upload-client.ts`
+- [x] **T22** Live message with attachments — POST persists + bucket-URL guard; presigned GET on read; grid + lightbox + real download (`chat-attachments.tsx`)
 
 ---
 
 ## Slice 7 — Docs harden
 
 - [ ] **T23** Mark API/FRONTEND/SOCKETS/LIB as implemented (exact)
-- [ ] **T24** Update [progress.md](../tracking/progress.md)
+- [x] **T24** Update [progress.md](../tracking/progress.md) (through files slice, Aug 9)
 - [ ] Manual E2E script in [E2E-FLOWS.md](./E2E-FLOWS.md)
+
+---
+
+## Slice 8 — Message edit / delete (backlog · **do first** after current features)
+
+Deferred from v1 on purpose. Design locked (Aug 9): timestamps over booleans, soft delete.
+
+- [ ] **T25** Model fields `editedAt` / `deletedAt` / `deletedBy` (nullable) + `PATCH`/`DELETE …/messages/:id`
+  - Authz: **edit = author only**; **delete = author | owner | admin**
+  - Soft delete → tombstone shape from API (never return body/attachments of deleted rows)
+- [ ] **T26** Realtime `message:update` / `message:delete` + RTK `updateQueryData` cache patch (all tabs)
+- [ ] **T27** UI: hover actions (inline edit, delete confirm), "edited" label, tombstone; delete → best-effort S3 attachment cleanup
+
+Notes:
+- Prefer `editedAt: Date|null` over `isEdited` boolean (`isEdited = editedAt != null`, and keeps *when*).
+- Soft delete keeps rows consistent for future threads/reactions + audit.
 
 ---
 
@@ -96,10 +112,10 @@ Check off when reviewed.
 ## Definition of done (module v1)
 
 - [ ] US-C1…US-C9 acceptance met (or deferred with note)
-- [ ] Two clients live-chat in public + private
-- [ ] File limits enforced
-- [ ] Typing + basic presence visible
-- [ ] Docs match shipped code exactly
+- [x] Two clients live-chat in public + private
+- [x] File limits enforced (client + server-side)
+- [x] Typing + basic presence visible
+- [ ] Docs match shipped code exactly (Slice 7)
 
 ---
 

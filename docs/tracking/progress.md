@@ -7,9 +7,9 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 5+6 — **Channels & realtime chat** (merged) |
-| **Current feature** | Slices 4–5 done (T13–T18: sockets, live msgs, typing, presence) → next **T19** Files/S3 upload |
-| **Current technology** | Next.js · Mongo · Zod · RTK · **Socket.IO service live** (auth handshake, rooms, internal emit) |
-| **Last updated** | 2026-08-08 |
+| **Current feature** | Files slice done (T19–T22: S3 presign/upload/preview) → next **Slice 7** docs harden, then Phase 7 AI |
+| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · **AWS S3** (presigned PUT/GET, private bucket) |
+| **Last updated** | 2026-08-09 |
 
 ## Phase status
 
@@ -21,7 +21,7 @@
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
 | 4 | State & data layer | 🟡 Partial | RTK already used; deepen as needed during channels |
-| 5 | Collaboration core | 🔄 **Chat live (text)** | Channels + REST + realtime text done; files (S3) next. [`docs/channels/`](../channels/README.md) |
+| 5 | Collaboration core | 🔄 **Chat live (text + files)** | Channels + REST + realtime + S3 attachments done; docs harden (Slice 7) next. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence shipped (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ⬜ Not started | |
 | 8 | Quality & deployment | ⬜ Not started | |
@@ -55,6 +55,11 @@
 | 2026-08-07 | T18 workspace presence | `workspace-handlers.ts` (ref-counted sockets), `use-workspace-presence` |
 | 2026-08-08 | Theme swap → **Ocean Blue** v1.1 | Retokenized `globals.css`; token-based components followed automatically; design-system.md updated |
 | 2026-08-08 | Chat UI polish | Bubbles hug content, group consecutive sender messages, tighter spacing (`chat-message-list.tsx`) |
+| 2026-08-08 | Marketing hero + product-preview polish | Gradient headline/eyebrow/glow + brand-gradient mock accents |
+| 2026-08-09 | T19–T20 S3 presign + limits | Batch presign route, `lib/storage/s3.ts`, shared `attachment-limits`, `upload-api` slice |
+| 2026-08-09 | T21 composer upload flow | Lazy presign → `Promise.all` PUT → send with attachments; `upload-client.ts` |
+| 2026-08-09 | T22 attachments end-to-end | POST persists + bucket guard; presigned GET on read; grid + lightbox + real blob download |
+| 2026-08-09 | Backlog: message edit/delete | Deferred to Slice 8 (T25–T27); design locked (editedAt/deletedAt, soft delete) |
 
 ## GitHub
 
