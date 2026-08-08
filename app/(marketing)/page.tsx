@@ -66,7 +66,7 @@ export default function MarketingPage() {
             </ul>
           </div>
 
-          <div className="animate-in duration-700 fill-mode-both [animation-delay:100ms] fade-in slide-in-from-right-3 relative">
+          <div className="relative animate-in duration-700 fill-mode-both [animation-delay:100ms] fade-in slide-in-from-right-3">
             <div
               aria-hidden
               className="bg-hero-glow pointer-events-none absolute -inset-8 -z-10 blur-2xl"

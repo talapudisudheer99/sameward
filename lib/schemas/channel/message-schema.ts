@@ -1,13 +1,10 @@
 import { z } from "zod"
 
-const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024
-const ALLOWED_MIMES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "application/pdf",
-] as const
+import {
+  ALLOWED_ATTACHMENT_MIMES,
+  MAX_ATTACHMENT_BYTES,
+  MAX_ATTACHMENTS_PER_MESSAGE,
+} from "@/lib/channels/attachment-limits"
 
 /**
  * One attachment metadata object (bytes live in S3).
@@ -15,7 +12,7 @@ const ALLOWED_MIMES = [
 export const attachmentSchema = z.object({
   url: z.string().url({ message: "Invalid attachment URL" }),
   name: z.string().trim().min(1, { message: "Attachment name is required" }),
-  mime: z.enum(ALLOWED_MIMES, { message: "File type not allowed" }),
+  mime: z.enum(ALLOWED_ATTACHMENT_MIMES, { message: "File type not allowed" }),
   sizeBytes: z
     .number()
     .int({ message: "sizeBytes must be an integer" })
@@ -38,7 +35,9 @@ const messageSchema = z
       .default(""),
     attachments: z
       .array(attachmentSchema)
-      .max(3, { message: "At most 3 attachments per message" })
+      .max(MAX_ATTACHMENTS_PER_MESSAGE, {
+        message: `At most ${MAX_ATTACHMENTS_PER_MESSAGE} attachments per message`,
+      })
       .default([]),
     clientMessageId: z.string().trim().min(1).optional(),
   })

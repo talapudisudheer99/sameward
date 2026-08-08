@@ -6,8 +6,9 @@ import { baseApi } from "@/store/api/base-api"
 import { authApi } from "./api/auth/auth-api"
 import { workspacesApi } from "./api/workspace/workspaces-api"
 import { channelsApi } from "./api/channel/channel-api"
+import { uploadApi } from "./api/upload/upload-api"
 
-export { authApi, workspacesApi, channelsApi }
+export { authApi, workspacesApi, channelsApi, uploadApi }
 
 /**
  * Factory so each browser tab gets its own store (see ReduxProvider).
