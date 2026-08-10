@@ -15,6 +15,7 @@ docs/
   workspaces/        ← ✅ Phase 3 workspaces
   channels/          ← ✅ channels + realtime chat
   ai/                ← ✅ Phase 7 AI knowledge assistant
+  profiles/          ← 🚧 Profile v1 (thin professional card)
   architecture/      ← product vision, stack, data flow
   design/            ← design system tokens
   guides/            ← reusable tech notes (e.g. Mongoose)
@@ -29,6 +30,7 @@ docs/
 | **`workspaces/`** | Phase 3 module — vision, stories, flows, tasks |
 | **`channels/`** | Channels + realtime chat (Phase 5+6 merged) |
 | **`ai/`** | Phase 7 Path A — AI knowledge assistant |
+| **`profiles/`** | Profile v1 — edit self + teammate card |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |
 | **`phases/`** | Learning roadmap stubs |
 | **`guides/`** | Tech primers (Mongoose, …) |
@@ -46,7 +48,8 @@ docs/
 | “Workspaces & members?” | [workspaces/README.md](./workspaces/README.md) |
 | “Channels & live chat?” | [channels/README.md](./channels/README.md) |
 | “AI assistant?” | [ai/README.md](./ai/README.md) |
-| “Next feature to build?” | [Phase 8](./phases/08-quality-deployment/README.md) · then Profile v1 ([progress](./tracking/progress.md)) |
+| “Member profiles?” | [profiles/README.md](./profiles/README.md) |
+| “Next feature to build?” | [profiles/TASKS.md](./profiles/TASKS.md) · then [Phase 8](./phases/08-quality-deployment/README.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |

@@ -9,6 +9,7 @@ import ChannelMembersPanel from "@/components/channel/channel-members-panel"
 import ChannelSidebar from "@/components/channel/channel-sidebar"
 import ChannelAiPanel from "@/components/channel/ai/channel-ai-panel"
 import ExplainMessageDialog from "@/components/channel/ai/explain-message-dialog"
+import ProfileCardDialog from "@/components/profile/profile-card-dialog"
 import ChatComposer from "@/components/channel/chat-composer"
 import ChatHeader from "@/components/channel/chat-header"
 import ChatMessageList from "@/components/channel/chat-message-list"
@@ -93,6 +94,10 @@ export default function ChannelChatShell({
     authorName: string
     attachmentNames: string[]
   } | null>(null)
+  const [profileTarget, setProfileTarget] = useState<{
+    userId: string
+    name: string
+  } | null>(null)
   const [draftNonce, setDraftNonce] = useState(0)
   const [draftText, setDraftText] = useState("")
   const [forChannelId, setForChannelId] = useState(activeChannel?.id)
@@ -163,6 +168,7 @@ export default function ChannelChatShell({
               isLoading={messagesLoading}
               isError={messagesError}
               onExplainMessage={(target) => setExplainTarget(target)}
+              onOpenProfile={(target) => setProfileTarget(target)}
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
@@ -193,6 +199,9 @@ export default function ChannelChatShell({
               canManage && onRemoveMember
                 ? (id) => void onRemoveMember(id)
                 : undefined
+            }
+            onOpenProfile={(m) =>
+              setProfileTarget({ userId: m.userId, name: m.fullName })
             }
           />
         </>
@@ -225,6 +234,15 @@ export default function ChannelChatShell({
             workspaceId={workspaceId}
             channelId={activeChannel.id}
             target={explainTarget}
+          />
+          <ProfileCardDialog
+            open={profileTarget != null}
+            onOpenChange={(open) => {
+              if (!open) setProfileTarget(null)
+            }}
+            workspaceId={workspaceId}
+            userId={profileTarget?.userId ?? null}
+            fallbackName={profileTarget?.name}
           />
           <RenameChannelDialog
             open={renameOpen}

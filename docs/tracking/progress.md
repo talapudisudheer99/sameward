@@ -6,8 +6,8 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 8 — Quality, Performance & Deployment (**next**) |
-| **Current feature** | Path A + chat E2E closed → **Phase 8** (tests + Railway deploy) · then **Profile v1** (PO agreed) |
+| **Current phase** | **Profile v1** (PO agreed) — Phase 8 quality/deploy deferred until Profile ships |
+| **Current feature** | Thin professional card — edit `/profile` · teammate dialog · [`docs/profiles/`](../profiles/README.md) |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
 | **Last updated** | 2026-08-11 |
 
@@ -24,7 +24,8 @@
 | 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; mobile picker + lightbox polish (Aug 11). Edit/delete → Slice 8. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
-| 8 | Quality & deployment | ⬜ **Not started** | Jest/RTL + Railway Option B ship — [phase README](../phases/08-quality-deployment/README.md) |
+| 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
+| — | **Profile v1** | 🚧 **In progress** | [`docs/profiles/`](../profiles/README.md) |
 
 ## Channels v1 — PO locks (Jul 31)
 
@@ -77,6 +78,7 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | Mobile channel switch | Back → `/channels?list=1` picker (index no longer traps redirect on phone) |
 | 2026-08-11 | PO: Profile v1 | Agreed thin professional card after Phase 8; locks in progress |
 | 2026-08-11 | Docs sync | Progress + channels FE/E2E + hub; Phase 8 remains **next** (not started) |
+| 2026-08-11 | Push + Profile v1 kickoff | `65f50ab` pushed; Profile docs + model/API/UI in progress |
 
 ## GitHub
 

@@ -7,7 +7,7 @@ import { SESSION_COOKIE_NAME } from "@/lib/auth/cookies"
  * proxy.ts (Next.js 16 — replaces the old middleware.ts name)
  *
  * Runs BEFORE a page/route renders. Think of it as a bouncer at the door:
- * - Guest trying to enter /workspace? → send them to /login
+ * - Guest trying to enter /workspace or /profile? → send them to /login
  * - Cookie present? → let them through (the page still re-checks the session later)
  *
  * Important limitation:
@@ -38,5 +38,5 @@ export function proxy(request: NextRequest) {
  * Public pages (/ , /login , /signup) and /api/* are NOT matched.
  */
 export const config = {
-  matcher: ["/workspace/:path*"],
+  matcher: ["/workspace/:path*", "/profile", "/profile/:path*"],
 }

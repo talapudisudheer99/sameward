@@ -13,6 +13,8 @@ type ChannelMembersPanelProps = {
   onInvite: () => void
   /** Wire: useRemoveChannelMemberMutation + confirm */
   onRemove?: (userId: string) => void
+  /** Profile v1 — open teammate card */
+  onOpenProfile?: (member: ChannelMemberRow) => void
   className?: string
 }
 
@@ -24,6 +26,7 @@ export default function ChannelMembersPanel({
   canInvite,
   onInvite,
   onRemove,
+  onOpenProfile,
   className,
 }: ChannelMembersPanelProps) {
   return (
@@ -56,22 +59,33 @@ export default function ChannelMembersPanel({
             key={m.userId}
             className="flex min-w-0 items-center gap-2 rounded-[var(--radius)] px-2 py-1.5"
           >
-            <span className="relative shrink-0">
-              <span className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
-                {m.fullName.slice(0, 1).toUpperCase()}
+            <button
+              type="button"
+              className={cn(
+                "flex min-w-0 flex-1 items-center gap-2 rounded-md text-left outline-none",
+                onOpenProfile &&
+                  "hover:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring"
+              )}
+              onClick={() => onOpenProfile?.(m)}
+              disabled={!onOpenProfile}
+            >
+              <span className="relative shrink-0">
+                <span className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                  {m.fullName.slice(0, 1).toUpperCase()}
+                </span>
+                {m.online ? (
+                  <span
+                    className="absolute right-0 bottom-0 size-2 rounded-full border border-card bg-primary"
+                    title="Online"
+                  />
+                ) : null}
               </span>
-              {m.online ? (
-                <span
-                  className="absolute right-0 bottom-0 size-2 rounded-full border border-card bg-primary"
-                  title="Online"
-                />
-              ) : null}
-            </span>
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <OverflowText className="block text-sm font-medium">
-                {m.fullName}
-              </OverflowText>
-            </div>
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <OverflowText className="block text-sm font-medium">
+                  {m.fullName}
+                </OverflowText>
+              </div>
+            </button>
             {onRemove ? (
               <Button
                 type="button"

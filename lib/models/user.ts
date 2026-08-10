@@ -7,6 +7,14 @@ import {
 } from "@/lib/db/mongoose-ns"
 import type { Types } from "mongoose"
 
+const profileLinkSchema = new Schema(
+  {
+    label: { type: String, trim: true, maxlength: 40, required: true },
+    url: { type: String, trim: true, maxlength: 500, required: true },
+  },
+  { _id: false }
+)
+
 const userSchema = new Schema(
   {
     fullName: {
@@ -38,6 +46,39 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    /** Profile v1 — optional professional card fields */
+    avatarUrl: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: null,
+    },
+    title: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+      default: "",
+    },
+    bio: {
+      type: String,
+      trim: true,
+      maxlength: 280,
+      default: "",
+    },
+    timezone: {
+      type: String,
+      trim: true,
+      maxlength: 64,
+      default: "",
+    },
+    links: {
+      type: [profileLinkSchema],
+      default: [],
+      validate: {
+        validator: (v: unknown[]) => !Array.isArray(v) || v.length <= 2,
+        message: "At most 2 links",
+      },
+    },
   },
   {
     timestamps: true,
@@ -49,7 +90,7 @@ export type UserDocument = InferSchemaType<typeof userSchema> & {
 }
 
 // Next.js hot-reload keeps an old Model in `models.User` without new fields.
-// That silently strips `emailVerified` on create/update. Clear it in dev.
+// That silently strips new fields on create/update. Clear it in dev.
 if (process.env.NODE_ENV !== "production" && models.User) {
   delete models.User
 }

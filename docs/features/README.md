@@ -18,8 +18,8 @@ Jump from a **product feature** to the right doc.
 | Channels + live chat (Socket.IO) | ✅ E2E | [**channels/**](../channels/README.md) |
 | Docs / boards | ⬜ | Later (after channels v1) |
 | AI assist (Path A) | ✅ E2E | [**ai/**](../ai/README.md) |
-| Member profiles (thin v1) | ⬜ PO agreed | After Phase 8 — locks in [progress](../tracking/progress.md) |
-| Tests + Railway deploy | ⬜ **next** | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
+| Member profiles (thin v1) | 🚧 | [**profiles/**](../profiles/README.md) |
+| Tests + Railway deploy | ⬜ after Profile | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)
 

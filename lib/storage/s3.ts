@@ -88,6 +88,22 @@ export function buildAttachmentKey(params: {
   return `workspaces/${params.workspaceId}/channels/${params.channelId}/${randomUUID()}-${safe}`
 }
 
+/** Profile avatar — under the user, never client-chosen path. */
+export function buildAvatarKey(params: {
+  userId: string
+  fileName: string
+}): string {
+  const safe = sanitizeFileName(params.fileName)
+  return `users/${params.userId}/avatar/${randomUUID()}-${safe}`
+}
+
+/** True when URL is an avatar object for this user (guards PATCH avatarUrl). */
+export function isUserAvatarUrl(url: string, userId: string): boolean {
+  const key = objectKeyFromUrl(url)
+  if (!key) return false
+  return key.startsWith(`users/${userId}/avatar/`)
+}
+
 function objectHost(): string {
   return `${getBucket()}.s3.${getRegion()}.amazonaws.com`
 }

@@ -24,6 +24,8 @@ type ChatMessageListProps = {
     authorName: string
     attachmentNames: string[]
   }) => void
+  /** Profile v1 — open author card */
+  onOpenProfile?: (target: { userId: string; name: string }) => void
 }
 
 function formatTime(iso: string) {
@@ -48,6 +50,7 @@ export default function ChatMessageList({
   isError = false,
   className,
   onExplainMessage,
+  onOpenProfile,
 }: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
@@ -135,6 +138,20 @@ export default function ChatMessageList({
           >
             {grouped ? (
               <span className="w-7 shrink-0" aria-hidden />
+            ) : onOpenProfile ? (
+              <button
+                type="button"
+                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium outline-none hover:ring-2 hover:ring-ring/40 focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={`View ${msg.authorName}'s profile`}
+                onClick={() =>
+                  onOpenProfile({
+                    userId: msg.authorId,
+                    name: msg.authorName,
+                  })
+                }
+              >
+                {(msg.authorName || "?").slice(0, 1).toUpperCase()}
+              </button>
             ) : (
               <span
                 className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium"
@@ -156,9 +173,24 @@ export default function ChatMessageList({
                     mine && "flex-row-reverse"
                   )}
                 >
-                  <span className="font-medium text-foreground">
-                    {msg.authorName}
-                  </span>
+                  {onOpenProfile ? (
+                    <button
+                      type="button"
+                      className="font-medium text-foreground hover:underline"
+                      onClick={() =>
+                        onOpenProfile({
+                          userId: msg.authorId,
+                          name: msg.authorName,
+                        })
+                      }
+                    >
+                      {msg.authorName}
+                    </button>
+                  ) : (
+                    <span className="font-medium text-foreground">
+                      {msg.authorName}
+                    </span>
+                  )}
                   <time dateTime={msg.createdAt}>
                     {formatTime(msg.createdAt)}
                   </time>

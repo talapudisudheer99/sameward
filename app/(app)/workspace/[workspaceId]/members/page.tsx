@@ -14,6 +14,7 @@ import { toast } from "sonner"
 
 import ConfirmDialog from "@/components/dialogs/confirm-dialog"
 import InviteMemberDialog from "@/components/dialogs/workspace/invite-member-dialog"
+import ProfileCardDialog from "@/components/profile/profile-card-dialog"
 import Loader from "@/components/sharable/loader"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -66,6 +67,10 @@ export default function WorkspaceMembersPage() {
   const [roleUpdatingUserId, setRoleUpdatingUserId] = useState<string | null>(
     null
   )
+  const [profileTarget, setProfileTarget] = useState<{
+    userId: string
+    name: string
+  } | null>(null)
 
   const { user, emailVerified } = useCurrentUser()
   const [removeMember] = useRemoveWorkspaceMemberMutation()
@@ -247,6 +252,22 @@ export default function WorkspaceMembersPage() {
         roleUpdatingUserId={roleUpdatingUserId}
         onRemoveMember={setMemberToRemove}
         onRoleChange={onRoleChange}
+        onOpenProfile={(member) =>
+          setProfileTarget({
+            userId: member.userId,
+            name: member.fullName || member.email,
+          })
+        }
+      />
+
+      <ProfileCardDialog
+        open={profileTarget != null}
+        onOpenChange={(open) => {
+          if (!open) setProfileTarget(null)
+        }}
+        workspaceId={workspaceId}
+        userId={profileTarget?.userId ?? null}
+        fallbackName={profileTarget?.name}
       />
 
       {canInvite ? (

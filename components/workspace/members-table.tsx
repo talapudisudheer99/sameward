@@ -32,6 +32,8 @@ interface MembersTableProps {
     member: WorkspaceMemberListItem,
     role: MemberRoleOption
   ) => void
+  /** Profile v1 — open teammate card */
+  onOpenProfile?: (member: WorkspaceMemberListItem) => void
 }
 
 /**
@@ -46,6 +48,7 @@ export default function MembersTable({
   roleUpdatingUserId = null,
   onRemoveMember,
   onRoleChange,
+  onOpenProfile,
 }: MembersTableProps) {
   if (members.length === 0) {
     return (
@@ -95,34 +98,45 @@ export default function MembersTable({
               )}
             >
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                <div
+                <button
+                  type="button"
                   className={cn(
-                    "flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white",
-                    workspaceTileColor(member.fullName || member.email)
+                    "flex min-w-0 flex-1 items-center gap-3 rounded-lg text-left outline-none",
+                    onOpenProfile &&
+                      "cursor-pointer hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
                   )}
-                  aria-hidden
+                  onClick={() => onOpenProfile?.(member)}
+                  disabled={!onOpenProfile}
                 >
-                  {workspaceInitials(member.fullName || member.email)}
-                </div>
-                <div className="min-w-0">
-                  <p
-                    className="truncate text-sm font-medium text-foreground"
-                    title={member.fullName || "Unknown"}
+                  <div
+                    className={cn(
+                      "flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white",
+                      workspaceTileColor(member.fullName || member.email)
+                    )}
+                    aria-hidden
                   >
-                    {member.fullName || "Unknown"}
-                    {isSelf ? (
-                      <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                        (you)
-                      </span>
-                    ) : null}
-                  </p>
-                  <p
-                    className="truncate text-xs text-muted-foreground"
-                    title={member.email}
-                  >
-                    {member.email}
-                  </p>
-                </div>
+                    {workspaceInitials(member.fullName || member.email)}
+                  </div>
+                  <div className="min-w-0">
+                    <p
+                      className="truncate text-sm font-medium text-foreground"
+                      title={member.fullName || "Unknown"}
+                    >
+                      {member.fullName || "Unknown"}
+                      {isSelf ? (
+                        <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                          (you)
+                        </span>
+                      ) : null}
+                    </p>
+                    <p
+                      className="truncate text-xs text-muted-foreground"
+                      title={member.email}
+                    >
+                      {member.email}
+                    </p>
+                  </div>
+                </button>
               </div>
 
               {canEditRole ? (

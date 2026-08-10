@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LayoutGrid, type LucideIcon } from "lucide-react"
+import { Home, LayoutGrid, UserRound, type LucideIcon } from "lucide-react"
 
 import { TeamHubLogo } from "@/components/layout/teamhub-logo"
 import { LogoutButton } from "@/components/layout/logout-button"
@@ -21,6 +21,11 @@ const navItems: NavItem[] = [
     label: "Workspace",
     href: "/workspace",
     icon: LayoutGrid,
+  },
+  {
+    label: "Profile",
+    href: "/profile",
+    icon: UserRound,
   },
   {
     label: "Home",
