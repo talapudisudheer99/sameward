@@ -1,6 +1,6 @@
 # Phase 7 — AI & Third-Party Integrations
 
-**Status:** ✅ **Path A shipped** — module SoT: [`docs/ai/`](../../ai/README.md)  
+**Status:** ✅ **Path A shipped + E2E verified** (Aug 10–11, 2026) — module SoT: [`docs/ai/`](../../ai/README.md)  
 **Prev:** [← Phase 6](../06-realtime/README.md) · **Next:** [Phase 8 — Quality →](../08-quality-deployment/README.md)
 
 ---

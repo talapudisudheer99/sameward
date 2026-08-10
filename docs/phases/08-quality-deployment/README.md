@@ -1,7 +1,7 @@
 # Phase 8 — Quality, Performance & Deployment
 
-**Status:** ⬜ Not started  
-**Prev:** [← Phase 7](../07-ai-integrations/README.md) · **Next:** — (iterate & deepen)
+**Status:** ⬜ **Not started** — **next on the roadmap** (Path A + chat E2E closed Aug 11)  
+**Prev:** [← Phase 7](../07-ai-integrations/README.md) · **Next:** Profile v1 (PO locks in [progress](../../tracking/progress.md)) · Path B AI later
 
 ---
 

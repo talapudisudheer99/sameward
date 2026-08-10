@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 7 — **AI Knowledge Assistant (Path A) ✅** |
-| **Current feature** | Path A shipped → next **Phase 8** quality & deploy (or Path B later) |
-| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · **OpenAI** (`lib/ai` provider) |
-| **Last updated** | 2026-08-10 |
+| **Current phase** | Phase 8 — Quality, Performance & Deployment (**next**) |
+| **Current feature** | Path A + chat E2E closed → **Phase 8** (tests + Railway deploy) · then **Profile v1** (PO agreed) |
+| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
+| **Last updated** | 2026-08-11 |
 
 ## Phase status
 
@@ -20,11 +20,11 @@
 | 2 | Authentication (core) | ✅ Done | Email/password, Google, forgot/reset, sessions, proxy |
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
-| 4 | State & data layer | 🟡 Partial | RTK already used; deepen as needed during channels |
-| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3 attachments; docs hardened (Slice 7). Edit/delete deferred to Slice 8. [`docs/channels/`](../channels/README.md) |
-| 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence shipped (T13–T18); Redis multi-instance later |
-| 7 | AI & integrations | ✅ **Path A shipped** | Summarize · catch-up · ask · explain · draft · notes · OpenAI · [`docs/ai/`](../ai/README.md) |
-| 8 | Quality & deployment | ⬜ Not started | |
+| 4 | State & data layer | 🟡 Partial | RTK used across workspaces/channels/AI; deepen in Phase 8 tests |
+| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; mobile picker + lightbox polish (Aug 11). Edit/delete → Slice 8. [`docs/channels/`](../channels/README.md) |
+| 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
+| 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
+| 8 | Quality & deployment | ⬜ **Not started** | Jest/RTL + Railway Option B ship — [phase README](../phases/08-quality-deployment/README.md) |
 
 ## Channels v1 — PO locks (Jul 31)
 
@@ -34,6 +34,15 @@
 4. Text + files (10MB · 3 files · jpeg/png/webp/gif/pdf)  
 5. Typing + basic presence  
 6. Create channel = owner \| admin  
+
+## Profiles — PO locks (Aug 11)
+
+Thin **Profile v1** after Phase 8 (not LinkedIn):
+
+1. Fields: display name · avatar · title/role · short bio · optional 1–2 links + timezone  
+2. Surfaces: edit own profile · teammate card from channel members / message click  
+3. Visibility: workspace-scoped; email only to workspace mates  
+4. Out: posts, endorsements, public web profiles, skills taxonomies  
 
 ## Session log
 
@@ -63,6 +72,11 @@
 | 2026-08-09 | Slice 7 docs harden (T23/T24 + E2E) | Synced API/SOCKETS/FRONTEND/LIB docs to exact shipped files; added manual E2E checklist → **Phase 5+6 closed, user E2E verified** |
 | 2026-08-10 | Phase 7 Path A kickoff | PO locks: understand-only · OpenAI · six capabilities; created `docs/ai/` |
 | 2026-08-10 | Phase 7 Path A implement | Provider + 6 AI routes + panel/explain/draft UI + rate limit + `ai_runs` |
+| 2026-08-10–11 | Phase 7 Path A E2E | User verified all six AI flows + draft insert + isolation; Path A **closed** |
+| 2026-08-11 | Chat UI polish | Light lightbox (no black frame); image grid; tablet/phone shell; members overlay |
+| 2026-08-11 | Mobile channel switch | Back → `/channels?list=1` picker (index no longer traps redirect on phone) |
+| 2026-08-11 | PO: Profile v1 | Agreed thin professional card after Phase 8; locks in progress |
+| 2026-08-11 | Docs sync | Progress + channels FE/E2E + hub; Phase 8 remains **next** (not started) |
 
 ## GitHub
 
@@ -73,4 +87,4 @@
 
 ---
 
-[← Docs hub](../README.md) · [Channels →](../channels/README.md) · [Workspaces →](../workspaces/README.md)
+[← Docs hub](../README.md) · [Channels →](../channels/README.md) · [Workspaces →](../workspaces/README.md) · [AI →](../ai/README.md)

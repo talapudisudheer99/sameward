@@ -46,7 +46,7 @@ docs/
 | “Workspaces & members?” | [workspaces/README.md](./workspaces/README.md) |
 | “Channels & live chat?” | [channels/README.md](./channels/README.md) |
 | “AI assistant?” | [ai/README.md](./ai/README.md) |
-| “Next feature to build?” | [ai/TASKS.md](./ai/TASKS.md) |
+| “Next feature to build?” | [Phase 8](./phases/08-quality-deployment/README.md) · then Profile v1 ([progress](./tracking/progress.md)) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
@@ -67,8 +67,8 @@ docs/
 | [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | 🟡 Partial (used in workspaces) |
 | [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels first; docs/boards later | ✅ → [channels/](./channels/README.md) |
 | [6 Realtime](./phases/06-realtime/README.md) | Chat sockets folded into channels | ✅ → [channels/SOCKETS.md](./channels/SOCKETS.md) |
-| [7 AI](./phases/07-ai-integrations/README.md) | Path A knowledge assistant | ✅ → [ai/](./ai/README.md) |
-| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests, Vercel | ⬜ |
+| [7 AI](./phases/07-ai-integrations/README.md) | Path A knowledge assistant | ✅ E2E → [ai/](./ai/README.md) |
+| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests + Railway Option B | ⬜ **next** |
 
 ---
 
@@ -85,4 +85,4 @@ docs/
 
 - Template: [`.env.example`](../.env.example)  
 - Auth production checklist: [auth/PRODUCTION.md](./auth/PRODUCTION.md)  
-- Full ship pipeline: Phase 8  
+- Full ship pipeline: [Phase 8](./phases/08-quality-deployment/README.md) · [deploy.md](./architecture/deploy.md) (Railway Option B) 

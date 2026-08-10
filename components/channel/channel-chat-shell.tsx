@@ -147,7 +147,7 @@ export default function ChannelChatShell({
                   : undefined
               }
               canManage={canManage}
-              backHref={`/workspace/${workspaceId}/channels`}
+              backHref={`/workspace/${workspaceId}/channels?list=1`}
               onRename={() => setRenameOpen(true)}
               onDelete={() => setDeleteOpen(true)}
               onInvite={isPrivate ? () => setInviteOpen(true) : undefined}

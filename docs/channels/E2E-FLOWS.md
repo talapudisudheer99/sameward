@@ -1,6 +1,6 @@
 # End-to-end flows — Channels & realtime chat
 
-**Status:** ✅ **Implemented · E2E verified 2026-08-09** (text, files, sockets, typing, presence)  
+**Status:** ✅ **Implemented · E2E verified 2026-08-09** (text, files, sockets, typing, presence) · **UI polish + mobile picker re-verified 2026-08-11**  
 **Working style:** discuss → docs → implement → review (same as auth/workspaces)
 
 **PO locks:** separate Socket.IO · public+private · `#general` · text+limited files · typing + presence · create = owner/admin
@@ -128,9 +128,14 @@ Two browsers: **A** (owner) + **B** (member), preferably one normal + one incogn
 
 **Files (flow E)**
 - [ ] A attaches 1 image + 1 pdf (≤10MB, allowlisted) → uploads then message posts; B sees image grid + file card live
-- [ ] Click image → lightbox opens (prev/next, counter, open-in-tab); Download button saves a real file
+- [ ] Click image → **light card** lightbox opens (prev/next, counter, open-in-tab); Download saves a real file (no black chrome frame)
 - [ ] Try a 4th file or an oversized/blocked-MIME file → rejected with clear error (client + server)
 - [ ] Send attachment-only message (no text) → succeeds
+
+**Mobile / tablet (responsive)**
+- [ ] Phone width: open a channel → channel list hidden; tap header **←** → full-screen Channels picker (`?list=1`)
+- [ ] From picker, open another channel → chat loads; switch again via **←**
+- [ ] Tablet: members panel opens as overlay (does not permanently crush the transcript)
 
 **Typing + presence (flows F, G)**
 - [ ] A types → B sees "A is typing…"; stops after idle/send

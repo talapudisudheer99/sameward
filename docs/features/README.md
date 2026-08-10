@@ -15,10 +15,11 @@ Jump from a **product feature** to the right doc.
 | Invite → accept + members / leave / remove / roles | ✅ v1 | [workspaces stories](../workspaces/USER-STORIES.md) |
 | Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
 | Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen during channels |
-| Channels + live chat (Socket.IO) | ✅ | [**channels/**](../channels/README.md) |
+| Channels + live chat (Socket.IO) | ✅ E2E | [**channels/**](../channels/README.md) |
 | Docs / boards | ⬜ | Later (after channels v1) |
-| AI assist (Path A) | ✅ | [**ai/**](../ai/README.md) |
-| Tests + Vercel deploy | ⬜ | [Phase 8](../phases/08-quality-deployment/README.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
+| AI assist (Path A) | ✅ E2E | [**ai/**](../ai/README.md) |
+| Member profiles (thin v1) | ⬜ PO agreed | After Phase 8 — locks in [progress](../tracking/progress.md) |
+| Tests + Railway deploy | ⬜ **next** | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)
 

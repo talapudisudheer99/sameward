@@ -13,7 +13,7 @@ We borrow *problems* from Slack / Notion / Jira / Trello / LinkedIn, not their U
 | Slack | Team conversation & presence | Channels + realtime chat |
 | Notion | Shared knowledge | Workspace docs / pages |
 | Jira / Trello | Work tracking | Boards & cards |
-| LinkedIn | Professional identity (light) | Profiles, activity, presence |
+| LinkedIn | Professional identity (light) | **Profile v1** (after Phase 8) — title, bio, avatar, teammate card |
 
 ## Core user journeys
 
@@ -22,12 +22,13 @@ We borrow *problems* from Slack / Notion / Jira / Trello / LinkedIn, not their U
 3. **Member** collaborates in **channels**, **docs**, **boards**
 4. **Member** gets **live** updates (messages, presence, notifications)
 5. **Member** uses **AI** for summaries / drafts (where it earns its place)
-6. **Admin** manages members & roles
+6. **Member** views/edits a **thin professional profile** (planned)
+7. **Admin** manages members & roles
 
 ## Domain model (high level)
 
 ```
-User
+User (+ profile fields later)
   └── Membership (role) ──→ Workspace
                                ├── Channel ──→ Message
                                ├── Document
@@ -45,7 +46,7 @@ By the end you should be able to:
 - Build secure **auth + protected APIs**
 - Model multi-tenant data in **MongoDB**
 - Add **realtime** without breaking REST architecture
-- Test critical paths and deploy via **GitHub → Vercel**
+- Test critical paths and deploy via **GitHub → Railway** (Option B)
 - Defend every stack choice in an interview
 
 ## Out of scope (for now)
@@ -53,9 +54,10 @@ By the end you should be able to:
 - Perfect pixel design systems competing with Figma-level polish
 - Native mobile apps
 - Full production billing / legal / SOC2
-- Cloning Slack/Notion feature parity
+- Cloning Slack/Notion/LinkedIn feature parity
+- Profile v1 stretch: posts, endorsements, public profiles outside workspace
 
-Those can be stretch goals after Phase 8.
+Those can be stretch goals after Phase 8 (+ Profile v1).
 
 ---
 

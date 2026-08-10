@@ -1,6 +1,6 @@
 # End-to-end flows — AI Knowledge Assistant
 
-**Status:** ✅ Implemented · E2E verified (manual, Aug 10, 2026)  
+**Status:** ✅ Implemented · E2E verified (manual, Aug 10–11, 2026)  
 **PO locks:** Path A · OpenAI · read-only · windowed context  
 **Prerequisite:** `OPENAI_API_KEY` in `.env.local` + restart Next. Realtime optional for AI routes but needed for normal live chat.
 

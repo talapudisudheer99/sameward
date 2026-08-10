@@ -1,7 +1,8 @@
 # Frontend — Channels & chat
 
-**Status:** ✅ **Wired & shipped** — UI + RTK Query + live sockets + S3 attachments (E2E verified 2026-08-09)  
-**Routes:** `/workspace/[workspaceId]/channels` · `/workspace/[workspaceId]/channels/[channelId]`
+**Status:** ✅ **Wired & shipped** — UI + RTK Query + live sockets + S3 attachments  
+**E2E:** verified 2026-08-09 · UI polish + mobile channel picker verified 2026-08-11  
+**Routes:** `/workspace/[workspaceId]/channels` · `?list=1` (mobile picker) · `/workspace/[workspaceId]/channels/[channelId]`
 
 ---
 
@@ -10,6 +11,7 @@
 | Code | Screen | Component | Status |
 |------|--------|-----------|--------|
 | **Ch-A** | Channel list sidebar | `components/channel/channel-sidebar.tsx` | ✅ UI |
+| **Ch-A′** | Mobile channel picker | `app/.../channels/page.tsx` (`?list=1` / &lt;md) | ✅ UI |
 | **Ch-B** | Empty / tip | `channel-empty-tip.tsx` | ✅ UI |
 | **Ch-C** | Create channel dialog | `dialogs/channel/create-channel-dialog.tsx` | ✅ UI |
 | **Ch-D** | Chat + composer | `chat-header` · `chat-message-list` · `chat-composer` · shell | ✅ UI |
@@ -17,10 +19,23 @@
 | **Ch-F** | Invite to private | `invite-channel-members-dialog.tsx` | ✅ UI |
 | — | Rename / delete | `rename-channel-dialog` · `ConfirmDialog` | ✅ UI |
 | — | Typing / reconnect | `typing-indicator` · `reconnect-banner` | ✅ UI (props only) |
+| — | Channel AI | `components/channel/ai/*` | ✅ → [docs/ai](../ai/FRONTEND.md) |
 
 **Shell:** `components/channel/channel-chat-shell.tsx` — all data via props + callbacks. No RTK inside.
 
-**Page stubs:** `app/(app)/workspace/[workspaceId]/channels/...` — toast placeholders until you wire RTK.
+**Page:** `app/(app)/workspace/[workspaceId]/channels/[channelId]/page.tsx` wires RTK + sockets + uploads.
+
+---
+
+## Responsive (tablet / phone)
+
+| Breakpoint | Behavior |
+|------------|----------|
+| **&lt; md** (phone) | In a channel: sidebar **hidden**; header **←** → `/channels?list=1` full-screen picker. App nav sidebar also hidden (`app/(app)/layout`). |
+| **md–lg** (tablet) | Channel list + chat side-by-side; members panel is an **overlay** (not a permanent third column). |
+| **≥ lg** | Members panel can dock beside chat when opened. |
+
+Desktop `/channels` (no `?list=1`) still auto-opens default/`#general`.
 
 ---
 
@@ -28,15 +43,15 @@
 
 | Piece | Behavior (shipped) |
 |-------|---------------------|
-| Transcript | Grouped bubbles hug content; attachments (image grid + lightbox + file cards); loading / error / empty; auto-scroll; `pending` / `failed` (`chat-message-list.tsx`, `chat-attachments.tsx`) |
-| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` · disabled while uploading |
-| Attachments | Local chips → **lazy presign + parallel S3 PUT in onSend**, then message POST (`lib/storage/upload-client.ts`) |
+| Transcript | Grouped bubbles hug content; `min-w-0` + wrap; loading / error / empty; auto-scroll; `pending` / `failed` |
+| Attachments | Image **1/2/3 grid** (stack on narrow); click → **light card lightbox** (prev/next, open, download); PDF/file cards with truncated names (`chat-attachments.tsx`) |
+| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` · disabled while uploading · AI draft insert via `draftNonce` |
 | Typing | `use-channel-typing` → `typingLabel` |
 | Presence | `user-workspace-presence` → `online` on `ChannelMemberRow` |
 | Reconnect | `reconnecting` prop → banner + gap fetch |
 | Emoji | Button stub (disabled) — optional later |
 
-**Not v1 UI:** thread panel, reaction picker, DM inbox.
+**Not v1 UI:** thread panel, reaction picker, DM inbox, member profile card (→ Profile v1).
 
 ---
 
@@ -48,6 +63,7 @@
 | Invite / remove private members | `canManage` + private channel |
 | Rename / delete | `canManage` (delete hidden if `isDefault`) |
 | Post / attach | anyone with channel access (gate in API) |
+| AI panel / Explain | channel members (same access as chat) |
 
 ---
 
@@ -55,9 +71,10 @@
 
 | Concern | Tool |
 |---------|------|
-| Channel list, CRUD, members | RTK Query → `store/api/workspace/workspaces-api.ts` |
+| Channel list, CRUD, members | RTK Query → `store/api/channel/channel-api.ts` (+ workspace members for invite) |
 | Message history / send | RTK Query → `store/api/channel/channel-api.ts` |
 | Attachment presign | RTK Query → `store/api/upload/upload-api.ts` |
+| AI mutations | RTK Query → `store/api/ai/ai-api.ts` |
 | Live append / typing / presence | `components/providers/socket-provider.tsx` + hooks |
 | Active channel id | URL `channelId` |
 

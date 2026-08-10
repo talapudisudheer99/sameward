@@ -1,6 +1,6 @@
 # Channels & realtime chat — module reference
 
-**Status:** Phase 5+6 merged — **docs locked, not built** (Jul 31, 2026)  
+**Status:** ✅ **Shipped + E2E verified** (Phase 5+6 · Aug 9, 2026) · UI polish / mobile picker Aug 11  
 **Customer goal:** Inside a workspace, the team has a **place to talk live** — public and private channels, text + limited files, typing, and basic presence.
 
 **PO locks (Jul 31, 2026)**
@@ -19,10 +19,10 @@ This folder is the **single source of truth** for the channels module (same idea
 | [USER-STORIES.md](./USER-STORIES.md) | PO stories + acceptance |
 | [E2E-FLOWS.md](./E2E-FLOWS.md) | Product + technical flows |
 | [DATA-MODEL.md](./DATA-MODEL.md) | Collections + visibility |
-| [API-ROUTES.md](./API-ROUTES.md) | Planned REST (history, channels, uploads) |
+| [API-ROUTES.md](./API-ROUTES.md) | REST (history, channels, uploads) |
 | [SOCKETS.md](./SOCKETS.md) | Separate Socket.IO service, events, edge cases |
-| [FRONTEND.md](./FRONTEND.md) | Screens + composer + live list |
-| [LIB-AND-MODELS.md](./LIB-AND-MODELS.md) | Planned `lib/` + `apps/realtime` (or `server/`) |
+| [FRONTEND.md](./FRONTEND.md) | Screens + composer + live list + responsive |
+| [LIB-AND-MODELS.md](./LIB-AND-MODELS.md) | `lib/` + `server/realtime` as built |
 | [TASKS.md](./TASKS.md) | Slice checklist |
 | [STEP-A-REALTIME-SCAFFOLD.md](./STEP-A-REALTIME-SCAFFOLD.md) | ✅ Second process + `/health` |
 | [STEP-B-SOCKET-ATTACH.md](./STEP-B-SOCKET-ATTACH.md) | ✅ Socket.IO attach + smoke connect |
@@ -31,26 +31,29 @@ This folder is the **single source of truth** for the channels module (same idea
 
 ---
 
-## What v1 will cover (planned)
+## What v1 covers (shipped)
 
 | Area | Covered |
 |------|---------|
-| Channels | Create (owner/admin) · list · open · rename/archive or delete (rules TBD in tasks) |
+| Channels | Create (owner/admin) · list · open · rename/delete (rules for `#general`) |
 | Visibility | `public` (all workspace members) · `private` (channel members only) |
 | Default | `#general` public on workspace create; lazy-create if missing |
 | Messages | Persist via REST · live fan-out via Socket.IO |
-| Files | Images + PDF · size/count/type limits (see VISION) |
+| Files | Images + PDF · size/count/type limits (see VISION) · light lightbox |
 | Live | Typing indicators · basic online presence |
+| Mobile | Full-screen channel picker via header **←** (`?list=1`) |
 | Safety | Workspace membership always · private → channel membership · non-access → **404** |
+| AI | Path A panel + explain — see [`docs/ai/`](../ai/README.md) |
 
-## What v1 will **not** cover (deferred)
+## What v1 does **not** cover (deferred)
 
 - Threads / reply sidebars  
 - DMs / group DMs  
-- Message reactions (emoji in text OK)  
+- Message reactions (emoji in text OK) · message edit/delete (Slice 8)  
 - Custom emoji packs  
 - Announcement-only channels  
 - Virus scanning / arbitrary file types  
+- Member **Profile v1** (after Phase 8 — [progress](../tracking/progress.md))  
 - Docs / boards (separate later modules)  
 - Full audit UI for chat  
 
@@ -77,7 +80,7 @@ Next.js (App Router)          Socket.IO service (separate process)
 2. **Private channel** → also require **channel membership** (or owner/admin exception only if PO locks it — default: must be channel member).
 3. **Create channel** = owner \| admin only.
 4. **UI is not authz** — hide CTAs; API + socket still enforce.
-5. **Separate realtime service** — do not rely on Vercel serverless alone for Socket.IO.
+5. **Separate realtime service** — Railway Option B (`server/realtime`); do not rely on serverless alone for Socket.IO.
 
 ---
 
