@@ -88,7 +88,7 @@ export default function ChatAttachments({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1.5",
+        "flex w-full max-w-full min-w-0 flex-col gap-1.5",
         mine ? "items-end" : "items-start"
       )}
     >
@@ -100,6 +100,7 @@ export default function ChatAttachments({
         <FileCard key={file.url} file={file} mine={mine} />
       ))}
 
+      {/* Light surface lightbox — soft overlay, no black chrome frame */}
       <Dialog
         open={isOpen}
         onOpenChange={(open) => {
@@ -108,19 +109,23 @@ export default function ChatAttachments({
       >
         <DialogContent
           showCloseButton
-          className="w-full gap-2 bg-transparent p-0 shadow-none ring-0 sm:max-w-3xl"
+          overlayClassName="bg-black/50 backdrop-blur-[2px]"
+          className={cn(
+            "gap-0 overflow-hidden border-border bg-card p-0 text-foreground shadow-xl",
+            "w-[min(100%-1.5rem,36rem)] max-w-[min(100%-1.5rem,36rem)] sm:max-w-xl"
+          )}
         >
           <DialogTitle className="sr-only">
             {current?.name ?? "Image"}
           </DialogTitle>
 
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex max-h-[min(72vh,34rem)] min-h-44 items-center justify-center bg-muted/50">
             {current ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={current.url}
                 alt={current.name}
-                className="max-h-[80vh] w-auto max-w-full rounded-xl object-contain"
+                className="max-h-[min(70vh,32rem)] w-auto max-w-full object-contain"
               />
             ) : null}
 
@@ -130,7 +135,7 @@ export default function ChatAttachments({
                   type="button"
                   size="icon"
                   variant="secondary"
-                  className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full opacity-90"
+                  className="absolute top-1/2 left-1.5 -translate-y-1/2 rounded-full border border-border/60 bg-card/95 shadow-sm sm:left-2"
                   onClick={() => step(-1)}
                   aria-label="Previous image"
                 >
@@ -140,7 +145,7 @@ export default function ChatAttachments({
                   type="button"
                   size="icon"
                   variant="secondary"
-                  className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full opacity-90"
+                  className="absolute top-1/2 right-1.5 -translate-y-1/2 rounded-full border border-border/60 bg-card/95 shadow-sm sm:right-2"
                   onClick={() => step(1)}
                   aria-label="Next image"
                 >
@@ -150,22 +155,22 @@ export default function ChatAttachments({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-3 rounded-lg bg-popover px-3 py-2 text-popover-foreground">
-            <span className="min-w-0 flex-1 truncate text-sm font-medium">
+          <div className="flex min-w-0 items-center gap-2 border-t border-border bg-card px-3 py-2.5">
+            <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground sm:text-sm">
               {current?.name}
             </span>
             {images.length > 1 ? (
-              <span className="shrink-0 text-xs text-muted-foreground">
-                {(openIndex ?? 0) + 1} / {images.length}
+              <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">
+                {(openIndex ?? 0) + 1}/{images.length}
               </span>
             ) : null}
             {current ? (
-              <span className="flex shrink-0 items-center gap-1">
+              <span className="flex shrink-0 items-center gap-0.5">
                 <a
                   href={current.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label="Open in new tab"
                 >
                   <ExternalLink className="size-4" />
@@ -173,7 +178,7 @@ export default function ChatAttachments({
                 <button
                   type="button"
                   onClick={() => downloadAttachment(current.url, current.name)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label="Download"
                 >
                   <Download className="size-4" />
@@ -187,6 +192,10 @@ export default function ChatAttachments({
   )
 }
 
+/** Shared width: never wider than the bubble / viewport */
+const gridShell =
+  "w-full max-w-[min(100%,14rem)] overflow-hidden rounded-2xl border border-border sm:max-w-[17rem]"
+
 function ImageGrid({
   images,
   onOpen,
@@ -198,14 +207,14 @@ function ImageGrid({
 }) {
   const count = images.length
 
-  // Single image — natural, capped height
   if (count === 1) {
     return (
       <button
         type="button"
         onClick={() => onOpen(0)}
         className={cn(
-          "block w-64 max-w-full overflow-hidden rounded-xl border border-border transition hover:brightness-95",
+          gridShell,
+          "group block bg-muted/30 transition hover:brightness-[0.97]",
           mine && "border-primary/30"
         )}
       >
@@ -213,18 +222,18 @@ function ImageGrid({
         <img
           src={images[0]!.url}
           alt={images[0]!.name}
-          className="max-h-72 w-full object-cover"
+          className="max-h-56 w-full object-cover sm:max-h-72"
         />
       </button>
     )
   }
 
-  // 2 up — side by side squares
   if (count === 2) {
     return (
       <div
         className={cn(
-          "grid w-64 max-w-full grid-cols-2 gap-1 overflow-hidden rounded-xl border border-border",
+          gridShell,
+          "grid grid-cols-2 gap-0.5 bg-border",
           mine && "border-primary/30"
         )}
       >
@@ -235,21 +244,30 @@ function ImageGrid({
     )
   }
 
-  // 3 up — one tall on the left, two stacked on the right
+  // 3 — collage from sm up; stacked strip on very narrow chat columns
   return (
     <div
       className={cn(
-        "grid h-56 w-64 max-w-full grid-cols-2 grid-rows-2 gap-1 overflow-hidden rounded-xl border border-border",
+        gridShell,
+        "flex flex-col gap-0.5 bg-border sm:grid sm:h-56 sm:grid-cols-2 sm:grid-rows-2 sm:gap-0.5",
         mine && "border-primary/30"
       )}
     >
       <GridTile
         img={images[0]!}
         onClick={() => onOpen(0)}
-        className="row-span-2"
+        className="h-36 min-h-0 sm:row-span-2 sm:h-auto"
       />
-      <GridTile img={images[1]!} onClick={() => onOpen(1)} />
-      <GridTile img={images[2]!} onClick={() => onOpen(2)} />
+      <GridTile
+        img={images[1]!}
+        onClick={() => onOpen(1)}
+        className="h-28 min-h-0 sm:h-auto"
+      />
+      <GridTile
+        img={images[2]!}
+        onClick={() => onOpen(2)}
+        className="h-28 min-h-0 sm:h-auto"
+      />
     </div>
   )
 }
@@ -270,7 +288,7 @@ function GridTile({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative overflow-hidden transition hover:brightness-95",
+        "group relative h-full min-h-0 w-full overflow-hidden bg-muted",
         square && "aspect-square",
         className
       )}
@@ -279,7 +297,7 @@ function GridTile({
       <img
         src={img.url}
         alt={img.name}
-        className="h-full w-full object-cover"
+        className="h-full w-full object-cover transition duration-200 group-hover:brightness-95"
       />
     </button>
   )
@@ -290,16 +308,15 @@ function FileCard({ file, mine }: { file: Attachment; mine?: boolean }) {
   return (
     <div
       className={cn(
-        "flex w-64 max-w-full items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 transition hover:bg-muted",
+        "flex w-full max-w-[min(100%,14rem)] items-center gap-2 overflow-hidden rounded-xl border border-border bg-card px-3 py-2.5 transition hover:bg-muted sm:max-w-[17rem]",
         mine && "border-primary/30"
       )}
     >
-      {/* Preview: open in a new tab (PDFs/images render in-browser) */}
       <a
         href={file.url}
         target="_blank"
         rel="noreferrer"
-        className="flex min-w-0 flex-1 items-center gap-3"
+        className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden"
       >
         <span
           className={cn(
@@ -310,18 +327,17 @@ function FileCard({ file, mine }: { file: Attachment; mine?: boolean }) {
         >
           <FileText className="size-4.5" />
         </span>
-        <span className="min-w-0 flex-1">
-          <OverflowText className="text-sm font-medium text-foreground">
+        <span className="min-w-0 flex-1 overflow-hidden">
+          <OverflowText className="block w-full text-sm font-medium text-foreground">
             {file.name}
           </OverflowText>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
+          <span className="mt-0.5 block truncate text-xs text-muted-foreground">
             {isPdf ? "PDF" : file.mime.split("/")[1]?.toUpperCase()} ·{" "}
             {formatBytes(file.sizeBytes)}
           </span>
         </span>
       </a>
 
-      {/* Real download (fetch → blob → save) */}
       <button
         type="button"
         onClick={() => downloadAttachment(file.url, file.name)}

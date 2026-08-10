@@ -32,12 +32,21 @@ function clampLimit(limit?: number): number {
 }
 
 function formatOne(m: ContextMessage): string {
-  const files =
-    m.attachmentNames.length > 0
-      ? ` [files: ${m.attachmentNames.join(", ")}]`
-      : ""
-  const body = m.body.trim() || "(no text)"
-  return `[${m.createdAt}] ${m.authorName}: ${body}${files}`
+  const files = m.attachmentNames.length > 0 ? m.attachmentNames.join(", ") : ""
+  const body = m.body.trim()
+  const prefix = `[${m.createdAt}] ${m.authorName}:`
+
+  if (body && files) {
+    return `${prefix} ${body} [shared files: ${files}]`
+  }
+  if (body) {
+    return `${prefix} ${body}`
+  }
+  if (files) {
+    // Attachment-only — never pretend there was text; name the files clearly
+    return `${prefix} [attachment-only message — shared files: ${files}]`
+  }
+  return `${prefix} (empty message)`
 }
 
 function toContextMessage(
@@ -209,9 +218,18 @@ export async function loadExplainContext(
   )
   const { messages, truncated } = applyCharBudget(mapped)
 
+  const formatted = messages
+    .map((m) => {
+      const line = formatOne(m)
+      return m.id === messageId
+        ? `<<< TARGET >>>\n${line}\n<<< END TARGET >>>`
+        : line
+    })
+    .join("\n")
+
   return {
     messages,
-    formatted: messages.map(formatOne).join("\n"),
+    formatted,
     truncated,
     messageCount: messages.length,
   }

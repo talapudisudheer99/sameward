@@ -1,7 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { Copy, Sparkles } from "lucide-react"
+import { useState, type ComponentType } from "react"
+import {
+  Clock3,
+  Copy,
+  Loader2,
+  MessageCircleQuestion,
+  NotebookPen,
+  PenLine,
+  Sparkles,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -35,6 +43,26 @@ type ChannelAiPanelProps = {
   onInsertDraft: (text: string) => void
 }
 
+const TABS: {
+  id: TabId
+  label: string
+  Icon: ComponentType<{ className?: string }>
+}[] = [
+  { id: "summarize", label: "Summarize", Icon: Sparkles },
+  { id: "catch-up", label: "Catch up", Icon: Clock3 },
+  { id: "ask", label: "Ask", Icon: MessageCircleQuestion },
+  { id: "draft", label: "Draft", Icon: PenLine },
+  { id: "notes", label: "Notes", Icon: NotebookPen },
+]
+
+const RESULT_LABEL: Record<TabId, string> = {
+  summarize: "Summary",
+  "catch-up": "Catch-up",
+  ask: "Answer",
+  draft: "Draft",
+  notes: "Meeting notes",
+}
+
 function sinceYesterday(): string {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
@@ -60,6 +88,7 @@ export default function ChannelAiPanel({
 }: ChannelAiPanelProps) {
   const [tab, setTab] = useState<TabId>("summarize")
   const [result, setResult] = useState<string>("")
+  const [resultTab, setResultTab] = useState<TabId>("summarize")
   const [metaLine, setMetaLine] = useState<string | null>(null)
   const [question, setQuestion] = useState("")
   const [tone, setTone] = useState<AiTone>("concise")
@@ -72,19 +101,36 @@ export default function ChannelAiPanel({
 
   const busy = summarizing || catchingUp || asking || drafting || noting
 
-  function applyResult(text: string, messageCount: number, truncated: boolean) {
+  function selectTab(next: TabId) {
+    setTab(next)
+    setResult("")
+    setMetaLine(null)
+  }
+
+  function applyResult(
+    text: string,
+    messageCount: number,
+    truncated: boolean,
+    forTab: TabId
+  ) {
+    setResultTab(forTab)
     setResult(text)
     setMetaLine(
       truncated
-        ? `Used ${messageCount} messages (truncated to fit context)`
-        : `Used ${messageCount} messages`
+        ? `${messageCount} messages · truncated`
+        : `${messageCount} messages`
     )
   }
 
   async function runSummarize() {
     try {
       const data = await summarize({ workspaceId, channelId }).unwrap()
-      applyResult(data.text, data.meta.messageCount, data.meta.truncated)
+      applyResult(
+        data.text,
+        data.meta.messageCount,
+        data.meta.truncated,
+        "summarize"
+      )
     } catch (err) {
       toast.error(aiErrorMessage(err))
     }
@@ -93,7 +139,12 @@ export default function ChannelAiPanel({
   async function runCatchUp(since: string, label: string) {
     try {
       const data = await catchUp({ workspaceId, channelId, since }).unwrap()
-      applyResult(data.text, data.meta.messageCount, data.meta.truncated)
+      applyResult(
+        data.text,
+        data.meta.messageCount,
+        data.meta.truncated,
+        "catch-up"
+      )
       toast.success(`Catch-up: ${label}`)
     } catch (err) {
       toast.error(aiErrorMessage(err))
@@ -108,7 +159,7 @@ export default function ChannelAiPanel({
     }
     try {
       const data = await ask({ workspaceId, channelId, question: q }).unwrap()
-      applyResult(data.text, data.meta.messageCount, data.meta.truncated)
+      applyResult(data.text, data.meta.messageCount, data.meta.truncated, "ask")
     } catch (err) {
       toast.error(aiErrorMessage(err))
     }
@@ -132,7 +183,12 @@ export default function ChannelAiPanel({
   async function runNotes() {
     try {
       const data = await notes({ workspaceId, channelId }).unwrap()
-      applyResult(data.text, data.meta.messageCount, data.meta.truncated)
+      applyResult(
+        data.text,
+        data.meta.messageCount,
+        data.meta.truncated,
+        "notes"
+      )
     } catch (err) {
       toast.error(aiErrorMessage(err))
     }
@@ -148,64 +204,88 @@ export default function ChannelAiPanel({
     }
   }
 
-  const tabs: { id: TabId; label: string }[] = [
-    { id: "summarize", label: "Summarize" },
-    { id: "catch-up", label: "Catch up" },
-    { id: "ask", label: "Ask" },
-    { id: "draft", label: "Draft" },
-    { id: "notes", label: "Notes" },
-  ]
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(90vh,40rem)] max-w-lg flex-col gap-3 sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent
+        className={cn(
+          "flex max-h-[min(90vh,36rem)] w-[min(100%-1.5rem,28rem)] max-w-[min(100%-1.5rem,28rem)] flex-col gap-3 overflow-hidden p-4 sm:max-w-md",
+          "border-border bg-card shadow-xl"
+        )}
+      >
+        <DialogHeader className="gap-1 pr-8 text-left">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="size-4 text-primary" aria-hidden />
-            AI · #{channelName}
+            <span className="font-heading text-base font-semibold tracking-tight">
+              Channel AI
+            </span>
+            <span className="truncate text-xs font-normal text-muted-foreground">
+              #{channelName}
+            </span>
           </DialogTitle>
-          <DialogDescription>
-            Read-only help over messages you can already see. Nothing is posted
-            for you.
+          <DialogDescription className="text-xs text-muted-foreground">
+            Read-only · nothing is posted for you
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-wrap gap-1">
-          {tabs.map((t) => (
-            <Button
-              key={t.id}
-              type="button"
-              size="sm"
-              variant={tab === t.id ? "default" : "ghost"}
-              onClick={() => setTab(t.id)}
-              disabled={busy}
-            >
-              {t.label}
-            </Button>
-          ))}
+        {/* Tabs — no tray box; active = underline */}
+        <div
+          className="-mx-1 flex gap-0.5 overflow-x-auto border-b border-border/60"
+          role="tablist"
+          aria-label="AI capabilities"
+        >
+          {TABS.map(({ id, label, Icon }) => {
+            const active = tab === id
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                disabled={busy}
+                onClick={() => selectTab(id)}
+                className={cn(
+                  "flex shrink-0 items-center gap-1 border-b-2 px-2.5 py-2 text-xs font-medium transition-colors duration-150",
+                  active
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
+                  busy && "opacity-60"
+                )}
+              >
+                <Icon className="size-3.5 shrink-0" aria-hidden />
+                {label}
+              </button>
+            )
+          })}
         </div>
 
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
           {tab === "summarize" ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-xs text-muted-foreground">
-                Summarize recent messages in this channel.
+                Distill recent discussion into topics, decisions, and open
+                questions.
               </p>
               <Button
                 type="button"
                 size="sm"
                 disabled={busy}
                 onClick={() => void runSummarize()}
+                className="btn-brand-gradient gap-2"
               >
+                {summarizing ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="size-3.5" />
+                )}
                 {summarizing ? "Working…" : "Generate summary"}
               </Button>
             </div>
           ) : null}
 
           {tab === "catch-up" ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-xs text-muted-foreground">
-                Summarize what happened since a point in time.
+                What changed since a point in time.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -213,10 +293,16 @@ export default function ChannelAiPanel({
                   size="sm"
                   variant="outline"
                   disabled={busy}
+                  className="gap-1.5"
                   onClick={() =>
                     void runCatchUp(sinceYesterday(), "since yesterday")
                   }
                 >
+                  {catchingUp ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Clock3 className="size-3.5" />
+                  )}
                   Since yesterday
                 </Button>
                 <Button
@@ -235,44 +321,62 @@ export default function ChannelAiPanel({
           ) : null}
 
           {tab === "ask" ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 disabled={busy}
-                rows={3}
+                rows={2}
                 maxLength={2000}
                 placeholder="Ask about this channel…"
-                className="w-full resize-none rounded-[var(--radius)] border border-border bg-background px-3 py-2 text-sm outline-none"
+                className={cn(
+                  "w-full resize-none rounded-md border border-border bg-transparent px-2.5 py-2 text-sm outline-none",
+                  "placeholder:text-muted-foreground",
+                  "focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/25"
+                )}
               />
               <Button
                 type="button"
                 size="sm"
                 disabled={busy}
                 onClick={() => void runAsk()}
+                className="btn-brand-gradient gap-2"
               >
+                {asking ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <MessageCircleQuestion className="size-3.5" />
+                )}
                 {asking ? "Thinking…" : "Ask"}
               </Button>
             </div>
           ) : null}
 
           {tab === "draft" ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-xs text-muted-foreground">
-                Inserts a suggestion into the composer. You still click Send.
+                Inserts into the composer — you still click Send.
               </p>
-              <div className="flex flex-wrap gap-1">
+              <div
+                className="flex flex-wrap gap-3"
+                role="group"
+                aria-label="Draft tone"
+              >
                 {(["concise", "friendly", "formal"] as AiTone[]).map((t) => (
-                  <Button
+                  <button
                     key={t}
                     type="button"
-                    size="sm"
-                    variant={tone === t ? "default" : "outline"}
                     disabled={busy}
                     onClick={() => setTone(t)}
+                    className={cn(
+                      "border-b-2 pb-0.5 text-xs font-medium capitalize transition-colors",
+                      tone === t
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                    )}
                   >
                     {t}
-                  </Button>
+                  </button>
                 ))}
               </div>
               <Button
@@ -280,50 +384,70 @@ export default function ChannelAiPanel({
                 size="sm"
                 disabled={busy}
                 onClick={() => void runDraft()}
+                className="btn-brand-gradient gap-2"
               >
+                {drafting ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <PenLine className="size-3.5" />
+                )}
                 {drafting ? "Drafting…" : "Draft into composer"}
               </Button>
             </div>
           ) : null}
 
           {tab === "notes" ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <p className="text-xs text-muted-foreground">
-                Structured markdown notes you can copy — not saved as a Doc.
+                Markdown notes you can copy — not saved as a Doc.
               </p>
               <Button
                 type="button"
                 size="sm"
                 disabled={busy}
                 onClick={() => void runNotes()}
+                className="btn-brand-gradient gap-2"
               >
+                {noting ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <NotebookPen className="size-3.5" />
+                )}
                 {noting ? "Writing…" : "Generate notes"}
               </Button>
             </div>
           ) : null}
 
           {result ? (
-            <div className="space-y-2">
+            <div
+              key={result.slice(0, 24)}
+              className="animate-in space-y-1.5 border-t border-border/60 pt-3 duration-200 fade-in-0"
+            >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-xs text-muted-foreground">{metaLine}</p>
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold">
+                    {RESULT_LABEL[resultTab]}
+                  </span>
+                  {metaLine ? (
+                    <span className="text-[11px] text-muted-foreground">
+                      {metaLine}
+                    </span>
+                  ) : null}
+                </div>
                 <Button
                   type="button"
                   size="sm"
                   variant="ghost"
                   onClick={() => void copyResult()}
-                  className="gap-1"
+                  className="h-7 shrink-0 gap-1 px-2 text-xs"
                 >
                   <Copy className="size-3.5" />
                   Copy
                 </Button>
               </div>
-              <pre
-                className={cn(
-                  "max-h-64 overflow-y-auto rounded-[var(--radius)] border border-border bg-muted/40 p-3 text-left text-xs leading-relaxed whitespace-pre-wrap"
-                )}
-              >
+              <div className="max-h-48 overflow-y-auto text-left text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
                 {result}
-              </pre>
+              </div>
             </div>
           ) : null}
         </div>

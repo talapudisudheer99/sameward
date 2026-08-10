@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Loader2, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -13,14 +13,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { aiErrorMessage } from "@/lib/ai/ai-error-message"
+import { cn } from "@/lib/utils"
 import { useAiExplainMutation } from "@/store/api/ai/ai-api"
+
+export type ExplainTarget = {
+  id: string
+  body: string
+  authorName: string
+  attachmentNames: string[]
+}
 
 type ExplainMessageDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   workspaceId: string
   channelId: string
-  messageId: string | null
+  target: ExplainTarget | null
 }
 
 /**
@@ -31,18 +39,27 @@ export default function ExplainMessageDialog({
   onOpenChange,
   workspaceId,
   channelId,
-  messageId,
+  target,
 }: ExplainMessageDialogProps) {
   const [text, setText] = useState("")
   const [explain, { isLoading }] = useAiExplainMutation()
 
+  const body = target?.body?.trim() ?? ""
+  const files = target?.attachmentNames ?? []
+  const quote = body
+    ? body
+    : files.length > 0
+      ? `Shared file${files.length === 1 ? "" : "s"}: ${files.join(", ")}`
+      : "(empty message)"
+  const showFileNote = files.length > 0 && !body
+
   async function run() {
-    if (!messageId) return
+    if (!target?.id) return
     try {
       const data = await explain({
         workspaceId,
         channelId,
-        messageId,
+        messageId: target.id,
       }).unwrap()
       setText(data.text)
     } catch (err) {
@@ -58,31 +75,68 @@ export default function ExplainMessageDialog({
         onOpenChange(next)
       }}
     >
-      <DialogContent className="max-w-lg sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent
+        className={cn(
+          "w-[min(100%-1.5rem,28rem)] max-w-[min(100%-1.5rem,28rem)] gap-3 overflow-hidden p-4 sm:max-w-md",
+          "border-border bg-card shadow-xl"
+        )}
+      >
+        <DialogHeader className="gap-1 pr-8 text-left">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="size-4 text-primary" aria-hidden />
             Explain message
           </DialogTitle>
-          <DialogDescription>
-            Uses this message and nearby conversation for context.
+          <DialogDescription className="text-xs">
+            Nearby chat for context. Image/PDF bytes are not opened — filenames
+            only.
           </DialogDescription>
         </DialogHeader>
 
-        {!text ? (
-          <Button
-            type="button"
-            size="sm"
-            disabled={isLoading || !messageId}
-            onClick={() => void run()}
-          >
-            {isLoading ? "Explaining…" : "Explain"}
-          </Button>
-        ) : (
-          <pre className="max-h-72 overflow-y-auto rounded-[var(--radius)] border border-border bg-muted/40 p-3 text-xs leading-relaxed whitespace-pre-wrap">
-            {text}
-          </pre>
-        )}
+        <div className="space-y-3">
+          {target ? (
+            <blockquote className="border-l-2 border-primary/40 pl-3 text-left">
+              <p className="mb-0.5 text-[11px] font-medium text-muted-foreground">
+                {target.authorName}
+              </p>
+              <p className="line-clamp-4 text-sm leading-relaxed text-foreground/90">
+                {quote}
+              </p>
+              {showFileNote || (body && files.length > 0) ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {body && files.length > 0
+                    ? `Also attached: ${files.join(", ")}`
+                    : "AI cannot view image/PDF bytes — only the filename and thread context."}
+                </p>
+              ) : null}
+            </blockquote>
+          ) : null}
+
+          {!text ? (
+            <Button
+              type="button"
+              size="sm"
+              disabled={isLoading || !target?.id}
+              onClick={() => void run()}
+              className="btn-brand-gradient gap-2"
+            >
+              {isLoading ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="size-3.5" />
+              )}
+              {isLoading ? "Explaining…" : "Explain"}
+            </Button>
+          ) : (
+            <div className="animate-in space-y-1.5 border-t border-border/60 pt-3 duration-200 fade-in-0">
+              <span className="text-xs font-semibold tracking-tight">
+                Explanation
+              </span>
+              <div className="max-h-64 overflow-y-auto text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+                {text}
+              </div>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )

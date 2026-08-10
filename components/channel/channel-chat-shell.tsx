@@ -87,25 +87,29 @@ export default function ChannelChatShell({
   const [inviteOpen, setInviteOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
-  const [explainId, setExplainId] = useState<string | null>(null)
+  const [explainTarget, setExplainTarget] = useState<{
+    id: string
+    body: string
+    authorName: string
+    attachmentNames: string[]
+  } | null>(null)
   const [draftNonce, setDraftNonce] = useState(0)
   const [draftText, setDraftText] = useState("")
   const [forChannelId, setForChannelId] = useState(activeChannel?.id)
 
   const isPrivate = activeChannel?.visibility === "private"
 
-  // Reset the members strip while switching channels (open by default for
-  // private). Adjusting state during render is the React-recommended pattern
-  // for "reset state when a prop changes" — no effect / cascading render.
+  // Reset panels when switching channels. Members stay closed by default so
+  // tablet/phone chat isn’t covered by the overlay (open via header).
   if (forChannelId !== activeChannel?.id) {
     setForChannelId(activeChannel?.id)
-    setMembersOpen(isPrivate)
+    setMembersOpen(false)
   }
 
   const showMembers = Boolean(membersOpen && isPrivate)
 
   return (
-    <div className="flex h-full min-h-0 flex-1 overflow-hidden border-border bg-background md:border-l">
+    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden border-border bg-background md:border-l">
       <ChannelSidebar
         workspaceId={workspaceId}
         channels={channels}
@@ -122,7 +126,7 @@ export default function ChannelChatShell({
               onCreateClick={() => setCreateOpen(true)}
             />
           ) : (
-            <div className="bg-brand-wash flex flex-1 flex-col items-center justify-center gap-3 text-center text-sm text-muted-foreground">
+            <div className="bg-brand-wash flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center text-sm text-muted-foreground">
               <span
                 className="brand-tile flex size-11 items-center justify-center rounded-[var(--radius)]"
                 aria-hidden
@@ -143,6 +147,7 @@ export default function ChannelChatShell({
                   : undefined
               }
               canManage={canManage}
+              backHref={`/workspace/${workspaceId}/channels`}
               onRename={() => setRenameOpen(true)}
               onDelete={() => setDeleteOpen(true)}
               onInvite={isPrivate ? () => setInviteOpen(true) : undefined}
@@ -157,7 +162,7 @@ export default function ChannelChatShell({
               currentUserId={currentUserId}
               isLoading={messagesLoading}
               isError={messagesError}
-              onExplainMessage={(id) => setExplainId(id)}
+              onExplainMessage={(target) => setExplainTarget(target)}
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
@@ -173,16 +178,24 @@ export default function ChannelChatShell({
       </div>
 
       {showMembers ? (
-        <ChannelMembersPanel
-          members={channelMembers}
-          canInvite={canManage}
-          onInvite={() => setInviteOpen(true)}
-          onRemove={
-            canManage && onRemoveMember
-              ? (id) => void onRemoveMember(id)
-              : undefined
-          }
-        />
+        <>
+          <button
+            type="button"
+            className="absolute inset-0 z-20 bg-black/30 lg:hidden"
+            aria-label="Close members"
+            onClick={() => setMembersOpen(false)}
+          />
+          <ChannelMembersPanel
+            members={channelMembers}
+            canInvite={canManage}
+            onInvite={() => setInviteOpen(true)}
+            onRemove={
+              canManage && onRemoveMember
+                ? (id) => void onRemoveMember(id)
+                : undefined
+            }
+          />
+        </>
       ) : null}
 
       <CreateChannelDialog
@@ -205,13 +218,13 @@ export default function ChannelChatShell({
             }}
           />
           <ExplainMessageDialog
-            open={explainId != null}
+            open={explainTarget != null}
             onOpenChange={(open) => {
-              if (!open) setExplainId(null)
+              if (!open) setExplainTarget(null)
             }}
             workspaceId={workspaceId}
             channelId={activeChannel.id}
-            messageId={explainId}
+            target={explainTarget}
           />
           <RenameChannelDialog
             open={renameOpen}

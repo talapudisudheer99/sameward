@@ -1,6 +1,8 @@
 "use client"
 
+import Link from "next/link"
 import {
+  ArrowLeft,
   Hash,
   Lock,
   Pencil,
@@ -19,6 +21,8 @@ type ChatHeaderProps = {
   memberCount?: number
   onlineCount?: number
   canManage: boolean
+  /** Mobile: back to channel list */
+  backHref?: string
   onRename?: () => void
   onDelete?: () => void
   onInvite?: () => void
@@ -34,6 +38,7 @@ export default function ChatHeader({
   memberCount,
   onlineCount,
   canManage,
+  backHref,
   onRename,
   onDelete,
   onInvite,
@@ -43,7 +48,17 @@ export default function ChatHeader({
   const Icon = channel.visibility === "private" ? Lock : Hash
 
   return (
-    <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3">
+    <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
+      {backHref ? (
+        <Link
+          href={backHref}
+          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
+          aria-label="Back to channels"
+        >
+          <ArrowLeft className="size-4" />
+        </Link>
+      ) : null}
+
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         <OverflowText
@@ -53,24 +68,23 @@ export default function ChatHeader({
         >
           {channel.name}
         </OverflowText>
-        <span className="hidden text-xs text-muted-foreground sm:inline">
+        <span className="hidden text-xs text-muted-foreground lg:inline">
           {memberCount != null ? `${memberCount} members` : null}
           {memberCount != null && onlineCount != null ? " · " : null}
           {onlineCount != null ? `${onlineCount} online` : null}
         </span>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
         {onOpenAi ? (
           <Button
             type="button"
             size="sm"
-            variant="ghost"
             onClick={onOpenAi}
             aria-label="Open AI assistant"
-            className="gap-1.5"
+            className="btn-brand-gradient gap-1.5 shadow-sm"
           >
-            <Sparkles className="size-4" />
+            <Sparkles className="size-3.5" />
             <span className="hidden sm:inline">AI</span>
           </Button>
         ) : null}
@@ -101,6 +115,7 @@ export default function ChatHeader({
             type="button"
             size="sm"
             variant="ghost"
+            className="hidden sm:inline-flex"
             onClick={onRename}
             aria-label="Rename channel"
           >
@@ -112,7 +127,7 @@ export default function ChatHeader({
             type="button"
             size="sm"
             variant="ghost"
-            className="text-destructive hover:text-destructive"
+            className="hidden text-destructive hover:text-destructive sm:inline-flex"
             onClick={onDelete}
             aria-label="Delete channel"
           >

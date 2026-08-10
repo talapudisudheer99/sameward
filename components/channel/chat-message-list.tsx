@@ -18,7 +18,12 @@ type ChatMessageListProps = {
   isError?: boolean
   className?: string
   /** Path A — open explain dialog for this message */
-  onExplainMessage?: (messageId: string) => void
+  onExplainMessage?: (target: {
+    id: string
+    body: string
+    authorName: string
+    attachmentNames: string[]
+  }) => void
 }
 
 function formatTime(iso: string) {
@@ -103,7 +108,7 @@ export default function ChatMessageList({
     <div
       ref={scrollerRef}
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-4",
+        "flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-3 sm:px-4 sm:py-4",
         className
       )}
     >
@@ -122,7 +127,7 @@ export default function ChatMessageList({
           <article
             key={msg.id}
             className={cn(
-              "flex max-w-[min(85%,32rem)] gap-2",
+              "flex max-w-[min(92%,20rem)] gap-2 sm:max-w-[min(85%,32rem)]",
               grouped ? "mt-0.5" : "mt-3",
               mine ? "ml-auto flex-row-reverse" : "mr-auto",
               msg.pending && "opacity-70"
@@ -168,18 +173,27 @@ export default function ChatMessageList({
                       : "rounded-bl-md bg-muted text-foreground"
                   )}
                 >
-                  <p className="break-words whitespace-pre-wrap">{msg.body}</p>
+                  <p className="[overflow-wrap:anywhere] break-words whitespace-pre-wrap">
+                    {msg.body}
+                  </p>
                   {onExplainMessage && !msg.pending ? (
                     <Button
                       type="button"
                       size="icon-xs"
                       variant="secondary"
                       className={cn(
-                        "absolute -top-2 opacity-0 transition-opacity group-hover/msg:opacity-100",
+                        "absolute -top-2 opacity-0 shadow-sm transition-opacity group-hover/msg:opacity-100",
                         mine ? "-left-2" : "-right-2"
                       )}
                       aria-label="Explain message"
-                      onClick={() => onExplainMessage(msg.id)}
+                      onClick={() =>
+                        onExplainMessage({
+                          id: msg.id,
+                          body: msg.body,
+                          authorName: msg.authorName,
+                          attachmentNames: msg.attachments.map((a) => a.name),
+                        })
+                      }
                     >
                       <Sparkles className="size-3" />
                     </Button>
@@ -205,7 +219,14 @@ export default function ChatMessageList({
                   size="sm"
                   variant="ghost"
                   className="h-7 gap-1 px-2 text-xs text-muted-foreground"
-                  onClick={() => onExplainMessage(msg.id)}
+                  onClick={() =>
+                    onExplainMessage({
+                      id: msg.id,
+                      body: msg.body,
+                      authorName: msg.authorName,
+                      attachmentNames: msg.attachments.map((a) => a.name),
+                    })
+                  }
                 >
                   <Sparkles className="size-3" />
                   Explain

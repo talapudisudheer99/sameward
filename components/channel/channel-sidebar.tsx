@@ -33,7 +33,9 @@ export default function ChannelSidebar({
   return (
     <aside
       className={cn(
-        "flex h-full min-h-0 w-56 shrink-0 flex-col border-r border-border bg-card",
+        "flex h-full min-h-0 w-44 shrink-0 flex-col border-r border-border bg-card md:w-56",
+        // In chat: hide list on phones so the transcript gets full width
+        activeChannelId ? "hidden md:flex" : "flex",
         className
       )}
     >

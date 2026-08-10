@@ -29,7 +29,9 @@ export default function ChannelMembersPanel({
   return (
     <aside
       className={cn(
-        "flex h-full w-56 shrink-0 flex-col border-l border-border bg-card",
+        "flex h-full w-[min(100%,14rem)] shrink-0 flex-col border-l border-border bg-card shadow-xl",
+        // Overlay on tablet/phone; docked from lg up
+        "absolute inset-y-0 right-0 z-30 lg:static lg:w-56 lg:shadow-none",
         className
       )}
     >
