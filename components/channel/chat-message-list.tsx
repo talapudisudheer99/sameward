@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { MessageCircle } from "lucide-react"
+import { MessageCircle, Sparkles } from "lucide-react"
 
 import ChatAttachments from "@/components/channel/chat-attachments"
 import Loader from "@/components/sharable/loader"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/lib/types/channel/channel-types"
 
@@ -16,6 +17,8 @@ type ChatMessageListProps = {
   /** History request failed */
   isError?: boolean
   className?: string
+  /** Path A — open explain dialog for this message */
+  onExplainMessage?: (messageId: string) => void
 }
 
 function formatTime(iso: string) {
@@ -39,6 +42,7 @@ export default function ChatMessageList({
   isLoading = false,
   isError = false,
   className,
+  onExplainMessage,
 }: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
@@ -158,13 +162,28 @@ export default function ChatMessageList({
               {msg.body ? (
                 <div
                   className={cn(
-                    "w-fit max-w-full rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed",
+                    "group/msg relative w-fit max-w-full rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed",
                     mine
                       ? "rounded-br-md bg-primary text-primary-foreground"
                       : "rounded-bl-md bg-muted text-foreground"
                   )}
                 >
                   <p className="break-words whitespace-pre-wrap">{msg.body}</p>
+                  {onExplainMessage && !msg.pending ? (
+                    <Button
+                      type="button"
+                      size="icon-xs"
+                      variant="secondary"
+                      className={cn(
+                        "absolute -top-2 opacity-0 transition-opacity group-hover/msg:opacity-100",
+                        mine ? "-left-2" : "-right-2"
+                      )}
+                      aria-label="Explain message"
+                      onClick={() => onExplainMessage(msg.id)}
+                    >
+                      <Sparkles className="size-3" />
+                    </Button>
+                  ) : null}
                 </div>
               ) : null}
               {(msg.pending || msg.failed) && (
@@ -179,6 +198,18 @@ export default function ChatMessageList({
               )}
               {hasAttachments ? (
                 <ChatAttachments attachments={msg.attachments} mine={mine} />
+              ) : null}
+              {!msg.body && onExplainMessage && !msg.pending ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 gap-1 px-2 text-xs text-muted-foreground"
+                  onClick={() => onExplainMessage(msg.id)}
+                >
+                  <Sparkles className="size-3" />
+                  Explain
+                </Button>
               ) : null}
             </div>
           </article>

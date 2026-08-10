@@ -180,7 +180,13 @@ export const channelsApi = baseApi.injectEndpoints({
         clientMessageId?: string
       }
     >({
-      query: ({ workspaceId, channelId, body, attachments, clientMessageId }) => ({
+      query: ({
+        workspaceId,
+        channelId,
+        body,
+        attachments,
+        clientMessageId,
+      }) => ({
         url: `workspaces/${workspaceId}/channels/${channelId}/messages`,
         method: "POST",
         body: {

@@ -1,6 +1,14 @@
 "use client"
 
-import { Hash, Lock, Pencil, Trash2, UserPlus, Users } from "lucide-react"
+import {
+  Hash,
+  Lock,
+  Pencil,
+  Sparkles,
+  Trash2,
+  UserPlus,
+  Users,
+} from "lucide-react"
 
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button } from "@/components/ui/button"
@@ -15,6 +23,7 @@ type ChatHeaderProps = {
   onDelete?: () => void
   onInvite?: () => void
   onToggleMembers?: () => void
+  onOpenAi?: () => void
 }
 
 /**
@@ -29,6 +38,7 @@ export default function ChatHeader({
   onDelete,
   onInvite,
   onToggleMembers,
+  onOpenAi,
 }: ChatHeaderProps) {
   const Icon = channel.visibility === "private" ? Lock : Hash
 
@@ -51,6 +61,19 @@ export default function ChatHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
+        {onOpenAi ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onOpenAi}
+            aria-label="Open AI assistant"
+            className="gap-1.5"
+          >
+            <Sparkles className="size-4" />
+            <span className="hidden sm:inline">AI</span>
+          </Button>
+        ) : null}
         {channel.visibility === "private" && canManage && onInvite ? (
           <Button
             type="button"

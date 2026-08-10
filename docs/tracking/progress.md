@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 5+6 — **Channels & realtime chat** (merged) |
-| **Current feature** | Phase 5+6 **complete** (chat text+files+realtime, docs hardened, E2E verified) → next **Phase 7** AI & integrations |
-| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · **AWS S3** (presigned PUT/GET, private bucket) |
-| **Last updated** | 2026-08-09 |
+| **Current phase** | Phase 7 — **AI Knowledge Assistant (Path A) ✅** |
+| **Current feature** | Path A shipped → next **Phase 8** quality & deploy (or Path B later) |
+| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · **OpenAI** (`lib/ai` provider) |
+| **Last updated** | 2026-08-10 |
 
 ## Phase status
 
@@ -23,7 +23,7 @@
 | 4 | State & data layer | 🟡 Partial | RTK already used; deepen as needed during channels |
 | 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3 attachments; docs hardened (Slice 7). Edit/delete deferred to Slice 8. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence shipped (T13–T18); Redis multi-instance later |
-| 7 | AI & integrations | ⬜ Not started | |
+| 7 | AI & integrations | ✅ **Path A shipped** | Summarize · catch-up · ask · explain · draft · notes · OpenAI · [`docs/ai/`](../ai/README.md) |
 | 8 | Quality & deployment | ⬜ Not started | |
 
 ## Channels v1 — PO locks (Jul 31)
@@ -61,6 +61,8 @@
 | 2026-08-09 | T22 attachments end-to-end | POST persists + bucket guard; presigned GET on read; grid + lightbox + real blob download |
 | 2026-08-09 | Backlog: message edit/delete | Deferred to Slice 8 (T25–T27); design locked (editedAt/deletedAt, soft delete) |
 | 2026-08-09 | Slice 7 docs harden (T23/T24 + E2E) | Synced API/SOCKETS/FRONTEND/LIB docs to exact shipped files; added manual E2E checklist → **Phase 5+6 closed, user E2E verified** |
+| 2026-08-10 | Phase 7 Path A kickoff | PO locks: understand-only · OpenAI · six capabilities; created `docs/ai/` |
+| 2026-08-10 | Phase 7 Path A implement | Provider + 6 AI routes + panel/explain/draft UI + rate limit + `ai_runs` |
 
 ## GitHub
 

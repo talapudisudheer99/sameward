@@ -7,6 +7,8 @@ import { Hash } from "lucide-react"
 import ChannelEmptyTip from "@/components/channel/channel-empty-tip"
 import ChannelMembersPanel from "@/components/channel/channel-members-panel"
 import ChannelSidebar from "@/components/channel/channel-sidebar"
+import ChannelAiPanel from "@/components/channel/ai/channel-ai-panel"
+import ExplainMessageDialog from "@/components/channel/ai/explain-message-dialog"
 import ChatComposer from "@/components/channel/chat-composer"
 import ChatHeader from "@/components/channel/chat-header"
 import ChatMessageList from "@/components/channel/chat-message-list"
@@ -84,6 +86,10 @@ export default function ChannelChatShell({
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [aiOpen, setAiOpen] = useState(false)
+  const [explainId, setExplainId] = useState<string | null>(null)
+  const [draftNonce, setDraftNonce] = useState(0)
+  const [draftText, setDraftText] = useState("")
   const [forChannelId, setForChannelId] = useState(activeChannel?.id)
 
   const isPrivate = activeChannel?.visibility === "private"
@@ -143,6 +149,7 @@ export default function ChannelChatShell({
               onToggleMembers={
                 isPrivate ? () => setMembersOpen((v) => !v) : undefined
               }
+              onOpenAi={() => setAiOpen(true)}
             />
             <ReconnectBanner visible={reconnecting} />
             <ChatMessageList
@@ -150,6 +157,7 @@ export default function ChannelChatShell({
               currentUserId={currentUserId}
               isLoading={messagesLoading}
               isError={messagesError}
+              onExplainMessage={(id) => setExplainId(id)}
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
@@ -157,6 +165,8 @@ export default function ChannelChatShell({
               onSend={onSendMessage}
               onTyping={onTyping}
               isSending={isSending}
+              draftNonce={draftNonce}
+              draftText={draftText}
             />
           </>
         )}
@@ -183,6 +193,26 @@ export default function ChannelChatShell({
 
       {activeChannel ? (
         <>
+          <ChannelAiPanel
+            open={aiOpen}
+            onOpenChange={setAiOpen}
+            workspaceId={workspaceId}
+            channelId={activeChannel.id}
+            channelName={activeChannel.name}
+            onInsertDraft={(text) => {
+              setDraftText(text)
+              setDraftNonce((n) => n + 1)
+            }}
+          />
+          <ExplainMessageDialog
+            open={explainId != null}
+            onOpenChange={(open) => {
+              if (!open) setExplainId(null)
+            }}
+            workspaceId={workspaceId}
+            channelId={activeChannel.id}
+            messageId={explainId}
+          />
           <RenameChannelDialog
             open={renameOpen}
             onOpenChange={setRenameOpen}

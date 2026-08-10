@@ -15,9 +15,9 @@ Jump from a **product feature** to the right doc.
 | Invite → accept + members / leave / remove / roles | ✅ v1 | [workspaces stories](../workspaces/USER-STORIES.md) |
 | Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
 | Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen during channels |
-| Channels + live chat (Socket.IO) | 🔄 Spec locked | [**channels/**](../channels/README.md) |
+| Channels + live chat (Socket.IO) | ✅ | [**channels/**](../channels/README.md) |
 | Docs / boards | ⬜ | Later (after channels v1) |
-| AI assist | ⬜ | [Phase 7](../phases/07-ai-integrations/README.md) |
+| AI assist (Path A) | ✅ | [**ai/**](../ai/README.md) |
 | Tests + Vercel deploy | ⬜ | [Phase 8](../phases/08-quality-deployment/README.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)

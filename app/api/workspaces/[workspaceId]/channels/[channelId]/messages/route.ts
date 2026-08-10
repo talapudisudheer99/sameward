@@ -218,10 +218,9 @@ export async function POST(
     if (clientMessageId) {
       const existing = await Message.findOne({ channelId, clientMessageId })
       if (existing) {
-        return NextResponse.json(
-          await toMessageJson(existing, user.fullName),
-          { status: 200 }
-        )
+        return NextResponse.json(await toMessageJson(existing, user.fullName), {
+          status: 200,
+        })
       }
     }
 

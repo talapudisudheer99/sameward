@@ -35,6 +35,12 @@ type ChatComposerProps = {
   /** Optional: emit typing (socket later) */
   onTyping?: () => void
   isSending?: boolean
+  /**
+   * AI draft — bump `draftNonce` when applying `draftText`
+   * (adjust state during render; avoids setState-in-effect).
+   */
+  draftNonce?: number
+  draftText?: string
 }
 
 /**
@@ -47,11 +53,19 @@ export default function ChatComposer({
   onSend,
   onTyping,
   isSending = false,
+  draftNonce = 0,
+  draftText = "",
 }: ChatComposerProps) {
   const [body, setBody] = useState("")
   const [pending, setPending] = useState<ComposerPendingFile[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [seenDraftNonce, setSeenDraftNonce] = useState(0)
   const fileRef = useRef<HTMLInputElement>(null)
+
+  if (draftNonce > 0 && draftNonce !== seenDraftNonce) {
+    setSeenDraftNonce(draftNonce)
+    setBody(draftText)
+  }
 
   function clearPending() {
     for (const p of pending) {
