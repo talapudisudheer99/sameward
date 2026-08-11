@@ -24,6 +24,8 @@ type ChatHeaderProps = {
   canManage: boolean
   /** Mobile: back to channel list */
   backHref?: string
+  /** Mobile: in-place back (Explore demo) — preferred over backHref when set */
+  onBack?: () => void
   onRename?: () => void
   onDelete?: () => void
   onInvite?: () => void
@@ -40,6 +42,7 @@ export default function ChatHeader({
   onlineCount,
   canManage,
   backHref,
+  onBack,
   onRename,
   onDelete,
   onInvite,
@@ -55,7 +58,16 @@ export default function ChatHeader({
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
-      {backHref ? (
+      {onBack ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
+          aria-label="Back to channels"
+        >
+          <ArrowLeft className="size-4" />
+        </button>
+      ) : backHref ? (
         <Link
           href={backHref}
           className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
@@ -94,6 +106,7 @@ export default function ChatHeader({
             size="sm"
             onClick={onOpenAi}
             aria-label="Open AI assistant"
+            data-explore-tutorial="channel-ai"
             className="btn-brand-gradient gap-1.5 shadow-sm"
           >
             <Sparkles className="size-3.5" />

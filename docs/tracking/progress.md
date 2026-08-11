@@ -84,6 +84,7 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | Unread tracking | `channel_read_states` · mark-read · sidebar badges · Catch up “Since last visit” |
 | 2026-08-11 | 1:1 DMs + @mentions | `visibility: dm` · `…/dms` · composer `@` · transcript highlight |
 | 2026-08-11 | Repo cleanup | Removed unused marketing collage assets; docs + helpers aligned |
+| 2026-08-11 | Explore TeamHub demo | Read-only Acme Studio + canned Channel AI · `/explore` |
 
 ## GitHub
 

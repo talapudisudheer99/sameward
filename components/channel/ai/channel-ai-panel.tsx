@@ -30,6 +30,7 @@ import {
   useAiNotesMutation,
   useAiSummarizeMutation,
 } from "@/store/api/ai/ai-api"
+import type { ChannelAiRunner } from "@/lib/explore/ai-runners"
 
 type TabId = "summarize" | "catch-up" | "ask" | "draft" | "notes"
 
@@ -43,6 +44,8 @@ type ChannelAiPanelProps = {
   lastVisitSince?: string | null
   /** Insert draft into composer — never auto-sends */
   onInsertDraft: (text: string) => void
+  /** Explore demo — canned runners instead of RTK */
+  runner?: ChannelAiRunner
 }
 
 const TABS: {
@@ -88,6 +91,7 @@ export default function ChannelAiPanel({
   channelName,
   lastVisitSince = null,
   onInsertDraft,
+  runner,
 }: ChannelAiPanelProps) {
   const [tab, setTab] = useState<TabId>("summarize")
   const [result, setResult] = useState<string>("")
@@ -95,6 +99,7 @@ export default function ChannelAiPanel({
   const [metaLine, setMetaLine] = useState<string | null>(null)
   const [question, setQuestion] = useState("")
   const [tone, setTone] = useState<AiTone>("concise")
+  const [runnerBusy, setRunnerBusy] = useState(false)
 
   const [summarize, { isLoading: summarizing }] = useAiSummarizeMutation()
   const [catchUp, { isLoading: catchingUp }] = useAiCatchUpMutation()
@@ -102,7 +107,8 @@ export default function ChannelAiPanel({
   const [draftReply, { isLoading: drafting }] = useAiDraftReplyMutation()
   const [notes, { isLoading: noting }] = useAiNotesMutation()
 
-  const busy = summarizing || catchingUp || asking || drafting || noting
+  const busy =
+    runnerBusy || summarizing || catchingUp || asking || drafting || noting
 
   function selectTab(next: TabId) {
     setTab(next)
@@ -127,6 +133,17 @@ export default function ChannelAiPanel({
 
   async function runSummarize() {
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner.summarize()
+        applyResult(
+          data.text,
+          data.meta.messageCount,
+          data.meta.truncated,
+          "summarize"
+        )
+        return
+      }
       const data = await summarize({ workspaceId, channelId }).unwrap()
       applyResult(
         data.text,
@@ -136,11 +153,25 @@ export default function ChannelAiPanel({
       )
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 
   async function runCatchUp(since: string, label: string) {
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner.catchUp(since)
+        applyResult(
+          data.text,
+          data.meta.messageCount,
+          data.meta.truncated,
+          "catch-up"
+        )
+        toast.success(`Catch-up: ${label}`)
+        return
+      }
       const data = await catchUp({ workspaceId, channelId, since }).unwrap()
       applyResult(
         data.text,
@@ -151,6 +182,8 @@ export default function ChannelAiPanel({
       toast.success(`Catch-up: ${label}`)
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 
@@ -161,15 +194,33 @@ export default function ChannelAiPanel({
       return
     }
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner.ask(q)
+        applyResult(data.text, data.meta.messageCount, data.meta.truncated, "ask")
+        return
+      }
       const data = await ask({ workspaceId, channelId, question: q }).unwrap()
       applyResult(data.text, data.meta.messageCount, data.meta.truncated, "ask")
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 
   async function runDraft() {
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner.draft(tone)
+        onInsertDraft(data.text)
+        onOpenChange(false)
+        toast.success(
+          "Sample draft shown in the composer — create a workspace to send for real"
+        )
+        return
+      }
       const data = await draftReply({
         workspaceId,
         channelId,
@@ -180,11 +231,24 @@ export default function ChannelAiPanel({
       toast.success("Draft inserted into composer — edit and Send when ready")
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 
   async function runNotes() {
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner.notes()
+        applyResult(
+          data.text,
+          data.meta.messageCount,
+          data.meta.truncated,
+          "notes"
+        )
+        return
+      }
       const data = await notes({ workspaceId, channelId }).unwrap()
       applyResult(
         data.text,
@@ -194,6 +258,8 @@ export default function ChannelAiPanel({
       )
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 

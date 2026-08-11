@@ -23,6 +23,7 @@ Jump from a **product feature** to the right doc.
 | AI assist (Path A) | ✅ E2E | [**ai/**](../ai/README.md) |
 | Member profiles (thin v1) | ✅ E2E | [**profiles/**](../profiles/README.md) |
 | Workspace description | ✅ | Optional ≤280 chars · [workspaces](../workspaces/DATA-MODEL.md) |
+| Explore TeamHub demo | ✅ | Read-only Acme Studio · [explore-demo](./explore-demo.md) |
 | Tests + Railway deploy | ⬜ next | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)

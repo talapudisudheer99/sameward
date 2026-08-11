@@ -13,12 +13,13 @@ import { cn } from "@/lib/utils"
 /**
  * Phone/tablet app chrome — hamburger opens the same sidebar as desktop.
  * Hidden from `md` up (desktop already has the docked aside).
- * Also hidden on channel surfaces — chat / picker own their headers (avoids double nav).
+ * Also hidden on channel surfaces and Explore demo — those own their headers.
  */
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const isChannelSurface = /\/workspace\/[^/]+\/channels/.test(pathname)
+  const isExplore = pathname === "/explore" || pathname.startsWith("/explore/")
 
   // Close drawer after navigation
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function MobileNav() {
     }
   }, [open])
 
-  if (isChannelSurface) return null
+  if (isChannelSurface || isExplore) return null
 
   return (
     <>

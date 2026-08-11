@@ -15,6 +15,7 @@ import {
 import { aiErrorMessage } from "@/lib/ai/ai-error-message"
 import { cn } from "@/lib/utils"
 import { useAiExplainMutation } from "@/store/api/ai/ai-api"
+import type { ExplainAiRunner } from "@/lib/explore/ai-runners"
 
 export type ExplainTarget = {
   id: string
@@ -29,6 +30,8 @@ type ExplainMessageDialogProps = {
   workspaceId: string
   channelId: string
   target: ExplainTarget | null
+  /** Explore demo — canned explain instead of RTK */
+  runner?: ExplainAiRunner
 }
 
 /**
@@ -40,9 +43,12 @@ export default function ExplainMessageDialog({
   workspaceId,
   channelId,
   target,
+  runner,
 }: ExplainMessageDialogProps) {
   const [text, setText] = useState("")
+  const [runnerBusy, setRunnerBusy] = useState(false)
   const [explain, { isLoading }] = useAiExplainMutation()
+  const busy = runnerBusy || isLoading
 
   const body = target?.body?.trim() ?? ""
   const files = target?.attachmentNames ?? []
@@ -56,6 +62,12 @@ export default function ExplainMessageDialog({
   async function run() {
     if (!target?.id) return
     try {
+      if (runner) {
+        setRunnerBusy(true)
+        const data = await runner(target.id)
+        setText(data.text)
+        return
+      }
       const data = await explain({
         workspaceId,
         channelId,
@@ -64,6 +76,8 @@ export default function ExplainMessageDialog({
       setText(data.text)
     } catch (err) {
       toast.error(aiErrorMessage(err))
+    } finally {
+      setRunnerBusy(false)
     }
   }
 
@@ -115,16 +129,16 @@ export default function ExplainMessageDialog({
             <Button
               type="button"
               size="sm"
-              disabled={isLoading || !target?.id}
+              disabled={busy || !target?.id}
               onClick={() => void run()}
               className="btn-brand-gradient gap-2"
             >
-              {isLoading ? (
+              {busy ? (
                 <Loader2 className="size-3.5 animate-spin" />
               ) : (
                 <Sparkles className="size-3.5" />
               )}
-              {isLoading ? "Explaining…" : "Explain"}
+              {busy ? "Explaining…" : "Explain"}
             </Button>
           ) : (
             <div className="animate-in space-y-1.5 border-t border-border/60 pt-3 duration-200 fade-in-0">

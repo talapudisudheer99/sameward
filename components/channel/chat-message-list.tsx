@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { MessageCircle, Sparkles } from "lucide-react"
 
 import ChatAttachments from "@/components/channel/chat-attachments"
@@ -28,17 +28,34 @@ type ChatMessageListProps = {
   }) => void
   /** Profile v1 — open author card */
   onOpenProfile?: (target: { userId: string; name: string }) => void
+  /** Explore tour — keep Explain visible on this message */
+  tutorialPinExplainMessageId?: string
 }
 
 function formatTime(iso: string) {
   try {
-    return new Date(iso).toLocaleTimeString([], {
+    return new Date(iso).toLocaleTimeString(undefined, {
       hour: "numeric",
       minute: "2-digit",
     })
   } catch {
     return ""
   }
+}
+
+/** Avoid SSR/client locale mismatch on `<time>` text (Node vs browser). */
+function MessageTime({ iso }: { iso: string }) {
+  const [label, setLabel] = useState<string | null>(null)
+
+  useEffect(() => {
+    setLabel(formatTime(iso))
+  }, [iso])
+
+  return (
+    <time dateTime={iso} suppressHydrationWarning>
+      {label ?? ""}
+    </time>
+  )
 }
 
 /** Highlight @Full Name tokens for mentioned users. */
@@ -94,6 +111,7 @@ export default function ChatMessageList({
   className,
   onExplainMessage,
   onOpenProfile,
+  tutorialPinExplainMessageId,
 }: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
@@ -157,8 +175,10 @@ export default function ChatMessageList({
         "flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-3 sm:px-4 sm:py-4",
         className
       )}
+      data-explore-tutorial="transcript"
     >
       {messages.map((msg, i) => {
+        const pinExplain = msg.id === tutorialPinExplainMessageId
         const mine = msg.authorId === currentUserId
         const prev = messages[i - 1]
         // Group consecutive messages by the same author within ~5 minutes
@@ -234,9 +254,7 @@ export default function ChatMessageList({
                       {msg.authorName}
                     </span>
                   )}
-                  <time dateTime={msg.createdAt}>
-                    {formatTime(msg.createdAt)}
-                  </time>
+                  <MessageTime iso={msg.createdAt} />
                 </div>
               )}
               {msg.body ? (
@@ -262,10 +280,16 @@ export default function ChatMessageList({
                       size="icon-xs"
                       variant="secondary"
                       className={cn(
-                        "absolute -top-2 opacity-0 shadow-sm transition-opacity group-hover/msg:opacity-100",
+                        "absolute -top-2 shadow-sm transition-opacity",
+                        pinExplain
+                          ? "opacity-100 ring-2 ring-primary"
+                          : "opacity-0 group-hover/msg:opacity-100",
                         mine ? "-left-2" : "-right-2"
                       )}
                       aria-label="Explain message"
+                      data-explore-tutorial={
+                        pinExplain ? "explain-button" : undefined
+                      }
                       onClick={() =>
                         onExplainMessage({
                           id: msg.id,

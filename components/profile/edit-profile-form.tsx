@@ -124,8 +124,8 @@ export default function EditProfileForm() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
-      <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+    <div className="flex w-full flex-col gap-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
         <UserAvatar
           name={fullName || user.fullName}
           avatarUrl={localPreview ?? avatarUrl}

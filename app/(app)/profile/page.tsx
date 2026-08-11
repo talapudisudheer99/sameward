@@ -5,7 +5,7 @@ import EditProfileForm from "@/components/profile/edit-profile-form"
  */
 export default function ProfilePage() {
   return (
-    <div className="mx-auto w-full max-w-2xl px-1 py-2">
+    <section className="mx-auto w-full max-w-xl">
       <header className="mb-8">
         <h1 className="font-heading text-2xl font-bold tracking-tight md:text-3xl">
           Your profile
@@ -16,6 +16,6 @@ export default function ProfilePage() {
         </p>
       </header>
       <EditProfileForm />
-    </div>
+    </section>
   )
 }

@@ -20,6 +20,10 @@ type ChannelSidebarProps = {
   canCreate: boolean
   onCreateClick: () => void
   onNewDmClick?: () => void
+  /**
+   * When set (e.g. Explore demo), navigate in-place instead of real workspace URLs.
+   */
+  onSelectChannel?: (channelId: string) => void
   className?: string
 }
 
@@ -44,13 +48,29 @@ export default function ChannelSidebar({
   canCreate,
   onCreateClick,
   onNewDmClick,
+  onSelectChannel,
   className,
 }: ChannelSidebarProps) {
+  function rowClass(active: boolean, unread: boolean) {
+    return cn(
+      "flex min-w-0 items-center gap-2 rounded-[var(--radius)] px-2 py-1.5 text-sm transition-colors",
+      active
+        ? "bg-primary/10 font-medium text-primary"
+        : unread
+          ? "font-semibold text-foreground hover:bg-muted"
+          : "text-foreground hover:bg-muted"
+    )
+  }
+
   return (
     <aside
       className={cn(
-        "flex h-full min-h-0 w-44 shrink-0 flex-col border-r border-border bg-card md:w-56",
-        activeChannelId ? "hidden md:flex" : "flex",
+        "flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-card",
+        activeChannelId
+          ? "hidden w-44 md:flex md:w-56"
+          : onSelectChannel
+            ? "flex w-full md:w-56"
+            : "flex w-44 md:w-56",
         className
       )}
     >
@@ -72,7 +92,11 @@ export default function ChannelSidebar({
         ) : null}
       </div>
 
-      <nav className="min-h-0 flex-1 overflow-y-auto p-2" aria-label="Channels">
+      <nav
+        className="min-h-0 flex-1 overflow-y-auto p-2"
+        aria-label="Channels"
+        data-explore-tutorial="channels-list"
+      >
         {channels.length === 0 ? (
           <p className="px-2 py-3 text-xs text-muted-foreground">
             No channels yet.
@@ -83,40 +107,52 @@ export default function ChannelSidebar({
               const active = ch.id === activeChannelId
               const Icon = ch.visibility === "private" ? Lock : Hash
               const unread = !active && (ch.unreadCount ?? 0) > 0
+              const label = unread
+                ? `${ch.name}, ${ch.unreadCount > 99 ? "99+" : ch.unreadCount} unread`
+                : ch.name
+              const content = (
+                <>
+                  <Icon
+                    className="size-3.5 shrink-0 opacity-70"
+                    aria-hidden
+                  />
+                  <OverflowText className="min-w-0 flex-1">
+                    {ch.name}
+                  </OverflowText>
+                  <UnreadBadge count={unread ? ch.unreadCount : 0} />
+                </>
+              )
               return (
                 <li key={ch.id} className="min-w-0">
-                  <Link
-                    href={`/workspace/${workspaceId}/channels/${ch.id}`}
-                    className={cn(
-                      "flex min-w-0 items-center gap-2 rounded-[var(--radius)] px-2 py-1.5 text-sm transition-colors",
-                      active
-                        ? "bg-primary/10 font-medium text-primary"
-                        : unread
-                          ? "font-semibold text-foreground hover:bg-muted"
-                          : "text-foreground hover:bg-muted"
-                    )}
-                    aria-label={
-                      unread
-                        ? `${ch.name}, ${ch.unreadCount > 99 ? "99+" : ch.unreadCount} unread`
-                        : ch.name
-                    }
-                  >
-                    <Icon
-                      className="size-3.5 shrink-0 opacity-70"
-                      aria-hidden
-                    />
-                    <OverflowText className="min-w-0 flex-1">
-                      {ch.name}
-                    </OverflowText>
-                    <UnreadBadge count={unread ? ch.unreadCount : 0} />
-                  </Link>
+                  {onSelectChannel ? (
+                    <button
+                      type="button"
+                      onClick={() => onSelectChannel(ch.id)}
+                      className={cn("w-full text-left", rowClass(active, unread))}
+                      aria-label={label}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {content}
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/workspace/${workspaceId}/channels/${ch.id}`}
+                      className={rowClass(active, unread)}
+                      aria-label={label}
+                    >
+                      {content}
+                    </Link>
+                  )}
                 </li>
               )
             })}
           </ul>
         )}
 
-        <div className="mt-4 flex items-center justify-between gap-2 px-2 pt-2">
+        <div
+          className="mt-4 flex items-center justify-between gap-2 px-2 pt-2"
+          data-explore-tutorial="dms-list"
+        >
           <h3 className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
             Direct messages
           </h3>
@@ -143,33 +179,42 @@ export default function ChannelSidebar({
             {dms.map((dm) => {
               const active = dm.id === activeChannelId
               const unread = !active && dm.unreadCount > 0
+              const label = unread
+                ? `${dm.peer.fullName}, ${dm.unreadCount > 99 ? "99+" : dm.unreadCount} unread`
+                : dm.peer.fullName
+              const content = (
+                <>
+                  <MessageSquare
+                    className="size-3.5 shrink-0 opacity-70"
+                    aria-hidden
+                  />
+                  <OverflowText className="min-w-0 flex-1">
+                    {dm.peer.fullName}
+                  </OverflowText>
+                  <UnreadBadge count={unread ? dm.unreadCount : 0} />
+                </>
+              )
               return (
                 <li key={dm.id} className="min-w-0">
-                  <Link
-                    href={`/workspace/${workspaceId}/channels/${dm.id}`}
-                    className={cn(
-                      "flex min-w-0 items-center gap-2 rounded-[var(--radius)] px-2 py-1.5 text-sm transition-colors",
-                      active
-                        ? "bg-primary/10 font-medium text-primary"
-                        : unread
-                          ? "font-semibold text-foreground hover:bg-muted"
-                          : "text-foreground hover:bg-muted"
-                    )}
-                    aria-label={
-                      unread
-                        ? `${dm.peer.fullName}, ${dm.unreadCount > 99 ? "99+" : dm.unreadCount} unread`
-                        : dm.peer.fullName
-                    }
-                  >
-                    <MessageSquare
-                      className="size-3.5 shrink-0 opacity-70"
-                      aria-hidden
-                    />
-                    <OverflowText className="min-w-0 flex-1">
-                      {dm.peer.fullName}
-                    </OverflowText>
-                    <UnreadBadge count={unread ? dm.unreadCount : 0} />
-                  </Link>
+                  {onSelectChannel ? (
+                    <button
+                      type="button"
+                      onClick={() => onSelectChannel(dm.id)}
+                      className={cn("w-full text-left", rowClass(active, unread))}
+                      aria-label={label}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {content}
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/workspace/${workspaceId}/channels/${dm.id}`}
+                      className={rowClass(active, unread)}
+                      aria-label={label}
+                    >
+                      {content}
+                    </Link>
+                  )}
                 </li>
               )
             })}

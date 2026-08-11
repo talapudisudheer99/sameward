@@ -28,6 +28,10 @@ import InviteChannelMembersDialog from "@/components/dialogs/channel/invite-chan
 import RenameChannelDialog from "@/components/dialogs/channel/rename-channel-dialog"
 import StartDmDialog from "@/components/dialogs/channel/start-dm-dialog"
 import { resolveMentionCandidates } from "@/lib/channels/chat-ui-helpers"
+import type {
+  ChannelAiRunner,
+  ExplainAiRunner,
+} from "@/lib/explore/ai-runners"
 
 /**
  * Presentational chat shell — all data via props.
@@ -55,6 +59,17 @@ export type ChannelChatShellProps = {
   isSending?: boolean
   /** Previous lastReadAt for Catch up “Since last visit” */
   lastVisitSince?: string | null
+  /**
+   * Explore demo — read-only chrome: disabled composer, in-place nav,
+   * no profile API, injectable AI runners.
+   */
+  demoMode?: boolean
+  onSelectChannel?: (channelId: string) => void
+  onBackToList?: () => void
+  aiRunner?: ChannelAiRunner
+  explainRunner?: ExplainAiRunner
+  /** Explore tour — pin Explain on one message */
+  tutorialPinExplainMessageId?: string
   /** RTK callbacks — throw/reject on failure */
   onCreateChannel: (data: {
     name: string
@@ -90,6 +105,12 @@ export default function ChannelChatShell({
   typingLabel = null,
   isSending = false,
   lastVisitSince = null,
+  demoMode = false,
+  onSelectChannel,
+  onBackToList,
+  aiRunner,
+  explainRunner,
+  tutorialPinExplainMessageId,
   onCreateChannel,
   onOpenDm,
   onRenameChannel,
@@ -152,9 +173,12 @@ export default function ChannelChatShell({
         channels={channels}
         dms={dms}
         activeChannelId={activeChannel?.id}
-        canCreate={canManage}
+        canCreate={canManage && !demoMode}
         onCreateClick={() => setCreateOpen(true)}
-        onNewDmClick={onOpenDm ? () => setDmOpen(true) : undefined}
+        onNewDmClick={
+          !demoMode && onOpenDm ? () => setDmOpen(true) : undefined
+        }
+        onSelectChannel={onSelectChannel}
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -185,12 +209,23 @@ export default function ChannelChatShell({
                   ? channelMembers.filter((m) => m.online).length || undefined
                   : undefined
               }
-              canManage={canManage}
-              backHref={`/workspace/${workspaceId}/channels?list=1`}
-              onRename={isDm ? undefined : () => setRenameOpen(true)}
-              onDelete={isDm ? undefined : () => setDeleteOpen(true)}
+              canManage={canManage && !demoMode}
+              backHref={
+                demoMode
+                  ? undefined
+                  : `/workspace/${workspaceId}/channels?list=1`
+              }
+              onBack={demoMode ? onBackToList : undefined}
+              onRename={
+                demoMode || isDm ? undefined : () => setRenameOpen(true)
+              }
+              onDelete={
+                demoMode || isDm ? undefined : () => setDeleteOpen(true)
+              }
               onInvite={
-                isPrivate && !isDm ? () => setInviteOpen(true) : undefined
+                demoMode || !isPrivate || isDm
+                  ? undefined
+                  : () => setInviteOpen(true)
               }
               onToggleMembers={
                 isPrivate && !isDm
@@ -209,7 +244,12 @@ export default function ChannelChatShell({
                 mentionCandidates.map((m) => [m.userId, m.fullName])
               )}
               onExplainMessage={(target) => setExplainTarget(target)}
-              onOpenProfile={(target) => setProfileTarget(target)}
+              onOpenProfile={
+                demoMode
+                  ? undefined
+                  : (target) => setProfileTarget(target)
+              }
+              tutorialPinExplainMessageId={tutorialPinExplainMessageId}
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
@@ -218,6 +258,7 @@ export default function ChannelChatShell({
               onSend={onSendMessage}
               onTyping={onTyping}
               isSending={isSending}
+              disabled={demoMode}
               draftNonce={draftNonce}
               draftText={draftText}
             />
@@ -273,6 +314,7 @@ export default function ChannelChatShell({
             channelId={activeChannel.id}
             channelName={activeChannel.name}
             lastVisitSince={lastVisitSince}
+            runner={aiRunner}
             onInsertDraft={(text) => {
               setDraftText(text)
               setDraftNonce((n) => n + 1)
@@ -286,16 +328,19 @@ export default function ChannelChatShell({
             workspaceId={workspaceId}
             channelId={activeChannel.id}
             target={explainTarget}
+            runner={explainRunner}
           />
-          <ProfileCardDialog
-            open={profileTarget != null}
-            onOpenChange={(open) => {
-              if (!open) setProfileTarget(null)
-            }}
-            workspaceId={workspaceId}
-            userId={profileTarget?.userId ?? null}
-            fallbackName={profileTarget?.name}
-          />
+          {!demoMode ? (
+            <ProfileCardDialog
+              open={profileTarget != null}
+              onOpenChange={(open) => {
+                if (!open) setProfileTarget(null)
+              }}
+              workspaceId={workspaceId}
+              userId={profileTarget?.userId ?? null}
+              fallbackName={profileTarget?.name}
+            />
+          ) : null}
           <RenameChannelDialog
             open={renameOpen}
             onOpenChange={setRenameOpen}
