@@ -277,28 +277,28 @@ export default function ChannelAiPanel({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "flex max-h-[min(90vh,36rem)] w-[min(100%-1.5rem,28rem)] max-w-[min(100%-1.5rem,28rem)] flex-col gap-3 overflow-hidden p-4 sm:max-w-md",
+          "flex max-h-[min(92vh,44rem)] w-[min(100%-1.5rem,42rem)] max-w-[min(100%-1.5rem,42rem)] flex-col gap-4 overflow-hidden p-5 sm:max-w-2xl sm:p-6",
           "border-border bg-card shadow-xl"
         )}
       >
-        <DialogHeader className="gap-1 pr-8 text-left">
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="size-4 text-primary" aria-hidden />
-            <span className="font-heading text-base font-semibold tracking-tight">
+        <DialogHeader className="gap-1.5 pr-10 text-left">
+          <DialogTitle className="flex items-center gap-2.5">
+            <Sparkles className="size-5 text-primary" aria-hidden />
+            <span className="font-heading text-lg font-semibold tracking-tight">
               Channel AI
             </span>
-            <span className="truncate text-xs font-normal text-muted-foreground">
+            <span className="truncate text-sm font-normal text-muted-foreground">
               #{channelName}
             </span>
           </DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">
+          <DialogDescription className="text-sm text-muted-foreground">
             Read-only · nothing is posted for you
           </DialogDescription>
         </DialogHeader>
 
         {/* Tabs — no tray box; active = underline */}
         <div
-          className="-mx-1 flex gap-0.5 overflow-x-auto border-b border-border/60"
+          className="-mx-1 flex gap-1 overflow-x-auto border-b border-border/60"
           role="tablist"
           aria-label="AI capabilities"
         >
@@ -313,38 +313,37 @@ export default function ChannelAiPanel({
                 disabled={busy}
                 onClick={() => selectTab(id)}
                 className={cn(
-                  "flex shrink-0 items-center gap-1 border-b-2 px-2.5 py-2 text-xs font-medium transition-colors duration-150",
+                  "flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150",
                   active
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground",
                   busy && "opacity-60"
                 )}
               >
-                <Icon className="size-3.5 shrink-0" aria-hidden />
+                <Icon className="size-4 shrink-0" aria-hidden />
                 {label}
               </button>
             )
           })}
         </div>
 
-        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
           {tab === "summarize" ? (
-            <div className="space-y-2.5">
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Distill recent discussion into topics, decisions, and open
                 questions.
               </p>
               <Button
                 type="button"
-                size="sm"
                 disabled={busy}
                 onClick={() => void runSummarize()}
                 className="btn-brand-gradient gap-2"
               >
                 {summarizing ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
-                  <Sparkles className="size-3.5" />
+                  <Sparkles className="size-4" />
                 )}
                 {summarizing ? "Working…" : "Generate summary"}
               </Button>
@@ -352,15 +351,14 @@ export default function ChannelAiPanel({
           ) : null}
 
           {tab === "catch-up" ? (
-            <div className="space-y-2.5">
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 What changed since a point in time.
               </p>
               <div className="flex flex-wrap gap-2">
                 {lastVisitSince ? (
                   <Button
                     type="button"
-                    size="sm"
                     disabled={busy}
                     className="btn-brand-gradient gap-1.5"
                     onClick={() =>
@@ -368,16 +366,15 @@ export default function ChannelAiPanel({
                     }
                   >
                     {catchingUp ? (
-                      <Loader2 className="size-3.5 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                     ) : (
-                      <Clock3 className="size-3.5" />
+                      <Clock3 className="size-4" />
                     )}
                     Since last visit
                   </Button>
                 ) : null}
                 <Button
                   type="button"
-                  size="sm"
                   variant="outline"
                   disabled={busy}
                   className="gap-1.5"
@@ -386,15 +383,14 @@ export default function ChannelAiPanel({
                   }
                 >
                   {catchingUp && !lastVisitSince ? (
-                    <Loader2 className="size-3.5 animate-spin" />
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    <Clock3 className="size-3.5" />
+                    <Clock3 className="size-4" />
                   )}
                   Since yesterday
                 </Button>
                 <Button
                   type="button"
-                  size="sm"
                   variant="outline"
                   disabled={busy}
                   onClick={() =>
@@ -408,31 +404,30 @@ export default function ChannelAiPanel({
           ) : null}
 
           {tab === "ask" ? (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 disabled={busy}
-                rows={2}
+                rows={4}
                 maxLength={2000}
                 placeholder="Ask about this channel…"
                 className={cn(
-                  "w-full resize-none rounded-md border border-border bg-transparent px-2.5 py-2 text-sm outline-none",
+                  "w-full resize-none rounded-xl border border-border bg-transparent px-3.5 py-3 text-[15px] leading-relaxed outline-none",
                   "placeholder:text-muted-foreground",
-                  "focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/25"
+                  "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/25"
                 )}
               />
               <Button
                 type="button"
-                size="sm"
                 disabled={busy}
                 onClick={() => void runAsk()}
                 className="btn-brand-gradient gap-2"
               >
                 {asking ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
-                  <MessageCircleQuestion className="size-3.5" />
+                  <MessageCircleQuestion className="size-4" />
                 )}
                 {asking ? "Thinking…" : "Ask"}
               </Button>
@@ -440,12 +435,12 @@ export default function ChannelAiPanel({
           ) : null}
 
           {tab === "draft" ? (
-            <div className="space-y-2.5">
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Inserts into the composer — you still click Send.
               </p>
               <div
-                className="flex flex-wrap gap-3"
+                className="flex flex-wrap gap-4"
                 role="group"
                 aria-label="Draft tone"
               >
@@ -456,7 +451,7 @@ export default function ChannelAiPanel({
                     disabled={busy}
                     onClick={() => setTone(t)}
                     className={cn(
-                      "border-b-2 pb-0.5 text-xs font-medium capitalize transition-colors",
+                      "border-b-2 pb-1 text-sm font-medium capitalize transition-colors",
                       tone === t
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
@@ -468,15 +463,14 @@ export default function ChannelAiPanel({
               </div>
               <Button
                 type="button"
-                size="sm"
                 disabled={busy}
                 onClick={() => void runDraft()}
                 className="btn-brand-gradient gap-2"
               >
                 {drafting ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
-                  <PenLine className="size-3.5" />
+                  <PenLine className="size-4" />
                 )}
                 {drafting ? "Drafting…" : "Draft into composer"}
               </Button>
@@ -484,21 +478,20 @@ export default function ChannelAiPanel({
           ) : null}
 
           {tab === "notes" ? (
-            <div className="space-y-2.5">
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Markdown notes you can copy — not saved as a Doc.
               </p>
               <Button
                 type="button"
-                size="sm"
                 disabled={busy}
                 onClick={() => void runNotes()}
                 className="btn-brand-gradient gap-2"
               >
                 {noting ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                 ) : (
-                  <NotebookPen className="size-3.5" />
+                  <NotebookPen className="size-4" />
                 )}
                 {noting ? "Writing…" : "Generate notes"}
               </Button>
@@ -508,15 +501,15 @@ export default function ChannelAiPanel({
           {result ? (
             <div
               key={result.slice(0, 24)}
-              className="animate-in space-y-1.5 border-t border-border/60 pt-3 duration-200 fade-in-0"
+              className="animate-in space-y-2 border-t border-border/60 pt-4 duration-200 fade-in-0"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold">
+                  <span className="text-sm font-semibold">
                     {RESULT_LABEL[resultTab]}
                   </span>
                   {metaLine ? (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {metaLine}
                     </span>
                   ) : null}
@@ -526,13 +519,13 @@ export default function ChannelAiPanel({
                   size="sm"
                   variant="ghost"
                   onClick={() => void copyResult()}
-                  className="h-7 shrink-0 gap-1 px-2 text-xs"
+                  className="h-8 shrink-0 gap-1.5 px-2.5 text-sm"
                 >
                   <Copy className="size-3.5" />
                   Copy
                 </Button>
               </div>
-              <div className="max-h-48 overflow-y-auto text-left text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+              <div className="max-h-72 overflow-y-auto text-left text-[15px] leading-relaxed whitespace-pre-wrap text-foreground/90">
                 {result}
               </div>
             </div>

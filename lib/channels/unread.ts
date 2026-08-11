@@ -60,6 +60,7 @@ export async function unreadInfoForChannels(args: {
           $match: {
             channelId: { $in: withoutState },
             authorId: { $ne: userOid },
+            deletedAt: null,
           },
         },
         { $group: { _id: "$channelId", count: { $sum: 1 } } },
@@ -78,6 +79,7 @@ export async function unreadInfoForChannels(args: {
         {
           $match: {
             authorId: { $ne: userOid },
+            deletedAt: null,
             $or: withState.map(({ channelId, lastReadAt }) => ({
               channelId,
               createdAt: { $gt: lastReadAt },

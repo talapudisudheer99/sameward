@@ -85,6 +85,9 @@ export type ChannelChatShellProps = {
     files: File[]
     mentionedUserIds?: string[]
   }) => Promise<void>
+  onEditMessage?: (messageId: string, body: string) => Promise<void>
+  onDeleteMessage?: (messageId: string) => Promise<void>
+  onToggleReaction?: (messageId: string, emoji: string) => Promise<void>
   onTyping?: () => void
 }
 
@@ -118,12 +121,16 @@ export default function ChannelChatShell({
   onInviteMembers,
   onRemoveMember,
   onSendMessage,
+  onEditMessage,
+  onDeleteMessage,
+  onToggleReaction,
   onTyping,
 }: ChannelChatShellProps) {
   const [createOpen, setCreateOpen] = useState(false)
   const [dmOpen, setDmOpen] = useState(false)
   const [renameOpen, setRenameOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteMessageId, setDeleteMessageId] = useState<string | null>(null)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
@@ -250,6 +257,18 @@ export default function ChannelChatShell({
                   : (target) => setProfileTarget(target)
               }
               tutorialPinExplainMessageId={tutorialPinExplainMessageId}
+              canModerate={canManage && !demoMode}
+              onEditMessage={
+                demoMode || !onEditMessage ? undefined : onEditMessage
+              }
+              onRequestDeleteMessage={
+                demoMode || !onDeleteMessage
+                  ? undefined
+                  : (id) => setDeleteMessageId(id)
+              }
+              onToggleReaction={
+                demoMode || !onToggleReaction ? undefined : onToggleReaction
+              }
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
@@ -362,6 +381,21 @@ export default function ChannelChatShell({
             confirmLabel="Delete"
             variant="destructive"
             onConfirm={onDeleteChannel}
+          />
+          <ConfirmDialog
+            open={deleteMessageId != null}
+            onOpenChange={(open) => {
+              if (!open) setDeleteMessageId(null)
+            }}
+            title="Delete message?"
+            description="This message will be removed for everyone in the channel."
+            confirmLabel="Delete"
+            variant="destructive"
+            onConfirm={async () => {
+              if (!deleteMessageId || !onDeleteMessage) return
+              await onDeleteMessage(deleteMessageId)
+              setDeleteMessageId(null)
+            }}
           />
         </>
       ) : null}

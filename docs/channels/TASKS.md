@@ -83,15 +83,13 @@ Check off when reviewed.
 
 ---
 
-## Slice 8 — Message edit / delete (backlog · **do first** after current features)
+## Slice 8 — Message edit / delete ✅
 
-Deferred from v1 on purpose. Design locked (Aug 9): timestamps over booleans, soft delete.
-
-- [ ] **T25** Model fields `editedAt` / `deletedAt` / `deletedBy` (nullable) + `PATCH`/`DELETE …/messages/:id`
+- [x] **T25** Model fields `editedAt` / `deletedAt` / `deletedBy` + `PATCH`/`DELETE …/messages/:id`
   - Authz: **edit = author only**; **delete = author | owner | admin**
   - Soft delete → tombstone shape from API (never return body/attachments of deleted rows)
-- [ ] **T26** Realtime `message:update` / `message:delete` + RTK `updateQueryData` cache patch (all tabs)
-- [ ] **T27** UI: hover actions (inline edit, delete confirm), "edited" label, tombstone; delete → best-effort S3 attachment cleanup
+- [x] **T26** Realtime `message:update` / `message:delete` + RTK `updateQueryData` cache patch (all tabs)
+- [x] **T27** UI: hover actions (inline edit, delete confirm), "edited" label, tombstone; delete → best-effort S3 attachment cleanup
 
 Notes:
 - Prefer `editedAt: Date|null` over `isEdited` boolean (`isEdited = editedAt != null`, and keeps *when*).
@@ -105,11 +103,16 @@ Notes:
 - [x] 1:1 DMs (`visibility: dm`, `…/dms`, sidebar)  
 - [x] @mentions (`mentionedUserIds` + composer autocomplete)
 
+## Slice 9 — Message reactions ✅
+
+- [x] **T28** Model `reactions[{ emoji, userIds }]` + allowlist + `POST …/reactions` toggle
+- [x] **T29** Realtime via existing `message:update` + RTK cache patch
+- [x] **T30** UI: SmilePlus picker + reaction chips (toggle / highlight)
+
 ## Later (not this module v1)
 
 - [ ] Threads  
 - [ ] Group DMs  
-- [ ] Reactions  
 - [ ] Redis adapter multi-instance  
 - [ ] Docs / boards modules  
 

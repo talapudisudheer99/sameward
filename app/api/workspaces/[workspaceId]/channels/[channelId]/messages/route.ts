@@ -3,6 +3,7 @@ import { Types } from "mongoose"
 
 import { getCurrentUser } from "@/lib/auth/session"
 import { requireChannelAccess } from "@/lib/channels/access"
+import { toMessageJson } from "@/lib/channels/message-json"
 import { notifyRealtime } from "@/lib/channels/notify-realtime"
 import { channelRoomName } from "@/lib/channels/channel-room"
 import { workspaceRoomName } from "@/lib/channels/workspace-room"
@@ -12,69 +13,10 @@ import { Message } from "@/lib/models/channel/message"
 import { Membership } from "@/lib/models/workspace/membership"
 import { User } from "@/lib/models/user"
 import messageSchema from "@/lib/schemas/channel/message-schema"
-import { isManagedObjectUrl, presignAttachmentGet } from "@/lib/storage/s3"
+import { isManagedObjectUrl } from "@/lib/storage/s3"
 
 const DEFAULT_LIMIT = 50
 const MAX_LIMIT = 100
-
-type ChatMessageJson = {
-  id: string
-  channelId: string
-  authorId: string
-  authorName: string
-  body: string
-  attachments: {
-    url: string
-    name: string
-    mime: string
-    sizeBytes: number
-  }[]
-  mentionedUserIds: string[]
-  createdAt: string
-}
-
-/**
- * Same JSON shape for GET history items and POST create/idempotent responses.
- * Attachment `url`s are stored as canonical (private) URLs; we sign a
- * short-lived GET here so the client can actually view them (T22).
- */
-async function toMessageJson(
-  doc: {
-    _id: { toString(): string }
-    channelId: { toString(): string }
-    authorId: { toString(): string }
-    body: string
-    attachments?: {
-      url: string
-      name: string
-      mime: string
-      sizeBytes: number
-    }[]
-    mentionedUserIds?: { toString(): string }[]
-    createdAt: Date
-  },
-  authorName: string
-): Promise<ChatMessageJson> {
-  const attachments = await Promise.all(
-    (doc.attachments ?? []).map(async (a) => ({
-      url: await presignAttachmentGet(a.url),
-      name: a.name,
-      mime: a.mime,
-      sizeBytes: a.sizeBytes,
-    }))
-  )
-
-  return {
-    id: doc._id.toString(),
-    channelId: doc.channelId.toString(),
-    authorId: doc.authorId.toString(),
-    authorName,
-    body: doc.body,
-    attachments,
-    mentionedUserIds: (doc.mentionedUserIds ?? []).map((id) => id.toString()),
-    createdAt: doc.createdAt.toISOString(),
-  }
-}
 
 /** Mentions must be workspace members; private/DM also need channel access. */
 async function filterValidMentionIds(args: {
@@ -95,9 +37,7 @@ async function filterValidMentionIds(args: {
     userId: { $in: oids },
   }).select("userId")
 
-  let allowed = new Set(
-    workspaceMembers.map((m) => m.userId.toString())
-  )
+  let allowed = new Set(workspaceMembers.map((m) => m.userId.toString()))
 
   if (
     args.visibility === ChannelVisibility.Private ||
@@ -107,9 +47,7 @@ async function filterValidMentionIds(args: {
       channelId: args.channelId,
       userId: { $in: oids },
     }).select("userId")
-    const inChannel = new Set(
-      channelMembers.map((m) => m.userId.toString())
-    )
+    const inChannel = new Set(channelMembers.map((m) => m.userId.toString()))
     allowed = new Set([...allowed].filter((id) => inChannel.has(id)))
   }
 

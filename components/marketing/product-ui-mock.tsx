@@ -1,19 +1,8 @@
 "use client"
 
-import {
-  Building2,
-  Hash,
-  Headphones,
-  Lock,
-  Palette,
-  Paperclip,
-  Send,
-  Sparkles,
-} from "lucide-react"
-import {
-  Beat,
-  useMarketingMotion,
-} from "@/components/marketing/motion"
+import { Hash, Lock, Paperclip, Send, Sparkles } from "lucide-react"
+
+import { Beat, useMarketingMotion } from "@/components/marketing/motion"
 import { cn } from "@/lib/utils"
 
 type ProductUiMockProps = {
@@ -31,7 +20,6 @@ const AVATARS = {
 /**
  * Absolute timeline (seconds from viewport enter).
  * Sequence: Channels → Workspaces → chat people → Profile → Channel AI.
- * Soft opacity dissolves — ~1.1s total, calm but not lazy.
  */
 function useMockTimeline() {
   const { reduce } = useMarketingMotion()
@@ -61,7 +49,7 @@ function useMockTimeline() {
 }
 
 /**
- * Marketing product composition — sequential element motion teaches the UI map.
+ * Marketing product composition — mirrors app chrome (brand tiles, quiet roles).
  */
 export function ProductUiMock({
   className,
@@ -78,7 +66,12 @@ export function ProductUiMock({
       )}
       aria-hidden
     >
-      <Beat delay={t.chrome} duration={t.duration} y={0} className="h-1 w-full bg-linear-to-r from-(--brand-a) via-primary to-(--brand-b)" />
+      <Beat
+        delay={t.chrome}
+        duration={t.duration}
+        y={0}
+        className="h-1 w-full bg-linear-to-r from-(--brand-a) via-primary to-(--brand-b)"
+      />
 
       <Beat
         delay={t.chrome}
@@ -97,7 +90,6 @@ export function ProductUiMock({
       <div
         className={cn(
           "grid gap-3 bg-linear-to-br from-secondary/50 via-background to-accent/30 p-2.5 sm:gap-3 sm:p-3 lg:gap-4 lg:p-4",
-          /* Phone: stack. Desktop: chat | rails */
           "grid-cols-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(220px,0.68fr)]",
           "lg:min-h-[400px]"
         )}
@@ -123,7 +115,6 @@ export function ProductUiMock({
 
           <div className="grid min-h-0 flex-1 md:grid-cols-[148px_minmax(0,1fr)] lg:grid-cols-[160px_minmax(0,1fr)]">
             <aside className="hidden border-r border-border/60 p-3 md:block">
-              {/* 1) Channels parent → children */}
               <Beat
                 delay={t.channelsParent}
                 duration={t.duration}
@@ -164,7 +155,6 @@ export function ProductUiMock({
                 </Beat>
               </ul>
 
-              {/* 2) Workspaces parent → children */}
               <Beat
                 delay={t.workspacesParent}
                 duration={t.duration}
@@ -174,26 +164,26 @@ export function ProductUiMock({
               >
                 Workspaces
               </Beat>
-              <ul className="space-y-2">
+              <ul className="space-y-1.5">
                 <WorkspaceItem
-                  Icon={Building2}
+                  initials="NW"
                   name="Northwind"
+                  role="Owner"
                   active
-                  tone="bg-primary/15 text-primary"
                   delay={t.workspaceItem(0)}
                   duration={t.duration}
                 />
                 <WorkspaceItem
-                  Icon={Palette}
+                  initials="AL"
                   name="Atlas Labs"
-                  tone="bg-secondary text-secondary-foreground"
+                  role="Member"
                   delay={t.workspaceItem(1)}
                   duration={t.duration}
                 />
                 <WorkspaceItem
-                  Icon={Headphones}
+                  initials="CS"
                   name="Customer Success"
-                  tone="bg-accent text-accent-foreground"
+                  role="Member"
                   delay={t.workspaceItem(2)}
                   duration={t.duration}
                 />
@@ -201,7 +191,6 @@ export function ProductUiMock({
             </aside>
 
             <div className="flex min-w-0 flex-col">
-              {/* 3) Chat people */}
               <div className="flex-1 space-y-3 p-3 sm:space-y-3.5 sm:p-4">
                 <ChatLine
                   src={AVATARS.sam}
@@ -238,7 +227,7 @@ export function ProductUiMock({
                   <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
                     Message #general
                   </span>
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-primary px-2 py-1 text-[10px] font-semibold text-white">
+                  <span className="btn-brand-gradient inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold text-white">
                     <Send className="size-3" />
                     Send
                   </span>
@@ -248,9 +237,7 @@ export function ProductUiMock({
           </div>
         </section>
 
-        {/* Phone: AI first (differentiator). Tablet: 2-up. Desktop: stacked rail. */}
         <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-col">
-          {/* 4) Profile — hide on very narrow phones to keep fold calm */}
           <Beat
             delay={t.profileParent}
             duration={t.duration}
@@ -299,13 +286,12 @@ export function ProductUiMock({
               delay={t.profileChild(3)}
               duration={t.duration}
               as="p"
-              className="mt-3 text-xs font-semibold text-primary"
+              className="mt-3 text-xs font-medium text-muted-foreground"
             >
               View profile →
             </Beat>
           </Beat>
 
-          {/* 5) Channel AI parent → children */}
           <Beat
             delay={t.aiParent}
             duration={t.duration}
@@ -368,17 +354,17 @@ export function ProductUiMock({
 }
 
 function WorkspaceItem({
-  Icon,
+  initials,
   name,
+  role,
   active,
-  tone,
   delay,
   duration,
 }: {
-  Icon: typeof Building2
+  initials: string
   name: string
+  role: string
   active?: boolean
-  tone: string
   delay: number
   duration: number
 }) {
@@ -389,25 +375,28 @@ function WorkspaceItem({
       x={-5}
       as="li"
       className={cn(
-        "flex items-center gap-2 rounded-md px-1 py-1",
-        active && "bg-primary/5"
+        "flex items-center gap-2 rounded-lg px-1 py-1",
+        active && "bg-primary/[0.04]"
       )}
     >
-      <span
-        className={cn(
-          "flex size-7 shrink-0 items-center justify-center rounded-md",
-          tone
-        )}
-      >
-        <Icon className="size-3.5" strokeWidth={1.75} />
+      <span className="brand-tile flex size-7 shrink-0 items-center justify-center rounded-md font-heading text-[10px] font-semibold tracking-tight">
+        {initials}
       </span>
       <span
         className={cn(
-          "truncate text-xs",
+          "min-w-0 flex-1 truncate text-xs",
           active ? "font-semibold text-foreground" : "text-muted-foreground"
         )}
       >
         {name}
+      </span>
+      <span
+        className={cn(
+          "shrink-0 text-[10px] font-medium capitalize",
+          active ? "text-primary/75" : "text-muted-foreground/80"
+        )}
+      >
+        {role}
       </span>
     </Beat>
   )

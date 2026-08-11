@@ -85,7 +85,7 @@ Deploy/migrate rules: [../architecture/deploy.md](../architecture/deploy.md).
 ## Status
 
 ✅ **All channel lib/models/realtime files shipped and E2E-verified (Aug 9, 2026).**  
-Next additions land with Slice 8 (message edit/delete): `editedAt`/`deletedAt`/`deletedBy` on `message.ts` + `PATCH`/`DELETE` handlers.
+Next additions: threads / Redis adapter (multi-instance). Edit/delete + reactions are shipped (`editedAt`/`deletedAt`/`reactions` on `message.ts`).
 
 ---
 

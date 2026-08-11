@@ -30,7 +30,6 @@ import {
 import {
   WORKSPACE_ROLE_STYLES,
   workspaceInitials,
-  workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
@@ -168,10 +167,7 @@ export default function WorkspaceDetailPage() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 flex-1 items-start gap-4">
           <div
-            className={cn(
-              "flex size-14 shrink-0 items-center justify-center rounded-xl text-lg font-bold text-white shadow-sm",
-              workspaceTileColor(data.name)
-            )}
+            className="brand-tile flex size-14 shrink-0 items-center justify-center rounded-xl font-heading text-lg font-semibold tracking-tight"
             aria-hidden
           >
             {workspaceInitials(data.name)}
@@ -269,12 +265,7 @@ export default function WorkspaceDetailPage() {
         className="mt-8 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         <div className="flex -space-x-2" aria-hidden>
-          <div
-            className={cn(
-              "flex size-9 items-center justify-center rounded-full border-2 border-card text-xs font-semibold text-white",
-              workspaceTileColor(data.name)
-            )}
-          >
+          <div className="brand-tile flex size-9 items-center justify-center rounded-full border-2 border-card text-xs font-semibold">
             {workspaceInitials(data.name).slice(0, 1)}
           </div>
           <div className="flex size-9 items-center justify-center rounded-full border-2 border-card bg-muted text-xs font-medium text-muted-foreground">

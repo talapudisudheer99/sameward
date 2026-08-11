@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto" // Node's built-in crypto — no package to install
 
-import { cookies } from "next/headers" // read/write cookies inside Route Handlers
+import { cookies, headers } from "next/headers" // read/write cookies inside Route Handlers
 
 import { connectDB } from "@/lib/db/mongoose"
-import { Session } from "@/lib/models/session"
+import { MAX_SESSIONS_PER_USER, Session } from "@/lib/models/session"
 
 import {
   SESSION_COOKIE_NAME,
@@ -21,6 +21,8 @@ export type { SessionUser } from "./session-user"
  * 1. invent a random token
  * 2. save its hash + owner + expiry in Mongo
  * 3. send the raw token to the browser as an httpOnly cookie
+ *
+ * Enforces MAX_SESSIONS_PER_USER by expiring the oldest session(s) first.
  *
  * rememberMe:
  *   true  → 30 days
@@ -49,10 +51,29 @@ export async function createSession(
   // Date.now() is milliseconds, our max age is seconds, hence * 1000.
   const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000)
 
+  const h = await headers()
+  const userAgent = (h.get("user-agent") ?? "").slice(0, 512)
+  const forwarded = h.get("x-forwarded-for")
+  const ip = (
+    forwarded?.split(",")[0]?.trim() ||
+    h.get("x-real-ip") ||
+    ""
+  ).slice(0, 64)
+
+  // Cap concurrent devices: drop oldest so this login can proceed.
+  const existing = await Session.find({ userId }).sort({ createdAt: 1 })
+  const overflow = existing.length - (MAX_SESSIONS_PER_USER - 1)
+  if (overflow > 0) {
+    const victimIds = existing.slice(0, overflow).map((s) => s._id)
+    await Session.deleteMany({ _id: { $in: victimIds } })
+  }
+
   await Session.create({
     tokenHash: hashToken(token),
     userId,
     expiresAt,
+    userAgent,
+    ip,
   })
 
   // `cookies()` is async in Next 16 — it must be awaited.
@@ -75,6 +96,12 @@ export async function getCurrentUser() {
   if (!token) return null
 
   return resolveUserFromSessionToken(token)
+}
+
+/** Raw session cookie value for this request (or null). */
+export async function getRawSessionToken(): Promise<string | null> {
+  const cookieStore = await cookies()
+  return cookieStore.get(SESSION_COOKIE_NAME)?.value ?? null
 }
 
 /**

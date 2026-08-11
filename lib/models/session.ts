@@ -7,6 +7,9 @@ import {
 } from "@/lib/db/mongoose-ns"
 import type { Types } from "mongoose"
 
+/** Hard cap — third login expires the oldest session automatically. */
+export const MAX_SESSIONS_PER_USER = 2
+
 /**
  * One document = one logged-in device/browser.
  * Logging out deletes the document, which instantly invalidates that cookie.
@@ -26,6 +29,20 @@ const sessionSchema = new Schema(
       ref: "User",
       required: true,
       index: true, // we query by userId (e.g. "log out everywhere")
+    },
+    /** Browser / app User-Agent at login (best-effort for Settings list). */
+    userAgent: {
+      type: String,
+      trim: true,
+      maxlength: 512,
+      default: "",
+    },
+    /** Client IP at login (best-effort). */
+    ip: {
+      type: String,
+      trim: true,
+      maxlength: 64,
+      default: "",
     },
     // `expires: 0` makes this a TTL index: Mongo deletes the document
     // automatically once the current time passes expiresAt.

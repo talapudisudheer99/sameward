@@ -19,6 +19,9 @@ Proxy is **not** enough — enforce membership in handlers.
 | DELETE | `.../channels/:channelId/members/:userId` | owner \| admin | Remove from private | ✅ |
 | GET | `.../channels/:channelId/messages` | allowed | History (cursor) | ✅ |
 | POST | `.../channels/:channelId/messages` | allowed | Create message (text + attachment refs) | ✅ (text + attachments) |
+| PATCH | `.../channels/:channelId/messages/:messageId` | author | Edit body (`editedAt`) | ✅ |
+| DELETE | `.../channels/:channelId/messages/:messageId` | author \| owner \| admin | Soft delete → tombstone | ✅ |
+| POST | `.../channels/:channelId/messages/:messageId/reactions` | allowed | Toggle allowlisted emoji reaction | ✅ |
 | POST | `.../channels/:channelId/uploads` | allowed | Batch presign PUT for attachments | ✅ (S3 presigned) |
 
 Live delivery is **not** REST — see [SOCKETS.md](./SOCKETS.md).
@@ -149,7 +152,8 @@ Non-access → **404** (same as workspaces).
 
 Channel CRUD + private members + messages REST (text + attachments): ✅  
 Batch presign uploads (S3 PUT) + presigned GET on read + realtime notify: ✅  
-Message edit/delete: ⬜ deferred to Slice 8 (`PATCH`/`DELETE …/messages/:id`).
+Message edit/delete (Slice 8): ✅ `PATCH`/`DELETE …/messages/:messageId` · soft delete · `message:update` / `message:delete`  
+Reactions: ✅ `POST …/messages/:messageId/reactions` `{ emoji }` toggle · response = full message JSON · fans out `message:update`
 
 ---
 

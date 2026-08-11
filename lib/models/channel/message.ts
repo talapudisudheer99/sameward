@@ -85,6 +85,42 @@ const messageSchema = new Schema(
         message: "At most 20 mentions per message",
       },
     },
+    /** Set when the author edits the body (null = never edited) */
+    editedAt: {
+      type: Date,
+      default: null,
+    },
+    /** Soft delete — tombstone keeps the row for transcript continuity */
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+    deletedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    /**
+     * Emoji reactions — one entry per emoji, userIds who reacted.
+     * Toggle via POST …/reactions (no custom emoji packs).
+     */
+    reactions: {
+      type: [
+        {
+          emoji: { type: String, required: true, trim: true, maxlength: 8 },
+          userIds: {
+            type: [Schema.Types.ObjectId],
+            ref: "User",
+            default: [],
+          },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: (v: unknown[]) => Array.isArray(v) && v.length <= 20,
+        message: "At most 20 reaction types per message",
+      },
+    },
   },
   { timestamps: true }
 )

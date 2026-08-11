@@ -21,7 +21,7 @@ export async function GET() {
   }
 
   await connectDB()
-  const user = await User.findById(sessionUser.id)
+  const user = await User.findById(sessionUser.id).select("+passwordHash")
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
@@ -34,6 +34,7 @@ export async function GET() {
         fullName: profile.fullName,
         email: profile.email,
         emailVerified: user.emailVerified === true,
+        hasPassword: Boolean(user.passwordHash),
         title: profile.title,
         bio: profile.bio,
         timezone: profile.timezone,
@@ -84,7 +85,7 @@ export async function PATCH(req: Request) {
   }
 
   await connectDB()
-  const user = await User.findById(sessionUser.id)
+  const user = await User.findById(sessionUser.id).select("+passwordHash")
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
@@ -110,6 +111,7 @@ export async function PATCH(req: Request) {
         fullName: profile.fullName,
         email: profile.email,
         emailVerified: user.emailVerified === true,
+        hasPassword: Boolean(user.passwordHash),
         title: profile.title,
         bio: profile.bio,
         timezone: profile.timezone,

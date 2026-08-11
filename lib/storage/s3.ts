@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto"
 
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -174,4 +175,26 @@ export async function presignAttachmentGet(url: string): Promise<string> {
     console.error("presignAttachmentGet failed:", error)
     return url
   }
+}
+
+/**
+ * Best-effort delete of one managed object. Soft-delete messages call this
+ * after the Mongo tombstone is written — failures are logged, not thrown.
+ */
+export async function deleteManagedObject(url: string): Promise<void> {
+  const key = objectKeyFromUrl(url)
+  if (!key) return
+  try {
+    await getClient().send(
+      new DeleteObjectCommand({ Bucket: getBucket(), Key: key })
+    )
+  } catch (error) {
+    console.error("deleteManagedObject failed:", error)
+  }
+}
+
+export async function deleteMessageAttachments(
+  attachments: { url: string }[]
+): Promise<void> {
+  await Promise.all(attachments.map((a) => deleteManagedObject(a.url)))
 }

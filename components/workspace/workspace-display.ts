@@ -9,6 +9,10 @@ export function workspaceInitials(name: string): string {
     .join("")
 }
 
+/**
+ * Deterministic color for *people* avatars (members table).
+ * Workspace marks use `brand-tile` instead — keeps product chrome cohesive.
+ */
 const TILE_COLORS = [
   "bg-violet-500",
   "bg-teal-500",
@@ -20,7 +24,6 @@ const TILE_COLORS = [
   "bg-amber-500",
 ] as const
 
-/** Deterministic tile color from name so the same workspace always matches list ↔ detail */
 export function workspaceTileColor(name: string): string {
   let hash = 0
   for (let i = 0; i < name.length; i++) {

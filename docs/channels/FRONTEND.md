@@ -54,9 +54,11 @@ Desktop `/channels` (no `?list=1`) still auto-opens default/`#general`.
 | Typing | `use-channel-typing` → `typingLabel` |
 | Presence | `user-workspace-presence` → `online` on `ChannelMemberRow` |
 | Reconnect | `reconnecting` prop → banner + gap fetch |
-| Emoji | Button stub (disabled) — optional later |
+| Emoji | Composer insert + message reaction picker (`EmojiPicker` allowlist) |
+| Reactions | Hover SmilePlus · chips under bubble (toggle; highlight if you reacted) |
+| Edit / delete | Hover Pencil/Trash · inline edit · confirm delete · tombstone |
 
-**Not v1 UI:** thread panel, reaction picker, group DM inbox. Profile card → [profiles](../profiles/README.md).
+**Not v1 UI:** thread panel, group DM inbox. Profile card → [profiles](../profiles/README.md).
 
 ---
 

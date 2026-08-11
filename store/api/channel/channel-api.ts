@@ -4,6 +4,7 @@ import type {
   MessagesListResponse,
   ChannelListItem,
   ChannelMemberRow,
+  ChatMessage,
   MarkChannelReadResponse,
   DmListItem,
 } from "@/lib/types/channel/channel-types"
@@ -291,6 +292,105 @@ export const channelsApi = baseApi.injectEndpoints({
         } catch {}
       },
     }),
+
+    updateMessage: builder.mutation<
+      ChatMessage,
+      {
+        workspaceId: string
+        channelId: string
+        messageId: string
+        body: string
+      }
+    >({
+      query: ({ workspaceId, channelId, messageId, body }) => ({
+        url: `workspaces/${workspaceId}/channels/${channelId}/messages/${messageId}`,
+        method: "PATCH",
+        body: { body },
+      }),
+      async onQueryStarted(
+        { workspaceId, channelId },
+        { dispatch, queryFulfilled }
+      ) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getMessages",
+              { workspaceId, channelId, limit: 50 },
+              (draft) => {
+                const idx = draft.messages.findIndex((m) => m.id === data.id)
+                if (idx === -1) return
+                draft.messages[idx] = data
+              }
+            )
+          )
+        } catch {}
+      },
+    }),
+
+    deleteMessage: builder.mutation<
+      ChatMessage,
+      { workspaceId: string; channelId: string; messageId: string }
+    >({
+      query: ({ workspaceId, channelId, messageId }) => ({
+        url: `workspaces/${workspaceId}/channels/${channelId}/messages/${messageId}`,
+        method: "DELETE",
+      }),
+      async onQueryStarted(
+        { workspaceId, channelId },
+        { dispatch, queryFulfilled }
+      ) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getMessages",
+              { workspaceId, channelId, limit: 50 },
+              (draft) => {
+                const idx = draft.messages.findIndex((m) => m.id === data.id)
+                if (idx === -1) return
+                draft.messages[idx] = data
+              }
+            )
+          )
+        } catch {}
+      },
+    }),
+
+    toggleMessageReaction: builder.mutation<
+      ChatMessage,
+      {
+        workspaceId: string
+        channelId: string
+        messageId: string
+        emoji: string
+      }
+    >({
+      query: ({ workspaceId, channelId, messageId, emoji }) => ({
+        url: `workspaces/${workspaceId}/channels/${channelId}/messages/${messageId}/reactions`,
+        method: "POST",
+        body: { emoji },
+      }),
+      async onQueryStarted(
+        { workspaceId, channelId },
+        { dispatch, queryFulfilled }
+      ) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getMessages",
+              { workspaceId, channelId, limit: 50 },
+              (draft) => {
+                const idx = draft.messages.findIndex((m) => m.id === data.id)
+                if (idx === -1) return
+                draft.messages[idx] = data
+              }
+            )
+          )
+        } catch {}
+      },
+    }),
   }),
 })
 
@@ -334,4 +434,7 @@ export const {
   useRemoveChannelMemberMutation,
   useGetMessagesQuery,
   useCreateMessageMutation,
+  useUpdateMessageMutation,
+  useDeleteMessageMutation,
+  useToggleMessageReactionMutation,
 } = channelsApi

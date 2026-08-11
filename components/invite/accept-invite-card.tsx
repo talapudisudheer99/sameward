@@ -12,7 +12,6 @@ import {
 
 import {
   workspaceInitials,
-  workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -150,10 +149,7 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   const { invite } = state
   const tile = (
     <div
-      className={cn(
-        "mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] text-lg font-semibold text-white",
-        workspaceTileColor(invite.workspaceName)
-      )}
+      className="brand-tile mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] font-heading text-lg font-semibold tracking-tight"
       aria-hidden
     >
       {workspaceInitials(invite.workspaceName)}

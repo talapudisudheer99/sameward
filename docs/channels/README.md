@@ -41,7 +41,8 @@ This folder is the **single source of truth** for the channels module (same idea
 | Unread | Per-user `lastReadAt` · sidebar badge · mark-read on open · Catch up “Since last visit” |
 | DMs | Start / reopen 1:1 · sidebar section · same message/unread/AI stack as channels |
 | Mentions | `mentionedUserIds` · composer `@` autocomplete · transcript highlight |
-| Messages | Persist via REST · live fan-out via Socket.IO |
+| Messages | Persist via REST · live fan-out via Socket.IO · edit / soft-delete |
+| Reactions | Allowlisted emoji toggle · chips under messages · live via `message:update` |
 | Files | Images + PDF · size/count/type limits (see VISION) · light lightbox |
 | Live | Typing indicators · basic online presence |
 | Mobile | Full-screen channel picker via header **←** (`?list=1`) |
@@ -52,7 +53,6 @@ This folder is the **single source of truth** for the channels module (same idea
 
 - Threads / reply sidebars  
 - Group DMs  
-- Message reactions (emoji in text OK) · message edit/delete (Slice 8)  
 - Custom emoji packs  
 - Announcement-only channels  
 - Virus scanning / arbitrary file types  

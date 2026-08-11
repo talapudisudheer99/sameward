@@ -184,9 +184,22 @@ Acceptance = what we demo for v1.
 
 ---
 
+## US-C13 — Emoji reactions
+
+**As a** channel or DM participant,  
+**I want** to react to messages with a small set of emoji,  
+**So that** I can acknowledge without cluttering the transcript.
+
+**Acceptance**
+- [x] Hover / React opens allowlisted emoji picker
+- [x] Clicking a chip or picker emoji toggles my reaction
+- [x] Counts update for everyone via `message:update`
+
+---
+
 ## Non-goals (later)
 
-- Threads · group DMs · reactions system · custom emoji · announcement channels · virus scan · docs/boards
+- Threads · group DMs · custom emoji packs · announcement channels · virus scan · docs/boards
 
 ---
 

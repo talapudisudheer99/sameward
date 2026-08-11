@@ -72,7 +72,7 @@ export default function CreateWorkSpaceDialog({
     try {
       const response = await createWorkspace({
         name: data.name,
-        description: data.description?.trim() || undefined,
+        description: data.description?.trim() ?? "",
       }).unwrap()
       handleOpenChange(false)
       toast.success("Workspace created", {
@@ -90,7 +90,13 @@ export default function CreateWorkSpaceDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       {showTrigger ? (
         <DialogTrigger
-          render={<Button type="button" size="lg" className="h-10 px-4" />}
+          render={
+            <Button
+              type="button"
+              size="lg"
+              className="btn-brand-gradient h-10 px-4 text-white shadow-sm"
+            />
+          }
         >
           Create Workspace
         </DialogTrigger>

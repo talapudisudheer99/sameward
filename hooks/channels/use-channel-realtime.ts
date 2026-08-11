@@ -40,8 +40,28 @@ function appendMessageToCache(
   )
 }
 
+function patchMessageInCache(
+  dispatch: AppDispatch,
+  workspaceId: string,
+  channelId: string,
+  message: ChatMessage
+): void {
+  dispatch(
+    channelsApi.util.updateQueryData(
+      "getMessages",
+      { workspaceId, channelId, limit: MESSAGE_PAGE_LIMIT },
+      (draft) => {
+        const idx = draft.messages.findIndex((m) => m.id === message.id)
+        if (idx === -1) return
+        draft.messages[idx] = message
+      }
+    )
+  )
+}
+
 /**
  * Join the open channel room, append message:new into RTK, gap-fetch on reconnect.
+ * Also patches message:update / message:delete (edit + soft-delete tombstones).
  */
 export function useChannelRealtime(args: {
   workspaceId: string
@@ -68,9 +88,9 @@ export function useChannelRealtime(args: {
       )
     }
     hadConnectedRef.current = true
-  }, [status, channelId, workspaceId, enabled, dispatch]) //Which outside variables am I reading?
+  }, [status, channelId, workspaceId, enabled, dispatch])
 
-  // Join / leave + live append
+  // Join / leave + live append / patch
 
   useEffect(() => {
     if (!enabled || !socket || !channelId || status !== "connected") return
@@ -83,6 +103,18 @@ export function useChannelRealtime(args: {
       appendMessageToCache(dispatch, workspaceId, channelId, payload)
     }
 
+    const onMessageUpdate = (payload: unknown) => {
+      if (!isChatMessage(payload)) return
+      if (payload.channelId !== channelId) return
+      patchMessageInCache(dispatch, workspaceId, channelId, payload)
+    }
+
+    const onMessageDelete = (payload: unknown) => {
+      if (!isChatMessage(payload)) return
+      if (payload.channelId !== channelId) return
+      patchMessageInCache(dispatch, workspaceId, channelId, payload)
+    }
+
     const onChannelError = (payload: {
       code?: string
       reasong?: string
@@ -92,11 +124,15 @@ export function useChannelRealtime(args: {
     }
 
     socket.on("message:new", onMessageNew)
+    socket.on("message:update", onMessageUpdate)
+    socket.on("message:delete", onMessageDelete)
     socket.on("channel:error", onChannelError)
 
     return () => {
       socket.emit("channel:leave", { channelId })
       socket.off("message:new", onMessageNew)
+      socket.off("message:update", onMessageUpdate)
+      socket.off("message:delete", onMessageDelete)
       socket.off("channel:error", onChannelError)
     }
   }, [socket, channelId, workspaceId, status, enabled, dispatch])

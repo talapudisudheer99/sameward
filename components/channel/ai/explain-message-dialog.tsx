@@ -91,16 +91,16 @@ export default function ExplainMessageDialog({
     >
       <DialogContent
         className={cn(
-          "w-[min(100%-1.5rem,28rem)] max-w-[min(100%-1.5rem,28rem)] gap-3 overflow-hidden p-4 sm:max-w-md",
+          "w-[min(100%-1.5rem,36rem)] max-w-[min(100%-1.5rem,36rem)] gap-4 overflow-hidden p-5 sm:max-w-xl sm:p-6",
           "border-border bg-card shadow-xl"
         )}
       >
-        <DialogHeader className="gap-1 pr-8 text-left">
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="size-4 text-primary" aria-hidden />
+        <DialogHeader className="gap-1.5 pr-10 text-left">
+          <DialogTitle className="flex items-center gap-2.5 text-lg">
+            <Sparkles className="size-5 text-primary" aria-hidden />
             Explain message
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription className="text-sm">
             Nearby chat for context. Image/PDF bytes are not opened — filenames
             only.
           </DialogDescription>

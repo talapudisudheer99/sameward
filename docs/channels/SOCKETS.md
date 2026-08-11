@@ -75,6 +75,8 @@ Do **not** merge Socket.IO into `app/api` — that blocks Option B’s “easy m
 | Event | Direction | Payload (sketch) |
 |-------|-----------|------------------|
 | `message:new` | server → room | full message DTO |
+| `message:update` | server → room | edited message DTO (`editedAt` set) |
+| `message:delete` | server → room | tombstone DTO (`deletedAt` set; empty body/attachments) |
 | `typing:start` / `typing:stop` | client → server → room | `{ channelId, userId, fullName? }` |
 | `presence:update` | server → workspace room | `{ onlineUserIds: string[] }` or diff |
 | `channel:join` / leave | client → server | `{ channelId }` |
@@ -95,6 +97,7 @@ Option B: Redis pub/sub (better when scaling)
 - Single `SocketProvider` for the app shell (or workspace layout)
 - On channel open: `channel:join`; on leave: leave room
 - On `message:new`: append / update RTK cache; dedupe by `id` or `clientMessageId`
+- On `message:update` / `message:delete`: patch the same message row in RTK (keep tombstone in place)
 - Reconnect handler: re-join active channel + optional history gap fetch
 - Throttle typing emits
 - Show “Reconnecting…” when disconnected

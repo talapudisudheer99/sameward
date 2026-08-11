@@ -210,4 +210,112 @@
     background: color-mix(in oklab, var(--primary) 10%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary) 20%, transparent);
   }
+
+  /*
+   * TeamHub toasts (Sonner) — Ocean Blue product chrome.
+   * Prefer these over Sonner richColors (generic green/red).
+   */
+  .teamhub-toast {
+    --toast-icon: var(--primary);
+    width: min(22rem, calc(100vw - 2rem)) !important;
+    border: 1px solid color-mix(in oklab, var(--border) 90%, var(--primary)) !important;
+    background:
+      radial-gradient(
+        120% 80% at 0% 0%,
+        color-mix(in oklab, var(--brand-a) 12%, transparent) 0%,
+        transparent 55%
+      ),
+      var(--card) !important;
+    color: var(--card-foreground) !important;
+    box-shadow:
+      0 10px 28px -12px color-mix(in oklab, var(--foreground) 28%, transparent),
+      0 0 0 1px color-mix(in oklab, var(--primary) 8%, transparent) !important;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+  }
+
+  .teamhub-toast-success {
+    --toast-icon: var(--primary);
+    border-color: color-mix(in oklab, var(--primary) 35%, var(--border)) !important;
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--primary) 14%, transparent) 0,
+        color-mix(in oklab, var(--primary) 14%, transparent) 3px,
+        transparent 3px
+      ),
+      radial-gradient(
+        100% 90% at 0% 0%,
+        color-mix(in oklab, var(--brand-a) 14%, transparent) 0%,
+        transparent 50%
+      ),
+      var(--card) !important;
+  }
+
+  .teamhub-toast-error {
+    --toast-icon: var(--destructive);
+    border-color: color-mix(in oklab, var(--destructive) 35%, var(--border)) !important;
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--destructive) 16%, transparent) 0,
+        color-mix(in oklab, var(--destructive) 16%, transparent) 3px,
+        transparent 3px
+      ),
+      radial-gradient(
+        100% 90% at 0% 0%,
+        color-mix(in oklab, var(--destructive) 10%, transparent) 0%,
+        transparent 50%
+      ),
+      var(--card) !important;
+  }
+
+  .teamhub-toast-warning {
+    --toast-icon: var(--warning);
+    border-color: color-mix(in oklab, var(--warning) 40%, var(--border)) !important;
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--warning) 18%, transparent) 0,
+        color-mix(in oklab, var(--warning) 18%, transparent) 3px,
+        transparent 3px
+      ),
+      var(--card) !important;
+  }
+
+  .teamhub-toast-info {
+    --toast-icon: var(--brand-a);
+    border-color: color-mix(in oklab, var(--brand-a) 35%, var(--border)) !important;
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--brand-a) 16%, transparent) 0,
+        color-mix(in oklab, var(--brand-a) 16%, transparent) 3px,
+        transparent 3px
+      ),
+      radial-gradient(
+        100% 90% at 0% 0%,
+        color-mix(in oklab, var(--brand-b) 12%, transparent) 0%,
+        transparent 50%
+      ),
+      var(--card) !important;
+  }
+
+  .teamhub-toast-close {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--muted-foreground) !important;
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent) !important;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .teamhub-toast-close:hover {
+    background: color-mix(in oklab, var(--primary) 10%, var(--card)) !important;
+    border-color: color-mix(in oklab, var(--primary) 35%, var(--border)) !important;
+    color: var(--primary) !important;
+  }
 }

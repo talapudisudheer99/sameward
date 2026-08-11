@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -8,7 +9,9 @@ import {
 } from "react"
 import { FileText, Paperclip, Send, Smile, X } from "lucide-react"
 
+import EmojiPicker from "@/components/channel/emoji-picker"
 import { Button } from "@/components/ui/button"
+import { useAutosizeTextarea } from "@/hooks/use-autosize-textarea"
 import type { WorkspaceMemberOption } from "@/lib/types/workspace/workspace-types"
 import { cn } from "@/lib/utils"
 
@@ -90,8 +93,24 @@ export default function ChatComposer({
   const [caret, setCaret] = useState(0)
   const [mentionIndex, setMentionIndex] = useState(0)
   const [mentionQueryKey, setMentionQueryKey] = useState("")
+  const [emojiOpen, setEmojiOpen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const emojiWrapRef = useRef<HTMLDivElement>(null)
+
+  // Start ~3 lines tall; grow with content up to ~6 lines, then scroll
+  useAutosizeTextarea(textareaRef, body, 160)
+
+  useEffect(() => {
+    if (!emojiOpen) return
+    function onDoc(e: MouseEvent) {
+      if (!emojiWrapRef.current?.contains(e.target as Node)) {
+        setEmojiOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", onDoc)
+    return () => document.removeEventListener("mousedown", onDoc)
+  }, [emojiOpen])
 
   if (draftNonce > 0 && draftNonce !== seenDraftNonce) {
     setSeenDraftNonce(draftNonce)
@@ -164,6 +183,22 @@ export default function ChatComposer({
       const target = prev.find((p) => p.key === key)
       if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl)
       return prev.filter((p) => p.key !== key)
+    })
+  }
+
+  function insertEmoji(emoji: string) {
+    const el = textareaRef.current
+    const start = el?.selectionStart ?? body.length
+    const end = el?.selectionEnd ?? body.length
+    const next = `${body.slice(0, start)}${emoji}${body.slice(end)}`
+    setBody(next)
+    setEmojiOpen(false)
+    const nextCaret = start + emoji.length
+    setCaret(nextCaret)
+    requestAnimationFrame(() => {
+      if (!el) return
+      el.focus()
+      el.setSelectionRange(nextCaret, nextCaret)
     })
   }
 
@@ -339,9 +374,9 @@ export default function ChatComposer({
           onKeyDown={onKeyDown}
           disabled={disabled || isSending}
           placeholder={`Message ${channelName.startsWith("#") ? channelName : channelName}`}
-          rows={3}
+          rows={1}
           maxLength={4000}
-          className="w-full resize-none bg-transparent px-3 pt-3 text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"
+          className="max-h-40 min-h-[4.5rem] w-full resize-none overflow-hidden bg-transparent px-3 pt-3 pb-2 text-sm leading-relaxed outline-none placeholder:text-muted-foreground disabled:opacity-50"
         />
         <div className="flex items-center gap-1 border-t border-border px-2 py-1.5">
           <input
@@ -362,16 +397,28 @@ export default function ChatComposer({
           >
             <Paperclip className="size-4" />
           </Button>
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="ghost"
-            disabled
-            title="Emoji picker — wire later"
-            aria-label="Emoji"
-          >
-            <Smile className="size-4" />
-          </Button>
+          <div ref={emojiWrapRef} className="relative">
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              disabled={disabled || isSending}
+              title="Insert emoji"
+              aria-label="Insert emoji"
+              aria-expanded={emojiOpen}
+              onClick={() => setEmojiOpen((v) => !v)}
+            >
+              <Smile className="size-4" />
+            </Button>
+            {emojiOpen ? (
+              <div className="absolute bottom-full left-0 z-40 mb-2">
+                <EmojiPicker
+                  onSelect={insertEmoji}
+                  label="Insert emoji into message"
+                />
+              </div>
+            ) : null}
+          </div>
           <div className="flex-1" />
           <Button
             type="button"

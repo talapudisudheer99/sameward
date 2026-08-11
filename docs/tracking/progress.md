@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 8 — Quality & deploy (**next**) |
-| **Current feature** | Unread + 1:1 DMs + @mentions ✅ · Phase 8 next |
+| **Current feature** | Settings v1 ✅ · Phase 8 next |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
 | **Last updated** | 2026-08-11 |
 
@@ -21,7 +21,7 @@
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
 | 4 | State & data layer | 🟡 Partial | RTK used across workspaces/channels/AI; deepen in Phase 8 tests |
-| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; unread + 1:1 DMs + @mentions (Aug 11). Edit/delete → Slice 8. [`docs/channels/`](../channels/README.md) |
+| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; unread + 1:1 DMs + @mentions; edit/delete + reactions. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
 | 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
@@ -85,6 +85,11 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | 1:1 DMs + @mentions | `visibility: dm` · `…/dms` · composer `@` · transcript highlight |
 | 2026-08-11 | Repo cleanup | Removed unused marketing collage assets; docs + helpers aligned |
 | 2026-08-11 | Explore TeamHub demo | Read-only Acme Studio + canned Channel AI · `/explore` |
+| 2026-08-11 | Message edit/delete (Slice 8) | Soft delete tombstones · PATCH/DELETE · realtime update/delete · hover UI |
+| 2026-08-11 | Message reactions (Slice 9) | Allowlisted toggle API · chips + picker · live via `message:update` |
+| 2026-08-11 | Settings v1 | `/settings` · theme · account/verify · change-password · sessions · sidebar |
+| 2026-08-12 | Device session cap | Max 2 sessions · list in Settings · 3rd login expires oldest |
+| 2026-08-12 | Session focus guard | Tab/window focus revalidates `/me` · auto `/login` if session dead |
 
 ## GitHub
 

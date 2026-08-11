@@ -48,7 +48,7 @@ export default function RootLayout({
           <ReduxProvider>
             <TooltipProvider delay={300}>
               {children}
-              <Toaster richColors closeButton position="top-right" />
+              <Toaster />
             </TooltipProvider>
           </ReduxProvider>
         </ThemeProvider>

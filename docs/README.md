@@ -16,6 +16,7 @@ docs/
   channels/          ← ✅ channels + realtime chat
   ai/                ← ✅ Phase 7 AI knowledge assistant
   profiles/          ← ✅ Profile v1
+  settings/          ← ✅ Settings v1 (account + app)
   architecture/      ← product vision, stack, data flow
   design/            ← design system tokens (+ marketing image prompts)
   guides/            ← reusable tech notes (e.g. Mongoose)
@@ -31,6 +32,7 @@ docs/
 | **`channels/`** | Channels + realtime + unread + 1:1 DMs + @mentions |
 | **`ai/`** | Phase 7 Path A — AI knowledge assistant |
 | **`profiles/`** | Profile v1 — edit self + teammate card |
+| **`settings/`** | Settings v1 — appearance, account, password, sessions |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |
 | **`phases/`** | Learning roadmap stubs |
 | **`guides/`** | Tech primers (Mongoose, …) |
@@ -49,7 +51,8 @@ docs/
 | “Channels & live chat?” | [channels/README.md](./channels/README.md) |
 | “AI assistant?” | [ai/README.md](./ai/README.md) |
 | “Member profiles?” | [profiles/README.md](./profiles/README.md) |
-| “Next feature to build?” | [profiles/TASKS.md](./profiles/TASKS.md) · then [Phase 8](./phases/08-quality-deployment/README.md) |
+| “Account settings?” | [settings/README.md](./settings/README.md) |
+| “Next feature to build?” | [Phase 8](./phases/08-quality-deployment/README.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
 | “Landing image prompts?” | [design/marketing-image-prompts.md](./design/marketing-image-prompts.md) |

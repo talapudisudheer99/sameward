@@ -200,10 +200,10 @@ export default function InviteMemberDialog({
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label
               htmlFor="member-emails"
-              className="text-sm font-medium text-foreground"
+              className="block text-sm font-medium leading-none text-foreground"
             >
               Email addresses
             </label>

@@ -19,6 +19,7 @@ import {
   useCreateChannelMutation,
   useCreateMessageMutation,
   useDeleteChannelMutation,
+  useDeleteMessageMutation,
   useGetChannelByIdQuery,
   useGetChannelMembersQuery,
   useGetChannelsQuery,
@@ -28,6 +29,8 @@ import {
   useOpenDmMutation,
   useRemoveChannelMemberMutation,
   useUpdateChannelMutation,
+  useUpdateMessageMutation,
+  useToggleMessageReactionMutation,
 } from "@/store/api/channel/channel-api"
 import {
   useGetWorkspaceByIdQuery,
@@ -210,6 +213,9 @@ export default function ChannelChatPage() {
     (m) => !channelMemberIds.has(m.userId) && m.userId !== currentUserId
   )
   const [createMessage, { isLoading: isSending }] = useCreateMessageMutation()
+  const [updateMessage] = useUpdateMessageMutation()
+  const [deleteMessage] = useDeleteMessageMutation()
+  const [toggleReaction] = useToggleMessageReactionMutation()
   const [presignUploads] = usePresignChannelUploadsMutation()
   const [isUploading, setIsUploading] = useState(false)
   const [createChannel] = useCreateChannelMutation()
@@ -466,6 +472,46 @@ export default function ChannelChatPage() {
           } catch {
             toast.error("Could not send message")
             throw new Error("send failed") // composer keeps draft + files
+          }
+        }}
+        onEditMessage={async (messageId, body) => {
+          try {
+            await updateMessage({
+              workspaceId,
+              channelId,
+              messageId,
+              body,
+            }).unwrap()
+            toast.success("Message updated")
+          } catch {
+            toast.error("Could not edit message")
+            throw new Error("edit failed")
+          }
+        }}
+        onDeleteMessage={async (messageId) => {
+          try {
+            await deleteMessage({
+              workspaceId,
+              channelId,
+              messageId,
+            }).unwrap()
+            toast.success("Message deleted")
+          } catch {
+            toast.error("Could not delete message")
+            throw new Error("delete failed")
+          }
+        }}
+        onToggleReaction={async (messageId, emoji) => {
+          try {
+            await toggleReaction({
+              workspaceId,
+              channelId,
+              messageId,
+              emoji,
+            }).unwrap()
+          } catch {
+            toast.error("Could not update reaction")
+            throw new Error("reaction failed")
           }
         }}
       />

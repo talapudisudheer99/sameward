@@ -89,11 +89,23 @@ export async function sendWorkspaceInviteEmail(options: {
   })
 
   if (error) {
+    // Resend test mode only delivers to the account owner — expected in local/dev.
+    // Keep the invite and print the accept link so you can still E2E without a domain.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        "[workspace-invite] Resend blocked (dev). Open this accept link:",
+        options.inviteUrl
+      )
+      console.warn("[workspace-invite]", {
+        to: options.to,
+        workspace: options.workspaceName,
+        resend: error.message,
+      })
+      return
+    }
     throw new Error(error.message)
   }
 
-  // Local/dev: Resend may succeed while mail is delayed/spam —
-  // log the link so you can open /invite/[token] while building accept.
   if (process.env.NODE_ENV !== "production") {
     console.info("[workspace-invite]", {
       to: options.to,

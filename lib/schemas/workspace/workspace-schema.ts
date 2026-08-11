@@ -2,7 +2,8 @@ import { z } from "zod"
 
 /**
  * Shared create / edit workspace rules.
- * `description` is always a string in the form (often ""); never required for product meaning.
+ * Forms always send `description` as a string (often "").
+ * API routes should coerce omitted `description` to "" before `safeParse`.
  */
 const workSpaceSchema = z.object({
   name: z

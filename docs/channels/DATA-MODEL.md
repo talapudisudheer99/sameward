@@ -55,9 +55,15 @@ Works for **public and private** channels (unlike `channel_memberships`). Openin
 | `attachments` | array | `{ url, name, mime, sizeBytes }` ≤ 3 |
 | `clientMessageId` | string? | optional idempotency |
 | `mentionedUserIds` | ObjectId[] | @mentions (≤ 20); validated as workspace (+ channel for private/DM) members |
+| `reactions` | `{ emoji, userIds[] }[]` | allowlisted emoji; ≤ 20 types; toggle via POST …/reactions |
+| `editedAt` | Date \| null | set when author edits body |
+| `deletedAt` | Date \| null | soft delete tombstone |
+| `deletedBy` | ObjectId \| null | who soft-deleted |
 | `createdAt` / `updatedAt` | dates | |
 
 **Indexes:** `{ channelId: 1, createdAt: -1 }` · optional unique `{ channelId, clientMessageId }` sparse
+
+**Soft delete:** API returns tombstone (`body: ""`, `attachments: []`) — never re-exposes content. Unread counts exclude `deletedAt != null`.
 
 **Reserved (not used in v1 UI):** `parentMessageId` for future threads.
 

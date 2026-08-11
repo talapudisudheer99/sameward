@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import EditProfileForm from "@/components/profile/edit-profile-form"
 
 /**
@@ -13,6 +15,14 @@ export default function ProfilePage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Teammates in shared workspaces can see this card — keep it short and
           professional.
+        </p>
+        <p className="mt-2 text-sm">
+          <Link
+            href="/settings"
+            className="font-medium text-primary hover:underline"
+          >
+            Account &amp; security settings
+          </Link>
         </p>
       </header>
       <EditProfileForm />

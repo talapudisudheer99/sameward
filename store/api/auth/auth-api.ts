@@ -6,6 +6,8 @@ export type CurrentUser = {
   fullName: string
   email: string
   emailVerified: boolean
+  /** False for Google-only accounts until they set a password via reset */
+  hasPassword?: boolean
   title?: string
   bio?: string
   timezone?: string

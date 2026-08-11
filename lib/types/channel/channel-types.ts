@@ -55,7 +55,15 @@ export type ChatMessage = {
   body: string
   attachments: Attachment[]
   mentionedUserIds?: string[]
+  reactions?: {
+    emoji: string
+    count: number
+    userIds: string[]
+  }[]
   createdAt: string // ISO
+  editedAt?: string | null
+  deletedAt?: string | null
+  deletedBy?: string | null
   pending?: boolean
   failed?: boolean
 }

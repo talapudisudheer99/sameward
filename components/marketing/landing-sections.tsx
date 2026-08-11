@@ -64,7 +64,7 @@ const solutions = [
     Icon: Building2,
     title: "Growing companies",
     body: "Owners and admins manage members; everyone gets a calm home for chat, files, and decisions.",
-    cue: "Owner · Admin · Member",
+    cue: "Roles · Members · Invites",
   },
 ] as const
 
@@ -145,7 +145,7 @@ function ChannelAiSection() {
                       <Beat
                         delay={at(parent)}
                         duration={duration}
-                        className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15 sm:size-9"
+                        className="brand-tile mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg sm:size-9"
                       >
                       <Icon
                         className="size-4"
@@ -331,7 +331,7 @@ function SolutionsSection() {
                         : "sm:border-l sm:border-primary/10"
                     )}
                   >
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card/80 text-primary shadow-sm ring-1 ring-primary/15">
+                    <span className="brand-tile flex size-8 shrink-0 items-center justify-center rounded-lg">
                       <Icon
                         className="size-4"
                         strokeWidth={1.75}

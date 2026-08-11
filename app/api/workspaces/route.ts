@@ -30,7 +30,14 @@ export async function POST(request: Request) {
       )
     }
 
-    const parsed = workSpaceSchema.safeParse(body)
+    const raw =
+      typeof body === "object" && body !== null
+        ? (body as Record<string, unknown>)
+        : {}
+    const parsed = workSpaceSchema.safeParse({
+      ...raw,
+      description: raw.description ?? "",
+    })
     if (!parsed.success) {
       // Must pass status as the 2nd arg — comma operator would return { status: 400 } alone
       return NextResponse.json(

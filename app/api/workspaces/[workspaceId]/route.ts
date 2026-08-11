@@ -192,7 +192,14 @@ export async function PATCH(
       )
     }
 
-    const parsedData = workSpaceSchema.safeParse(body)
+    const raw =
+      typeof body === "object" && body !== null
+        ? (body as Record<string, unknown>)
+        : {}
+    const parsedData = workSpaceSchema.safeParse({
+      ...raw,
+      description: raw.description ?? "",
+    })
     if (!parsedData.success) {
       return NextResponse.json(
         { message: "Validation failed" },
