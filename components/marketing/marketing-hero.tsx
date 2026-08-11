@@ -14,39 +14,28 @@ type MarketingHeroProps = {
 
 /**
  * Product-led hero — compact on phone/tablet, full mock from md+.
+ * Atmosphere: solid secondary wash + faint grid (Vercel/Linear pattern), no aurora.
  */
 export default function MarketingHero({ signedIn = false }: MarketingHeroProps) {
   return (
-    <div className="relative overflow-hidden border-b border-border/40">
+    <div className="relative isolate overflow-hidden border-b border-border/40 bg-secondary">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-secondary via-secondary/45 to-background"
-      />
-      <div
-        aria-hidden
-        className="bg-hero-aurora pointer-events-none absolute inset-0 -z-10 opacity-90"
-      />
-      <div
-        aria-hidden
-        className="bg-hero-grid pointer-events-none absolute inset-0 -z-10 opacity-40 sm:opacity-45"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[50%] bg-[radial-gradient(ellipse_at_50%_0%,color-mix(in_oklab,var(--brand-a)_20%,transparent),transparent_70%)]"
+        className="bg-hero-grid pointer-events-none absolute inset-0 z-0 opacity-50"
       />
 
-      <section className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-10 text-center sm:px-8 sm:pt-14 lg:px-10 lg:pt-20">
+      <section className="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-4 pt-10 text-center sm:px-8 sm:pt-14 lg:px-10 lg:pt-20">
         <div className="flex w-full max-w-2xl flex-col items-center">
           <Reveal onMount y={10}>
             <p className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-              TeamHub <span className="text-brand-gradient">AI</span>
+              TeamHub <span className="text-primary">AI</span>
             </p>
           </Reveal>
 
           <Reveal onMount y={12} delay={0.06} className="mt-3 sm:mt-5">
             <h1 className="font-heading text-[1.55rem] font-bold tracking-tight text-foreground sm:text-3xl sm:leading-[1.15] md:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
               One place for your team to{" "}
-              <span className="text-brand-gradient">plan, create and ship</span>
+              <span className="text-primary">plan, create and ship</span>
             </h1>
           </Reveal>
 
@@ -121,10 +110,6 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
             id="product"
             className="scroll-mt-28 relative mx-auto w-full max-w-5xl pb-8 text-left sm:scroll-mt-24 sm:pb-12 lg:pb-16"
           >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute top-1/2 left-1/2 -z-10 hidden h-[120%] w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-[100%] bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--brand-a)_26%,transparent)_0%,transparent_68%)] opacity-75 sm:block"
-            />
             <ProductUiMock density="band" />
             <figcaption className="sr-only">
               TeamHub workspaces, channels, chat, profiles, and Channel AI

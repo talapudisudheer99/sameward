@@ -241,7 +241,7 @@ All derive from `--brand-a` / `--primary` / `--warning`, so they follow the pale
 
 | Utility | Use |
 |---------|-----|
-| `bg-hero-aurora` | Soft sky backdrop for the marketing hero |
+| `bg-hero-grid` | Faint blueprint grid for marketing hero (no aurora) |
 | `bg-brand-panel` | Rich branded dark panel for the auth split-screen |
 | `btn-brand-gradient` | Gradient fill layered over a solid button |
 | `bg-brand-wash` | Soft top wash for empty / status sections |

@@ -28,12 +28,7 @@ export async function SiteHeader() {
           href={signedIn ? "/workspace" : "/"}
           className="flex shrink-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="sm:hidden">
-            <TeamHubLogo variant="horizontal" size={28} />
-          </span>
-          <span className="hidden sm:inline-flex">
-            <TeamHubLogo variant="horizontal" size={32} />
-          </span>
+          <TeamHubLogo variant="horizontal" size={32} />
         </Link>
 
         <nav

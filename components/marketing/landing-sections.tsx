@@ -99,7 +99,7 @@ function ChannelAiSection() {
   return (
     <section
       id="channel-ai"
-      className="scroll-mt-20 border-b border-border/40 bg-linear-to-b from-background via-secondary/35 to-background"
+      className="scroll-mt-20 border-b border-border/40 bg-background"
     >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
         <div className="max-w-2xl">
@@ -182,7 +182,7 @@ function ChannelAiSection() {
               delay={at(demoParent)}
               duration={duration}
               y={8}
-              className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-[0_20px_50px_-36px_rgba(3,105,161,0.45)] sm:p-6"
+              className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/90 p-5 shadow-[0_24px_50px_-32px_rgba(3,105,161,0.55)] ring-1 ring-primary/10 backdrop-blur-sm sm:p-6"
             >
               <Beat
                 delay={at(demoParent, 1)}
@@ -252,7 +252,10 @@ function SolutionsSection() {
   const bandGap = 0.18
 
   return (
-    <section id="solutions" className="scroll-mt-20 bg-background">
+    <section
+      id="solutions"
+      className="scroll-mt-20 border-b border-border/40 bg-muted/60"
+    >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
         <div className="max-w-2xl">
           <Beat
@@ -365,7 +368,7 @@ function ResourcesSection({
   return (
     <section
       id="resources"
-      className="scroll-mt-20 border-y border-border/40 bg-linear-to-b from-secondary/40 via-background to-background"
+      className="scroll-mt-20 border-t border-border/40 bg-secondary"
     >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">
