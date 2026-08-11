@@ -9,7 +9,7 @@ Proxy does **not** protect `/api/*`.
 | GET | `/api/workspaces` | logged-in | List my workspaces | ✅ |
 | POST | `/api/workspaces` | logged-in | Create + owner membership | ✅ |
 | GET | `/api/workspaces/[workspaceId]` | member | Get one + my role | ✅ |
-| PATCH | `/api/workspaces/[workspaceId]` | owner \| admin | Rename (name + slug) | ✅ |
+| PATCH | `/api/workspaces/[workspaceId]` | owner \| admin | Update name (+ slug) + description | ✅ |
 | DELETE | `/api/workspaces/[workspaceId]` | **owner** | Delete + cascade invites & memberships | ✅ |
 | GET | `/api/workspaces/[workspaceId]/members` | member | List members | ✅ |
 | POST | `/api/workspaces/[workspaceId]/members` | owner \| admin + **emailVerified** | Send invites (existing users) | ✅ |
@@ -27,27 +27,27 @@ Proxy does **not** protect `/api/*`.
 
 ### `POST /api/workspaces` ✅
 
-**Body:** `{ "name": "Acme Product" }` (Zod 2–50 chars)  
-**201:** `{ id, name, slug, role: "owner" }`  
+**Body:** `{ "name": "Acme Product", "description?": "Eng team for mobile" }` (name 2–50 · description ≤280 optional)  
+**201:** `{ id, name, slug, description, role: "owner" }`  
 **400** validation · **401** unauthenticated  
 **Audit:** `workspace.created`
 
 ### `GET /api/workspaces` ✅
 
-**200:** `{ workspaces: [{ id, name, slug, role }, ...] }`
+**200:** `{ workspaces: [{ id, name, slug, description, role }, ...] }`
 
 ### `GET /api/workspaces/[workspaceId]` ✅
 
-**200:** `{ id, name, slug, role }`  
+**200:** `{ id, name, slug, description, role }`  
 **404** non-member / missing / bad id (same message)
 
 ### `PATCH /api/workspaces/[workspaceId]` ✅
 
-**Body:** `{ "name": "…" }`  
-**200:** `{ id, name, slug, role }`  
+**Body:** `{ "name": "…", "description?": "…" }`  
+**200:** `{ id, name, slug, description, role }`  
 **403** not owner/admin · **404** not a member  
 **Audit:** `workspace.renamed`  
-Slug regenerated via `slugifyUnique(name, workspaceId)` (excludes self).
+Slug regenerated via `slugifyUnique(name, workspaceId)` (excludes self). Description trimmed (empty clears).
 
 ### `DELETE /api/workspaces/[workspaceId]` ✅
 
@@ -58,8 +58,10 @@ Deletes pending invites → all memberships → workspace. **No email notify.**
 
 ### `GET /api/workspaces/[workspaceId]/members` ✅
 
-**200:** `{ members: [{ userId, fullName, email, role }, ...] }`  
+**200:** `{ members: [{ userId, fullName, email, role, avatarUrl }, ...] }`  
 **404** if caller is not a member
+
+`avatarUrl` is a short-lived presigned GET when the user uploaded a photo; otherwise `null` (UI shows initials).
 
 ### `POST /api/workspaces/[workspaceId]/members` ✅
 

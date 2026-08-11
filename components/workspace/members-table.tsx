@@ -2,6 +2,7 @@
 
 import { UserMinus } from "lucide-react"
 
+import UserAvatar from "@/components/profile/user-avatar"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/tooltip"
 import {
   WORKSPACE_ROLE_STYLES,
-  workspaceInitials,
   workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import { cn } from "@/lib/utils"
@@ -108,15 +108,15 @@ export default function MembersTable({
                   onClick={() => onOpenProfile?.(member)}
                   disabled={!onOpenProfile}
                 >
-                  <div
-                    className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white",
+                  <UserAvatar
+                    name={member.fullName || member.email || "?"}
+                    avatarUrl={member.avatarUrl}
+                    size="md"
+                    fallbackClassName={cn(
+                      "font-bold text-white",
                       workspaceTileColor(member.fullName || member.email)
                     )}
-                    aria-hidden
-                  >
-                    {workspaceInitials(member.fullName || member.email)}
-                  </div>
+                  />
                   <div className="min-w-0">
                     <p
                       className="truncate text-sm font-medium text-foreground"

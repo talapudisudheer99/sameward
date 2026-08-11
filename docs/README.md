@@ -15,9 +15,9 @@ docs/
   workspaces/        ← ✅ Phase 3 workspaces
   channels/          ← ✅ channels + realtime chat
   ai/                ← ✅ Phase 7 AI knowledge assistant
-  profiles/          ← 🚧 Profile v1 (thin professional card)
+  profiles/          ← ✅ Profile v1
   architecture/      ← product vision, stack, data flow
-  design/            ← design system tokens
+  design/            ← design system tokens (+ marketing image prompts)
   guides/            ← reusable tech notes (e.g. Mongoose)
   phases/            ← roadmap stubs (what to build next)
   features/          ← feature → phase/doc index
@@ -52,6 +52,7 @@ docs/
 | “Next feature to build?” | [profiles/TASKS.md](./profiles/TASKS.md) · then [Phase 8](./phases/08-quality-deployment/README.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
+| “Landing image prompts?” | [design/marketing-image-prompts.md](./design/marketing-image-prompts.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | “Why this stack?” | [architecture/stack.md](./architecture/stack.md) |
 | “Where do we deploy?” | [architecture/deploy.md](./architecture/deploy.md) — **Railway** Option B (Next + Socket.IO, separate folders) |

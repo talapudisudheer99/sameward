@@ -18,7 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Form } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import workSpaceSchema, {
   type WorkSpaceSchema,
 } from "@/lib/schemas/workspace/workspace-schema"
@@ -31,6 +39,7 @@ type RenameWorkspaceDialogProps = {
   onOpenChange: (open: boolean) => void
   workspaceId: string
   currentName: string
+  currentDescription?: string
 }
 
 function getErrorMessage(error: unknown): string {
@@ -38,23 +47,24 @@ function getErrorMessage(error: unknown): string {
     const data = (error as { data?: { message?: string } }).data
     if (data?.message) return data.message
   }
-  return "Couldn’t rename workspace. Try again."
+  return "Couldn’t update workspace. Try again."
 }
 
 /**
- * Owner/admin rename — same Zod schema as create.
+ * Owner/admin edit — name (+ slug) and optional description.
  */
 export default function RenameWorkspaceDialog({
   open,
   onOpenChange,
   workspaceId,
   currentName,
+  currentDescription = "",
 }: RenameWorkspaceDialogProps) {
   const [updateWorkspace, { isLoading }] = useUpdateWorkspaceMutation()
 
   const form = useForm<WorkSpaceSchema>({
     resolver: zodResolver(workSpaceSchema),
-    defaultValues: { name: currentName },
+    defaultValues: { name: currentName, description: currentDescription },
     mode: "onChange",
   })
 
@@ -65,16 +75,15 @@ export default function RenameWorkspaceDialog({
     formState: { isValid },
   } = form
 
-  // Sync field when opening / name changes from server
   useEffect(() => {
     if (open) {
-      reset({ name: currentName })
+      reset({ name: currentName, description: currentDescription })
     }
-  }, [open, currentName, reset])
+  }, [open, currentName, currentDescription, reset])
 
   function handleOpenChange(next: boolean) {
     if (!next) {
-      reset({ name: currentName })
+      reset({ name: currentName, description: currentDescription })
     }
     onOpenChange(next)
   }
@@ -84,10 +93,11 @@ export default function RenameWorkspaceDialog({
       const response = await updateWorkspace({
         workspaceId,
         name: data.name,
+        description: data.description?.trim() ?? "",
       }).unwrap()
       handleOpenChange(false)
-      toast.success("Workspace renamed", {
-        description: `Now called ${response.name}.`,
+      toast.success("Workspace updated", {
+        description: `Saved changes for ${response.name}.`,
       })
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -106,10 +116,11 @@ export default function RenameWorkspaceDialog({
           </div>
           <div className="space-y-1.5">
             <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
-              Rename workspace
+              Edit workspace
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">
-              Update the display name. The URL slug updates when needed.
+              Update the name and optional description. The URL slug updates
+              when the name changes.
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -125,12 +136,42 @@ export default function RenameWorkspaceDialog({
               showIcon={false}
               autoComplete="organization"
               inputClassName="h-10"
+              maxLength={50}
             />
 
-            <DialogFooter className="gap-2 sm:justify-end">
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Description{" "}
+                    <span className="font-normal text-muted-foreground">
+                      (optional)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="e.g. Product engineering for the Acme mobile app"
+                      maxLength={280}
+                      rows={3}
+                      className="w-full min-w-0 resize-none rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Helps members understand what this workspace is for.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="gap-2">
               <CancelButton
-                className="h-9"
                 onClick={() => handleOpenChange(false)}
+                className="h-9"
               />
               <SubmitButton
                 type="submit"

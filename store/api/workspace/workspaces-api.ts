@@ -47,7 +47,10 @@ export const workspacesApi = baseApi.injectEndpoints({
      * POST /api/workspaces — create workspace (caller becomes owner).
      * Hook: useCreateWorkspaceMutation()
      */
-    createWorkspace: builder.mutation<WorkspaceListItem, { name: string }>({
+    createWorkspace: builder.mutation<
+      WorkspaceListItem,
+      { name: string; description?: string }
+    >({
       query: (body) => ({
         url: "workspaces",
         method: "POST",
@@ -188,17 +191,17 @@ export const workspacesApi = baseApi.injectEndpoints({
 
     /**
      * PATCH /api/workspaces/[workspaceId]
-     * Owner/admin rename (name + slug).
-     * Hook: useUpdateWorkspaceMutation({ workspaceId, name })
+     * Owner/admin update name (+ slug) and optional description.
+     * Hook: useUpdateWorkspaceMutation({ workspaceId, name, description? })
      */
     updateWorkspace: builder.mutation<
       WorkspaceListItem,
-      { workspaceId: string; name: string }
+      { workspaceId: string; name: string; description?: string }
     >({
-      query: ({ workspaceId, name }) => ({
+      query: ({ workspaceId, name, description }) => ({
         url: `workspaces/${workspaceId}`,
         method: "PATCH",
-        body: { name },
+        body: { name, description },
       }),
       invalidatesTags: (_result, _error, { workspaceId }) => [
         { type: "Workspace", id: "LIST" },

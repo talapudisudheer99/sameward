@@ -39,8 +39,12 @@ export async function POST(request: Request) {
       )
     }
 
-    const { name } = parsed.data
-    const { workspace, role } = await createWorkspaceForUser(user.id, name)
+    const { name, description } = parsed.data
+    const { workspace, role } = await createWorkspaceForUser(
+      user.id,
+      name,
+      description
+    )
 
     await logWorkspaceEvent({
       event: WorkspaceAuditEvent.Created,
@@ -54,6 +58,7 @@ export async function POST(request: Request) {
         id: workspace._id.toString(),
         name: workspace.name,
         slug: workspace.slug,
+        description: workspace.description ?? "",
         role,
       },
       { status: 201 }
@@ -102,6 +107,7 @@ export async function GET() {
         id: ws._id.toString(),
         name: ws.name,
         slug: ws.slug,
+        description: ws.description ?? "",
         role: roleByWorkspaceId.get(ws._id.toString()),
       }
     })

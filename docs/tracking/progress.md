@@ -6,8 +6,8 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | **Profile v1** (PO agreed) — Phase 8 quality/deploy deferred until Profile ships |
-| **Current feature** | Thin professional card — edit `/profile` · teammate dialog · [`docs/profiles/`](../profiles/README.md) |
+| **Current phase** | Phase 8 — Quality & deploy (**next**) |
+| **Current feature** | Profile ✅ · workspace description ✅ · Phase 8 next |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
 | **Last updated** | 2026-08-11 |
 
@@ -25,7 +25,7 @@
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
 | 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
-| — | **Profile v1** | 🚧 **In progress** | [`docs/profiles/`](../profiles/README.md) |
+| — | **Profile v1** | ✅ **E2E verified** | [`docs/profiles/`](../profiles/README.md) |
 
 ## Channels v1 — PO locks (Jul 31)
 
@@ -79,6 +79,8 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | PO: Profile v1 | Agreed thin professional card after Phase 8; locks in progress |
 | 2026-08-11 | Docs sync | Progress + channels FE/E2E + hub; Phase 8 remains **next** (not started) |
 | 2026-08-11 | Push + Profile v1 kickoff | `65f50ab` pushed; Profile docs + model/API/UI in progress |
+| 2026-08-11 | Profile v1 E2E | User verified → **Profile closed** (`cc0e6cf`) |
+| 2026-08-11 | Workspace description | Optional ≤280 char note on create/edit + home/list |
 
 ## GitHub
 

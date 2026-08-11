@@ -8,10 +8,11 @@
 |-------|------|--------|
 | `name` | string | Display name (2–50 chars) |
 | `slug` | string | URL-safe, unique |
+| `description` | string | Optional short note (≤280); empty string default |
 | `ownerId` | ObjectId → User | Creator; billing/permissions root later |
 | `createdAt` / `updatedAt` | dates | timestamps: true |
 
-**v1 create/rename form:** only `name`. Slug derived server-side. No logo/industry yet.
+**Create/edit form:** `name` required · `description` optional. Slug derived server-side. No logo/industry yet.
 
 ### `memberships`
 

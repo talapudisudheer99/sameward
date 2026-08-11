@@ -36,7 +36,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("font-sans antialiased", sans.variable, heading.variable)}
+      className={cn(
+        "scroll-smooth font-sans antialiased",
+        sans.variable,
+        heading.variable
+      )}
     >
       <body>
         {/* Toaster must sit inside ThemeProvider so it can follow light/dark theme */}

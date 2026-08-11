@@ -6,7 +6,7 @@
 - [x] GET workspace teammate profile  
 - [x] RTK + `/profile` edit UI + sidebar link  
 - [x] Teammate card wired to members / channel / messages  
-- [ ] Manual E2E checklist (user)
+- [x] Manual E2E checklist (user verified Aug 11, 2026)
 
 ---
 

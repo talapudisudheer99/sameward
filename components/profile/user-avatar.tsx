@@ -1,5 +1,6 @@
 "use client"
 
+import { workspaceInitials } from "@/components/workspace/workspace-display"
 import { cn } from "@/lib/utils"
 
 type UserAvatarProps = {
@@ -7,6 +8,8 @@ type UserAvatarProps = {
   avatarUrl?: string | null
   size?: "sm" | "md" | "lg"
   className?: string
+  /** Extra classes on the initials fallback (e.g. brand tile color) */
+  fallbackClassName?: string
 }
 
 const sizeClass = {
@@ -16,15 +19,16 @@ const sizeClass = {
 }
 
 /**
- * Letter initials or signed avatar image.
+ * Photo when `avatarUrl` is set; otherwise letter initials.
  */
 export default function UserAvatar({
   name,
   avatarUrl,
   size = "md",
   className,
+  fallbackClassName,
 }: UserAvatarProps) {
-  const initial = (name || "?").trim().slice(0, 1).toUpperCase() || "?"
+  const initials = workspaceInitials(name || "?") || "?"
 
   if (avatarUrl) {
     return (
@@ -46,11 +50,12 @@ export default function UserAvatar({
       className={cn(
         "flex shrink-0 items-center justify-center rounded-full bg-muted font-medium text-foreground",
         sizeClass[size],
+        fallbackClassName,
         className
       )}
       aria-hidden
     >
-      {initial}
+      {initials}
     </span>
   )
 }

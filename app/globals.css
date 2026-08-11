@@ -164,6 +164,27 @@
         color-mix(in oklab, var(--brand-a) 18%, transparent) 0%,
         transparent 72%
       );
+    animation: hero-aurora-drift 18s ease-in-out infinite alternate;
+  }
+
+  /* Fine grid texture — fills empty side space without cards */
+  .bg-hero-grid {
+    background-image:
+      linear-gradient(
+        color-mix(in oklab, var(--primary) 8%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--primary) 8%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 48px 48px;
+    mask-image: radial-gradient(
+      ellipse 75% 65% at 50% 35%,
+      #000 20%,
+      transparent 75%
+    );
   }
 
   /* Gradient-clipped text for hero headline emphasis */
@@ -174,9 +195,38 @@
       var(--brand-a) 52%,
       var(--brand-b) 100%
     );
+    background-size: 160% 160%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: hero-gradient-shift 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes hero-aurora-drift {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.8;
+    }
+    to {
+      transform: translate3d(-2%, 1.5%, 0) scale(1.04);
+      opacity: 1;
+    }
+  }
+
+  @keyframes hero-gradient-shift {
+    from {
+      background-position: 0% 40%;
+    }
+    to {
+      background-position: 100% 60%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-hero-aurora,
+    .text-brand-gradient {
+      animation: none;
+    }
   }
 
   /* Soft radial glow placed behind the hero product preview */

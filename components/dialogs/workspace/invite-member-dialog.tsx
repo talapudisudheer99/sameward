@@ -269,7 +269,7 @@ export default function InviteMemberDialog({
             )}
           </div>
 
-          <DialogFooter className="gap-2 sm:justify-end">
+          <DialogFooter className="gap-2">
             <CancelButton
               onClick={() => handleOpenChange(false)}
               className="h-9"

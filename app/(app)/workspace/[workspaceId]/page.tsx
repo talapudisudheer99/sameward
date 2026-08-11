@@ -21,6 +21,7 @@ import RenameWorkspaceDialog from "@/components/dialogs/workspace/rename-workspa
 import Loader from "@/components/sharable/loader"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
+import WorkspaceDescription from "@/components/workspace/workspace-description"
 import {
   Tooltip,
   TooltipContent,
@@ -204,20 +205,24 @@ export default function WorkspaceDetailPage() {
                           size="icon-sm"
                           className="text-muted-foreground hover:text-foreground"
                           onClick={() => setRenameOpen(true)}
-                          aria-label="Rename workspace"
+                          aria-label="Edit workspace"
                         />
                       }
                     >
                       <Pencil className="size-3.5" />
                     </TooltipTrigger>
-                    <TooltipContent side="top">Rename workspace</TooltipContent>
+                    <TooltipContent side="top">Edit workspace</TooltipContent>
                   </Tooltip>
                 ) : null}
               </div>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Your team&apos;s shared home in TeamHub
-            </p>
+            {data.description?.trim() ? (
+              <WorkspaceDescription text={data.description} />
+            ) : (
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Your team&apos;s shared home in TeamHub
+              </p>
+            )}
           </div>
         </div>
 
@@ -411,6 +416,7 @@ export default function WorkspaceDetailPage() {
           onOpenChange={setRenameOpen}
           workspaceId={workspaceId}
           currentName={data.name}
+          currentDescription={data.description ?? ""}
         />
       ) : null}
 

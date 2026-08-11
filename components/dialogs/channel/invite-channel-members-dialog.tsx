@@ -149,7 +149,7 @@ export default function InviteChannelMembersDialog({
           )}
         </ul>
 
-        <DialogFooter className="gap-2 sm:justify-end">
+        <DialogFooter className="gap-2">
           <CancelButton
             onClick={() => handleOpenChange(false)}
             className="h-9 min-w-24"

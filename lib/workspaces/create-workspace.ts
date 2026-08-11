@@ -12,7 +12,8 @@ import { slugifyUnique } from "@/lib/workspaces/slugify"
  */
 export async function createWorkspaceForUser(
   userId: string,
-  name: string
+  name: string,
+  description?: string
 ): Promise<{
   workspace: InstanceType<typeof Workspace>
   role: MembershipRole.Owner
@@ -24,6 +25,7 @@ export async function createWorkspaceForUser(
   const workspace = await Workspace.create({
     name: name.trim(),
     slug,
+    description: (description ?? "").trim(),
     ownerId: userId,
   })
 

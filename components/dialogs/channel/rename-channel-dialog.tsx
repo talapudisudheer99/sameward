@@ -75,7 +75,7 @@ export default function RenameChannelDialog({
               inputClassName="h-10"
               maxLength={80}
             />
-            <DialogFooter className="gap-2 sm:justify-end">
+            <DialogFooter className="gap-2">
               <CancelButton
                 onClick={() => handleOpenChange(false)}
                 className="h-9 min-w-24"

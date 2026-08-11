@@ -10,6 +10,8 @@ export type WorkspaceListItem = {
   id: string
   name: string
   slug: string
+  /** Optional short “what this workspace is for” */
+  description?: string
   role: string
 }
 
@@ -18,6 +20,8 @@ export type WorkspaceMemberListItem = {
   fullName: string
   email: string
   role: string
+  /** Presigned avatar when set; omit/null → initials */
+  avatarUrl?: string | null
 }
 
 /**

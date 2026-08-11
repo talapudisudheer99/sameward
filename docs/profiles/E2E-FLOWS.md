@@ -1,6 +1,6 @@
 # E2E — Profile v1
 
-**Status:** 🚧 Implement then verify  
+**Status:** ✅ Implemented · E2E verified (user, Aug 11, 2026) 
 
 1. Open `/profile` → edit title + bio → Save → reload persists  
 2. Upload avatar → appears on form; clear avatar → initials  

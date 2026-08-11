@@ -33,12 +33,22 @@ function WorkspaceRow({ workspace }: WorkspaceRowProps) {
         {workspaceInitials(workspace.name)}
       </div>
 
-      <span
-        className="min-w-0 flex-1 truncate font-medium text-foreground"
-        title={workspace.name}
-      >
-        {workspace.name}
-      </span>
+      <div className="min-w-0 flex-1">
+        <span
+          className="block truncate font-medium text-foreground"
+          title={workspace.name}
+        >
+          {workspace.name}
+        </span>
+        {workspace.description?.trim() ? (
+          <span
+            className="mt-0.5 block truncate text-xs text-muted-foreground"
+            title={workspace.description}
+          >
+            {workspace.description}
+          </span>
+        ) : null}
+      </div>
 
       <span
         className={cn(

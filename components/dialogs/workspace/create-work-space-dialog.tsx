@@ -19,7 +19,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Form } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import workSpaceSchema, {
   WorkSpaceSchema,
 } from "@/lib/schemas/workspace/workspace-schema"
@@ -43,7 +51,7 @@ export default function CreateWorkSpaceDialog({
 
   const form = useForm<WorkSpaceSchema>({
     resolver: zodResolver(workSpaceSchema),
-    defaultValues: { name: "" },
+    defaultValues: { name: "", description: "" },
     mode: "onChange",
   })
 
@@ -55,14 +63,17 @@ export default function CreateWorkSpaceDialog({
 
   function handleOpenChange(next: boolean) {
     if (!next) {
-      form.reset({ name: "" })
+      form.reset({ name: "", description: "" })
     }
     onOpenChange(next)
   }
 
   const onSubmit = async (data: WorkspaceFormValues) => {
     try {
-      const response = await createWorkspace(data).unwrap()
+      const response = await createWorkspace({
+        name: data.name,
+        description: data.description?.trim() || undefined,
+      }).unwrap()
       handleOpenChange(false)
       toast.success("Workspace created", {
         description: `${response.name} is ready for your team.`,
@@ -93,7 +104,8 @@ export default function CreateWorkSpaceDialog({
               Create workspace
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">
-              Name your workspace. You can always change it later.
+              Name your team home. A short description helps members know what
+              this workspace is for.
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -111,7 +123,37 @@ export default function CreateWorkSpaceDialog({
               inputClassName="h-10"
               maxLength={50}
             />
-            <DialogFooter className="gap-2 pt-1 sm:justify-end">
+
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Description{" "}
+                    <span className="font-normal text-muted-foreground">
+                      (optional)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="e.g. Product engineering for the Acme mobile app"
+                      maxLength={280}
+                      rows={3}
+                      className="w-full min-w-0 resize-none rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Up to 280 characters. Shown on the workspace home.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="gap-2">
               <CancelButton
                 onClick={() => handleOpenChange(false)}
                 className="h-9 min-w-24"

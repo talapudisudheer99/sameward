@@ -1,6 +1,6 @@
 # Profiles — module reference
 
-**Status:** 🚧 **In progress** (Profile v1 · Aug 11, 2026)  
+**Status:** ✅ **Shipped + E2E verified** (Profile v1 · Aug 11, 2026)  
 **Customer goal:** Know who a teammate is beyond a name — title, short bio, avatar — inside a shared workspace. Not LinkedIn.
 
 **PO locks (Aug 11, 2026)** — also in [progress](../tracking/progress.md)

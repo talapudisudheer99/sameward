@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LayoutGrid, UserRound, type LucideIcon } from "lucide-react"
+import { LayoutGrid, UserRound, type LucideIcon } from "lucide-react"
 
 import { TeamHubLogo } from "@/components/layout/teamhub-logo"
 import { LogoutButton } from "@/components/layout/logout-button"
@@ -16,6 +16,7 @@ interface NavItem {
   icon: LucideIcon
 }
 
+/** App shell only — marketing `/` is not a destination for signed-in users */
 const navItems: NavItem[] = [
   {
     label: "Workspace",
@@ -27,20 +28,21 @@ const navItems: NavItem[] = [
     href: "/profile",
     icon: UserRound,
   },
-  {
-    label: "Home",
-    href: "/",
-    icon: Home,
-  },
 ]
 
-export default function Sidebar() {
+type SidebarProps = {
+  /** Mobile drawer: close after a nav click */
+  onNavigate?: () => void
+}
+
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname()
 
   return (
     <div className="bg-brand-wash flex h-full flex-col gap-6 bg-sidebar p-4 text-sidebar-foreground">
       <Link
         href="/workspace"
+        onClick={onNavigate}
         className="flex items-center rounded-[var(--radius)] px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
       >
         <TeamHubLogo variant="horizontal" size={28} />
@@ -61,6 +63,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
                 buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
                 "relative w-full justify-start gap-2 rounded-[var(--radius)]",
@@ -80,7 +83,6 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* mt-auto pins logout to the bottom of the sidebar column */}
       <div className="mt-auto border-t border-sidebar-border pt-3">
         <LogoutButton />
         <LogoutAllDevicesButton />

@@ -114,7 +114,7 @@ export default function CreateChannelDialog({
               </div>
             </fieldset>
 
-            <DialogFooter className="gap-2 pt-1 sm:justify-end">
+            <DialogFooter className="gap-2">
               <CancelButton
                 onClick={() => handleOpenChange(false)}
                 className="h-9 min-w-24"
