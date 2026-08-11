@@ -4,16 +4,17 @@ import { ChannelMembership } from "@/lib/models/channel/channel-membership"
 import { slugifyUniqueInWorkspace } from "@/lib/channels/channel-slugify"
 
 /**
- * Create a channel in a workspace.
+ * Create a named channel (public or private) in a workspace.
  * - Public: Channel only (workspace membership is enough to access)
  * - Private: Channel + ChannelMembership for the creator (first key)
  *
+ * DMs use `findOrCreateDm` — do not pass visibility `"dm"` here.
  * Caller must already have checked owner|admin + workspace membership.
  */
 export async function createChannel(
   workspaceId: string,
   name: string,
-  visibility: ChannelVisibility,
+  visibility: ChannelVisibility.Public | ChannelVisibility.Private,
   createdBy: string
 ): Promise<InstanceType<typeof Channel>> {
   await connectDB()

@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Hash,
   Lock,
+  MessageSquare,
   Pencil,
   Sparkles,
   Trash2,
@@ -31,7 +32,7 @@ type ChatHeaderProps = {
 }
 
 /**
- * Ch-D header — channel title, presence counts, manage actions.
+ * Chat header — channel / DM title, presence, manage actions.
  */
 export default function ChatHeader({
   channel,
@@ -45,7 +46,12 @@ export default function ChatHeader({
   onToggleMembers,
   onOpenAi,
 }: ChatHeaderProps) {
-  const Icon = channel.visibility === "private" ? Lock : Hash
+  const isDm = channel.visibility === "dm"
+  const Icon = isDm
+    ? MessageSquare
+    : channel.visibility === "private"
+      ? Lock
+      : Hash
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
@@ -68,11 +74,17 @@ export default function ChatHeader({
         >
           {channel.name}
         </OverflowText>
-        <span className="hidden text-xs text-muted-foreground lg:inline">
-          {memberCount != null ? `${memberCount} members` : null}
-          {memberCount != null && onlineCount != null ? " · " : null}
-          {onlineCount != null ? `${onlineCount} online` : null}
-        </span>
+        {!isDm ? (
+          <span className="hidden text-xs text-muted-foreground lg:inline">
+            {memberCount != null ? `${memberCount} members` : null}
+            {memberCount != null && onlineCount != null ? " · " : null}
+            {onlineCount != null ? `${onlineCount} online` : null}
+          </span>
+        ) : (
+          <span className="hidden text-xs text-muted-foreground lg:inline">
+            Direct message
+          </span>
+        )}
       </div>
 
       <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
@@ -88,7 +100,7 @@ export default function ChatHeader({
             <span className="hidden sm:inline">AI</span>
           </Button>
         ) : null}
-        {channel.visibility === "private" && canManage && onInvite ? (
+        {!isDm && channel.visibility === "private" && canManage && onInvite ? (
           <Button
             type="button"
             size="sm"
@@ -99,7 +111,7 @@ export default function ChatHeader({
             <UserPlus className="size-4" />
           </Button>
         ) : null}
-        {onToggleMembers ? (
+        {!isDm && onToggleMembers ? (
           <Button
             type="button"
             size="sm"
@@ -110,7 +122,7 @@ export default function ChatHeader({
             <Users className="size-4" />
           </Button>
         ) : null}
-        {canManage && onRename ? (
+        {!isDm && canManage && onRename ? (
           <Button
             type="button"
             size="sm"
@@ -122,7 +134,7 @@ export default function ChatHeader({
             <Pencil className="size-4" />
           </Button>
         ) : null}
-        {canManage && !channel.isDefault && onDelete ? (
+        {!isDm && canManage && !channel.isDefault && onDelete ? (
           <Button
             type="button"
             size="sm"

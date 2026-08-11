@@ -6,11 +6,14 @@ Proxy is **not** enough — enforce membership in handlers.
 
 | Method | Path | Who | Purpose | Status |
 |--------|------|-----|---------|--------|
-| GET | `/api/workspaces/:id/channels` | member | List accessible channels | ✅ |
+| GET | `/api/workspaces/:id/channels` | member | List accessible channels (+ unreadCount, lastReadAt); excludes DMs | ✅ |
 | POST | `/api/workspaces/:id/channels` | owner \| admin | Create public/private | ✅ |
-| GET | `/api/workspaces/:id/channels/:channelId` | allowed | Get one | ✅ |
-| PATCH | `/api/workspaces/:id/channels/:channelId` | owner \| admin | Rename / metadata | ✅ |
-| DELETE | `/api/workspaces/:id/channels/:channelId` | owner \| admin | Delete (rules for `#general`) | ✅ |
+| GET | `/api/workspaces/:id/dms` | member | List 1:1 DMs (peer + unread) | ✅ |
+| POST | `/api/workspaces/:id/dms` | member | Find or create 1:1 DM `{ userId }` | ✅ |
+| GET | `/api/workspaces/:id/channels/:channelId` | allowed | Get one (DM name = peer) | ✅ |
+| PATCH | `/api/workspaces/:id/channels/:channelId` | owner \| admin | Rename / metadata (not DMs) | ✅ |
+| DELETE | `/api/workspaces/:id/channels/:channelId` | owner \| admin | Delete (rules for `#general`; not DMs) | ✅ |
+| POST | `.../channels/:channelId/read` | allowed | Upsert per-user lastReadAt cursor | ✅ |
 | GET | `.../channels/:channelId/members` | allowed | Private channel members | ✅ |
 | POST | `.../channels/:channelId/members` | owner \| admin | Add workspace members to private | ✅ |
 | DELETE | `.../channels/:channelId/members/:userId` | owner \| admin | Remove from private | ✅ |

@@ -4,7 +4,7 @@ Format: **As a… I want… So that…**
 Acceptance = what we demo for v1.
 
 **PO locks:** Jul 31, 2026 — see [VISION.md](./VISION.md)  
-**Status:** Spec locked · **not implemented yet**
+**Status:** ✅ **Implemented** (channels v1 + unread + 1:1 DMs + @mentions)
 
 ---
 
@@ -146,9 +146,47 @@ Acceptance = what we demo for v1.
 
 ---
 
-## Non-goals (v1)
+## US-C10 — Unread + catch-up
 
-- Threads · DMs · reactions system · custom emoji · announcement channels · virus scan · docs/boards
+**As a** workspace member,  
+**I want** unread counts and a clear “since I left” window,  
+**So that** Channel AI catch-up and the sidebar match what I actually missed.
+
+**Acceptance**
+- [x] Opening a channel marks it read (`POST …/read`); own messages never count as unread
+- [x] Sidebar shows unread badge; list API returns `unreadCount` + `lastReadAt`
+- [x] Catch up can scope to “Since last visit”
+
+---
+
+## US-C11 — 1:1 DMs
+
+**As a** workspace member,  
+**I want** a private 1:1 conversation with another member,  
+**So that** I can talk without creating a named channel.
+
+**Acceptance**
+- [x] `GET/POST …/dms` find-or-create; pair unique per workspace (`dmPairKey`)
+- [x] DMs excluded from channel list; shown in a DM sidebar section
+- [x] Same messages, unread, typing, and Channel AI as channels
+
+---
+
+## US-C12 — @mentions
+
+**As a** channel or DM participant,  
+**I want** to @mention teammates when composing,  
+**So that** messages call out the right people.
+
+**Acceptance**
+- [x] Composer `@` autocomplete from allowed members (workspace / private / DM peer)
+- [x] `mentionedUserIds` persisted and highlighted in the transcript
+
+---
+
+## Non-goals (later)
+
+- Threads · group DMs · reactions system · custom emoji · announcement channels · virus scan · docs/boards
 
 ---
 

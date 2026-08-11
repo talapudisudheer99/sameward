@@ -14,7 +14,7 @@ import { Membership } from "@/lib/models/workspace/membership"
  *
  * Caller must already have verified workspace membership + loaded the channel.
  * - Public → true (office badge is enough)
- * - Private → need a ChannelMembership row (key to the locked room)
+ * - Private / DM → need a ChannelMembership row
  */
 export async function canAccessChannel(
   userId: string,
@@ -24,6 +24,7 @@ export async function canAccessChannel(
     return true
   }
 
+  // private + dm both require membership
   const exists = await ChannelMembership.exists({
     channelId: channel._id,
     userId,

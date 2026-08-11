@@ -4,12 +4,13 @@
  */
 import type { Attachment } from "@/lib/types/upload/upload-types"
 
-export type ChannelVisibility = "public" | "private"
+export type ChannelVisibility = "public" | "private" | "dm"
 
 /** Same string values as `lib/models/channel/channel` ChannelVisibility */
 export enum ChannelVisibilityEnum {
   Public = "public",
   Private = "private",
+  Dm = "dm",
 }
 
 export type ChannelListItem = {
@@ -18,6 +19,27 @@ export type ChannelListItem = {
   slug: string
   visibility: ChannelVisibility
   isDefault: boolean
+  /** Messages from others after lastReadAt (0 if caught up) */
+  unreadCount: number
+  /** ISO cursor; null if never opened */
+  lastReadAt: string | null
+  /** Present when visibility === "dm" — the other participant */
+  peer?: { userId: string; fullName: string }
+}
+
+/** GET/POST …/dms */
+export type DmListItem = {
+  id: string
+  peer: { userId: string; fullName: string }
+  unreadCount: number
+  lastReadAt: string | null
+}
+
+/** POST …/channels/:channelId/read */
+export type MarkChannelReadResponse = {
+  channelId: string
+  lastReadAt: string
+  previousLastReadAt: string | null
 }
 
 /**
@@ -32,6 +54,7 @@ export type ChatMessage = {
   authorName: string
   body: string
   attachments: Attachment[]
+  mentionedUserIds?: string[]
   createdAt: string // ISO
   pending?: boolean
   failed?: boolean
@@ -47,6 +70,7 @@ export type MessagesListResponse = {
 export type CreateMessageRequest = {
   body: string
   attachments?: Attachment[]
+  mentionedUserIds?: string[]
   clientMessageId?: string
 }
 

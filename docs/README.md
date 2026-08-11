@@ -28,7 +28,7 @@ docs/
 |--------|---------|
 | **`auth/`** | Completed auth — flows, routes, FE, hardening, prod, debug |
 | **`workspaces/`** | Phase 3 module — vision, stories, flows, tasks |
-| **`channels/`** | Channels + realtime chat (Phase 5+6 merged) |
+| **`channels/`** | Channels + realtime + unread + 1:1 DMs + @mentions |
 | **`ai/`** | Phase 7 Path A — AI knowledge assistant |
 | **`profiles/`** | Profile v1 — edit self + teammate card |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |

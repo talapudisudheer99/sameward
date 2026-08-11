@@ -11,10 +11,12 @@ import type { Types } from "mongoose"
  * Who can see / post in this channel (within a workspace).
  * public  → any workspace member
  * private → only ChannelMembership rows (+ still need workspace membership)
+ * dm      → 1:1 Direct message; membership for exactly two users
  */
 export enum ChannelVisibility {
   Public = "public",
   Private = "private",
+  Dm = "dm",
 }
 
 /**
@@ -29,14 +31,14 @@ const channelSchema = new Schema(
       required: true,
       index: true,
     },
-    // Display name — UI often shows "# general"
+    // Display name — UI often shows "# general"; DMs use peer name in API JSON
     name: {
       type: String,
       required: true,
       trim: true,
       maxlength: 80,
     },
-    // URL/key unique *inside* this workspace only (general, hiring, …)
+    // URL/key unique *inside* this workspace only (general, hiring, dm-…)
     slug: {
       type: String,
       required: true,
@@ -60,23 +62,30 @@ const channelSchema = new Schema(
       ref: "User",
       required: true,
     },
+    /**
+     * 1:1 DM only — sorted `${minUserId}_${maxUserId}` so the pair is unique
+     * per workspace. Sparse unique index ignores non-DM channels.
+     */
+    dmPairKey: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+    },
   },
   { timestamps: true }
 )
 
 // Same slug can exist in two workspaces — not globally unique
 channelSchema.index({ workspaceId: 1, slug: 1 }, { unique: true })
+channelSchema.index(
+  { workspaceId: 1, dmPairKey: 1 },
+  { unique: true, sparse: true }
+)
 
 export type ChannelDocument = InferSchemaType<typeof channelSchema> & {
   _id: Types.ObjectId
 }
 
-let Channel: Model<ChannelDocument>
-
-if (models.Channel) {
-  Channel = models.Channel as Model<ChannelDocument>
-} else {
-  Channel = model<ChannelDocument>("Channel", channelSchema)
-}
-
-export { Channel }
+export const Channel: Model<ChannelDocument> =
+  (models.Channel as Model<ChannelDocument>) ||
+  model<ChannelDocument>("Channel", channelSchema)

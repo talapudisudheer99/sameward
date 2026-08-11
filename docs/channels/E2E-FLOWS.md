@@ -1,6 +1,6 @@
 # End-to-end flows — Channels & realtime chat
 
-**Status:** ✅ **Implemented · E2E verified 2026-08-09** (text, files, sockets, typing, presence) · **UI polish + mobile picker re-verified 2026-08-11**  
+**Status:** ✅ **Implemented · E2E verified 2026-08-09** (text, files, sockets, typing, presence) · **unread + 1:1 DMs + @mentions 2026-08-11**  
 **Working style:** discuss → docs → implement → review (same as auth/workspaces)
 
 **PO locks:** separate Socket.IO · public+private · `#general` · text+limited files · typing + presence · create = owner/admin
@@ -108,6 +108,38 @@ No DB write.
 
 ---
 
+## I) Unread + mark-read
+
+```text
+1. A posts in #general while B is elsewhere
+2. B’s channel list shows unreadCount; bold/badge in sidebar
+3. B opens channel → POST …/read → badge clears; Catch up “Since last visit” uses previousLastReadAt
+4. A’s own messages never increment A’s unread
+```
+
+---
+
+## J) 1:1 DM
+
+```text
+1. A → Start DM → pick B → POST …/dms { userId }
+2. Channel visibility=dm + two memberships; omitted from GET …/channels
+3. Both see peer name under Direct messages; chat/AI/unread reuse channel stack
+4. Open again → same dmPairKey (idempotent)
+```
+
+---
+
+## K) @mentions
+
+```text
+1. Composer types @ → autocomplete (workspace / private members / DM peer)
+2. Send with mentionedUserIds → persisted; transcript highlights mention
+3. Invalid ids (outside audience) rejected by API
+```
+
+---
+
 ## Manual E2E test script (run before each release)
 
 Two browsers: **A** (owner) + **B** (member), preferably one normal + one incognito.
@@ -140,6 +172,11 @@ Two browsers: **A** (owner) + **B** (member), preferably one normal + one incogn
 **Typing + presence (flows F, G)**
 - [ ] A types → B sees "A is typing…"; stops after idle/send
 - [ ] B online → A's presence shows B online; B closes tab → goes offline after grace
+
+**Unread / DMs / mentions (flows I–K)**
+- [ ] B gets unread badge when A posts elsewhere; opens channel → badge clears
+- [ ] A starts DM with B → both see it under Direct messages; live chat works
+- [ ] @mention in composer → autocomplete; sent message shows highlight
 
 **Pass criteria:** all boxes checked, no console errors, S3 bucket remains private (only presigned URLs reach the client).
 

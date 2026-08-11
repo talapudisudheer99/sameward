@@ -20,7 +20,6 @@ import {
 import { Form } from "@/components/ui/form"
 import channelSchema from "@/lib/schemas/channel/channel-schema"
 import { cn } from "@/lib/utils"
-import type { ChannelVisibility } from "@/lib/types/channel/channel-types"
 
 type FormValues = z.infer<typeof channelSchema>
 
@@ -65,7 +64,7 @@ export default function CreateChannelDialog({
     handleOpenChange(false)
   }
 
-  function setVisibility(v: ChannelVisibility) {
+  function setVisibility(v: "public" | "private") {
     form.setValue("visibility", v, { shouldValidate: true, shouldDirty: true })
   }
 

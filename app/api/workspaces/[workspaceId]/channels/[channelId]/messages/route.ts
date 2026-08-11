@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server"
+import { Types } from "mongoose"
 
 import { getCurrentUser } from "@/lib/auth/session"
 import { requireChannelAccess } from "@/lib/channels/access"
 import { notifyRealtime } from "@/lib/channels/notify-realtime"
 import { channelRoomName } from "@/lib/channels/channel-room"
+import { workspaceRoomName } from "@/lib/channels/workspace-room"
+import { ChannelVisibility } from "@/lib/models/channel/channel"
+import { ChannelMembership } from "@/lib/models/channel/channel-membership"
 import { Message } from "@/lib/models/channel/message"
+import { Membership } from "@/lib/models/workspace/membership"
 import { User } from "@/lib/models/user"
 import messageSchema from "@/lib/schemas/channel/message-schema"
 import { isManagedObjectUrl, presignAttachmentGet } from "@/lib/storage/s3"
@@ -24,6 +29,7 @@ type ChatMessageJson = {
     mime: string
     sizeBytes: number
   }[]
+  mentionedUserIds: string[]
   createdAt: string
 }
 
@@ -44,6 +50,7 @@ async function toMessageJson(
       mime: string
       sizeBytes: number
     }[]
+    mentionedUserIds?: { toString(): string }[]
     createdAt: Date
   },
   authorName: string
@@ -64,8 +71,49 @@ async function toMessageJson(
     authorName,
     body: doc.body,
     attachments,
+    mentionedUserIds: (doc.mentionedUserIds ?? []).map((id) => id.toString()),
     createdAt: doc.createdAt.toISOString(),
   }
+}
+
+/** Mentions must be workspace members; private/DM also need channel access. */
+async function filterValidMentionIds(args: {
+  workspaceId: string
+  channelId: string
+  visibility: string
+  mentionedUserIds: string[]
+}): Promise<string[]> {
+  const unique = [...new Set(args.mentionedUserIds)]
+  if (unique.length === 0) return []
+
+  const oids = unique
+    .filter((id) => Types.ObjectId.isValid(id))
+    .map((id) => new Types.ObjectId(id))
+
+  const workspaceMembers = await Membership.find({
+    workspaceId: args.workspaceId,
+    userId: { $in: oids },
+  }).select("userId")
+
+  let allowed = new Set(
+    workspaceMembers.map((m) => m.userId.toString())
+  )
+
+  if (
+    args.visibility === ChannelVisibility.Private ||
+    args.visibility === ChannelVisibility.Dm
+  ) {
+    const channelMembers = await ChannelMembership.find({
+      channelId: args.channelId,
+      userId: { $in: oids },
+    }).select("userId")
+    const inChannel = new Set(
+      channelMembers.map((m) => m.userId.toString())
+    )
+    allowed = new Set([...allowed].filter((id) => inChannel.has(id)))
+  }
+
+  return unique.filter((id) => allowed.has(id))
 }
 
 /**
@@ -203,7 +251,8 @@ export async function POST(
       )
     }
 
-    const { body: text, attachments, clientMessageId } = parsed.data
+    const { body: text, attachments, clientMessageId, mentionedUserIds } =
+      parsed.data
 
     // Only accept attachments that point at our own bucket — a client can't
     // inject arbitrary external URLs (we only ever signed our bucket keys).
@@ -213,6 +262,13 @@ export async function POST(
         { status: 400 }
       )
     }
+
+    const validMentions = await filterValidMentionIds({
+      workspaceId,
+      channelId,
+      visibility: access.channel.visibility,
+      mentionedUserIds,
+    })
 
     // Fast path: client retried with the same clientMessageId
     if (clientMessageId) {
@@ -231,6 +287,7 @@ export async function POST(
         authorId: user.id,
         body: text,
         attachments,
+        mentionedUserIds: validMentions,
         ...(clientMessageId ? { clientMessageId } : {}),
       })
 
@@ -241,6 +298,17 @@ export async function POST(
         room: channelRoomName(channelId),
         event: "message:new",
         payload: json,
+      })
+
+      // Workspace room: lightweight unread bump (no message body — private-safe)
+      await notifyRealtime({
+        room: workspaceRoomName(workspaceId),
+        event: "channel:activity",
+        payload: {
+          channelId,
+          authorId: user.id,
+          createdAt: json.createdAt,
+        },
       })
 
       return NextResponse.json(json, {

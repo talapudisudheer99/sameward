@@ -39,6 +39,14 @@ const messageSchema = z
         message: `At most ${MAX_ATTACHMENTS_PER_MESSAGE} attachments per message`,
       })
       .default([]),
+    mentionedUserIds: z
+      .array(
+        z
+          .string()
+          .regex(/^[a-f\d]{24}$/i, { message: "Invalid mentioned user id" })
+      )
+      .max(20, { message: "At most 20 mentions per message" })
+      .default([]),
     clientMessageId: z.string().trim().min(1).optional(),
   })
   .refine((data) => data.body.length > 0 || data.attachments.length > 0, {

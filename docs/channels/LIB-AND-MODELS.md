@@ -6,20 +6,25 @@ Follow [folder-structure.md](../architecture/folder-structure.md). Layout below 
 
 ```text
 lib/models/channel/
-  channel.ts                 # ✅ workspaceId, name, slug, visibility, isDefault, createdBy
-  channel-membership.ts      # ✅ private-channel access only
-  message.ts                 # ✅ body (optional) + attachments[]; body not required (attachment-only ok)
+  channel.ts                 # ✅ + visibility dm, dmPairKey
+  channel-membership.ts      # ✅ private + DM access
+  channel-read-state.ts      # ✅ per-user lastReadAt cursor (unread)
+  message.ts                 # ✅ + mentionedUserIds[]
 
 lib/schemas/channel/
   channel-schema.ts          # ✅ create/rename + visibility
-  message-schema.ts          # ✅ body-or-attachments; shares attachment-limits
+  dm-schema.ts               # ✅ open DM { userId }
+  message-schema.ts          # ✅ body-or-attachments + mentionedUserIds
   channel-members-schema.ts  # ✅ add/remove private members
   upload-schema.ts           # ✅ batch presign request (files[] name/mime/sizeBytes)
 
 lib/channels/
-  create-channel.ts          # ✅
+  create-channel.ts          # ✅ public|private only (DMs → find-or-create-dm)
+  find-or-create-dm.ts       # ✅ 1:1 DM find-or-create + resolveDmPeer
+  chat-ui-helpers.ts         # ✅ dmListItemToChannel + resolveMentionCandidates
   ensure-default-general.ts  # ✅ public #general, idempotent
-  access.ts                  # ✅ canAccessChannel + requireChannelAccess
+  access.ts                  # ✅ canAccessChannel + requireChannelAccess (dm like private)
+  unread.ts                  # ✅ batch unreadCount + lastReadAt for channel list
   require-private-channel-gate.ts # ✅
   channel-slugify.ts         # ✅
   channel-room.ts / workspace-room.ts # ✅ room-name helpers

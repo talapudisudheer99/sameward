@@ -99,10 +99,16 @@ Notes:
 
 ---
 
+## Shipped add-ons (Aug 11)
+
+- [x] Unread cursors (`channel_read_states`) + mark-read + sidebar badges  
+- [x] 1:1 DMs (`visibility: dm`, `…/dms`, sidebar)  
+- [x] @mentions (`mentionedUserIds` + composer autocomplete)
+
 ## Later (not this module v1)
 
 - [ ] Threads  
-- [ ] DMs  
+- [ ] Group DMs  
 - [ ] Reactions  
 - [ ] Redis adapter multi-instance  
 - [ ] Docs / boards modules  
@@ -111,11 +117,11 @@ Notes:
 
 ## Definition of done (module v1)
 
-- [ ] US-C1…US-C9 acceptance met (or deferred with note)
+- [x] US-C1…US-C12 acceptance met
 - [x] Two clients live-chat in public + private
 - [x] File limits enforced (client + server-side)
 - [x] Typing + basic presence visible
-- [x] Docs match shipped code exactly (Slice 7)
+- [x] Docs match shipped code exactly (Slice 7 + Aug 11 add-ons)
 
 ---
 

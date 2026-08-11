@@ -88,26 +88,15 @@ app/
 app/api/
 ├── health/
 │   └── db/route.ts            # Ops smoke check
-├── auth/                      # Identity domain (done)
-│   ├── signup/route.ts
-│   ├── signin/route.ts
-│   ├── logout/route.ts
-│   ├── logout-all/route.ts
-│   ├── me/route.ts
-│   ├── google/route.ts
-│   ├── google/callback/route.ts
-│   ├── forgot-password/route.ts
-│   ├── reset-password/route.ts
-│   ├── verify-email/route.ts
-│   └── resend-verification/route.ts
-├── workspaces/                # Phase 3 v1
+├── auth/                      # Identity domain
+├── profile/                   # Profile v1
+├── workspaces/                # Phase 3+
 │   ├── route.ts               # GET list / POST create
 │   └── [workspaceId]/
 │       ├── route.ts           # GET / PATCH / DELETE one
-│       └── members/
-│           ├── route.ts       # GET list / POST invite
-│           ├── me/route.ts    # DELETE leave
-│           └── [userId]/route.ts  # DELETE remove / PATCH role
+│       ├── members/…
+│       ├── channels/…         # list/create + [channelId] CRUD, messages, read, uploads, ai
+│       └── dms/route.ts       # GET list / POST open 1:1 DM
 └── invites/
     └── [token]/route.ts       # GET preview / POST accept
 ```
@@ -132,9 +121,12 @@ components/
 ├── marketing/                 # Landing / auth shell chrome
 ├── dialogs/
 │   ├── confirm-dialog.tsx     # Shared confirm (leave / delete / remove / demote)
-│   └── workspace/             # create, invite, rename
+│   ├── workspace/             # create, invite, rename
+│   └── channel/               # create, rename, invite members, start DM
 ├── workspace/                 # list, members-table, display helpers
+├── channel/                   # chat shell, sidebar, composer, AI panel, …
 ├── invite/                    # accept-invite-card
+├── profile/                   # edit + teammate card
 ├── sharable/                  # loader, overflow-text, …
 └── theme-provider.tsx
 ```
@@ -147,7 +139,8 @@ Prefer **domain folders** when a feature has several UI pieces:
 components/
   workspace/                   # list, members table, display helpers
   invite/                      # accept card
-  channels/                    # later
+  channel/                     # chat UI (singular folder name — matches repo)
+  profile/                     # profile surfaces
 ```
 
 | Put here | Example |
@@ -169,34 +162,21 @@ lib/
 ├── db/
 │   └── mongoose.ts            # connectDB (cached)
 ├── models/                    # Mongoose models (one file ≈ one collection)
-│   ├── user.ts
-│   ├── session.ts
-│   ├── …auth tokens / AuthEvent
-│   └── workspace/             # workspace, membership, workspace-invite, workspace-event
+│   ├── user/ · session/ · …auth
+│   ├── workspace/
+│   ├── channel/               # channel, membership, read-state, message
+│   └── profile/
 ├── schemas/                   # Zod — shared by forms + APIs
-│   ├── auth/
-│   └── workspace/             # workspace-schema, add-member-schema, role-update-schema
-├── auth/                      # Auth domain services (done)
-│   ├── session.ts
-│   ├── cookies.ts
-│   ├── password.ts
-│   ├── require-user.ts
-│   ├── rate-limit.ts
-│   ├── audit.ts
-│   └── email*.ts
-├── workspaces/                # Phase 3 helpers
-│   ├── create-workspace.ts
-│   ├── slugify.ts
-│   ├── invite.ts
-│   ├── workspace-audit-events.ts
-│   └── workspace-audit-logger.ts
+│   ├── auth/ · workspace/ · channel/ · ai/ · profile/
+├── auth/ · workspaces/ · channels/ · ai/ · profiles/  # domain helpers
+├── storage/                   # S3 presign + browser upload helper
 ├── api/
 │   └── axios.ts               # Browser HTTP client
 ├── types/                     # Shared TS types (non-Zod) when needed
 └── utils.ts                   # cn() and tiny pure helpers
 ```
 
-**Also:** `store/api/workspaces-api.ts` — RTK Query for all workspace/member/invite client calls.
+**Also (RTK):** `store/api/{auth,workspace,channel,upload,ai,profile}-api.ts` + `base-api.ts`.
 
 **Rules**
 - **Models** = persistence shape. **Schemas** = request/form validation. Both can exist for one domain.
@@ -262,9 +242,18 @@ components/invite/…                      # accept card
 
 Full inventory: [`docs/workspaces/`](../workspaces/README.md).
 
-### Channels module (next — planned)
+### Channels module (shipped)
 
-See [`docs/channels/LIB-AND-MODELS.md`](../channels/LIB-AND-MODELS.md) for target paths (`lib/models/channel/`, `server/realtime/`, `store/api/channels-api.ts`).
+```text
+app/(app)/workspace/[workspaceId]/channels/…
+app/api/workspaces/[workspaceId]/channels/…   # + …/dms
+lib/models/channel/ · lib/schemas/channel/ · lib/channels/
+store/api/channel/channel-api.ts
+components/channel/ · components/dialogs/channel/
+server/realtime/                              # separate Socket.IO process
+```
+
+Full inventory: [`docs/channels/`](../channels/README.md) · [`LIB-AND-MODELS.md`](../channels/LIB-AND-MODELS.md).
 
 ---
 

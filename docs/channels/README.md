@@ -1,7 +1,7 @@
 # Channels & realtime chat — module reference
 
-**Status:** ✅ **Shipped + E2E verified** (Phase 5+6 · Aug 9, 2026) · UI polish / mobile picker Aug 11  
-**Customer goal:** Inside a workspace, the team has a **place to talk live** — public and private channels, text + limited files, typing, and basic presence.
+**Status:** ✅ **Shipped + E2E verified** (Phase 5+6 · Aug 9, 2026) · unread · 1:1 DMs · @mentions (Aug 11)  
+**Customer goal:** Inside a workspace, the team has a **place to talk live** — public/private channels, 1:1 DMs, unread catch-up, @mentions, text + limited files, typing, and basic presence.
 
 **PO locks (Jul 31, 2026)**
 1. **Realtime:** separate **Socket.IO** service (not only REST; not sockets-only CRUD)
@@ -36,24 +36,26 @@ This folder is the **single source of truth** for the channels module (same idea
 | Area | Covered |
 |------|---------|
 | Channels | Create (owner/admin) · list · open · rename/delete (rules for `#general`) |
-| Visibility | `public` (all workspace members) · `private` (channel members only) |
+| Visibility | `public` · `private` · `dm` (1:1; listed via `/dms`, not channel list) |
 | Default | `#general` public on workspace create; lazy-create if missing |
+| Unread | Per-user `lastReadAt` · sidebar badge · mark-read on open · Catch up “Since last visit” |
+| DMs | Start / reopen 1:1 · sidebar section · same message/unread/AI stack as channels |
+| Mentions | `mentionedUserIds` · composer `@` autocomplete · transcript highlight |
 | Messages | Persist via REST · live fan-out via Socket.IO |
 | Files | Images + PDF · size/count/type limits (see VISION) · light lightbox |
 | Live | Typing indicators · basic online presence |
 | Mobile | Full-screen channel picker via header **←** (`?list=1`) |
-| Safety | Workspace membership always · private → channel membership · non-access → **404** |
+| Safety | Workspace membership always · private/DM → channel membership · non-access → **404** |
 | AI | Path A panel + explain — see [`docs/ai/`](../ai/README.md) |
 
 ## What v1 does **not** cover (deferred)
 
 - Threads / reply sidebars  
-- DMs / group DMs  
+- Group DMs  
 - Message reactions (emoji in text OK) · message edit/delete (Slice 8)  
 - Custom emoji packs  
 - Announcement-only channels  
 - Virus scanning / arbitrary file types  
-- Member **Profile v1** (after Phase 8 — [progress](../tracking/progress.md))  
 - Docs / boards (separate later modules)  
 - Full audit UI for chat  
 

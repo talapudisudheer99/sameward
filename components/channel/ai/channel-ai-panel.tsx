@@ -39,6 +39,8 @@ type ChannelAiPanelProps = {
   workspaceId: string
   channelId: string
   channelName: string
+  /** Previous lastReadAt captured before mark-read on this open */
+  lastVisitSince?: string | null
   /** Insert draft into composer — never auto-sends */
   onInsertDraft: (text: string) => void
 }
@@ -84,6 +86,7 @@ export default function ChannelAiPanel({
   workspaceId,
   channelId,
   channelName,
+  lastVisitSince = null,
   onInsertDraft,
 }: ChannelAiPanelProps) {
   const [tab, setTab] = useState<TabId>("summarize")
@@ -288,6 +291,24 @@ export default function ChannelAiPanel({
                 What changed since a point in time.
               </p>
               <div className="flex flex-wrap gap-2">
+                {lastVisitSince ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={busy}
+                    className="btn-brand-gradient gap-1.5"
+                    onClick={() =>
+                      void runCatchUp(lastVisitSince, "since last visit")
+                    }
+                  >
+                    {catchingUp ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Clock3 className="size-3.5" />
+                    )}
+                    Since last visit
+                  </Button>
+                ) : null}
                 <Button
                   type="button"
                   size="sm"
@@ -298,7 +319,7 @@ export default function ChannelAiPanel({
                     void runCatchUp(sinceYesterday(), "since yesterday")
                   }
                 >
-                  {catchingUp ? (
+                  {catchingUp && !lastVisitSince ? (
                     <Loader2 className="size-3.5 animate-spin" />
                   ) : (
                     <Clock3 className="size-3.5" />

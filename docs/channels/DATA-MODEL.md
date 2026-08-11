@@ -9,12 +9,13 @@
 | `workspaceId` | ObjectId | required, indexed |
 | `name` | string | display (e.g. General) |
 | `slug` | string | unique **per workspace** (e.g. `general`) |
-| `visibility` | enum | `public` \| `private` |
+| `visibility` | enum | `public` \| `private` \| `dm` |
 | `isDefault` | boolean | `#general` |
 | `createdBy` | ObjectId → User | |
+| `dmPairKey` | string? | 1:1 DM only — sorted `userA_userB`; sparse unique with workspaceId |
 | `createdAt` / `updatedAt` | dates | |
 
-**Indexes:** `{ workspaceId: 1, slug: 1 }` unique · `{ workspaceId: 1 }`
+**Indexes:** `{ workspaceId: 1, slug: 1 }` unique · `{ workspaceId: 1 }` · `{ workspaceId: 1, dmPairKey: 1 }` unique sparse
 
 ### `channel_memberships` (private access)
 
@@ -29,6 +30,20 @@
 
 Public channels do **not** require rows here (workspace membership is enough).
 
+### `channel_read_states` (per-user unread cursor)
+
+| Field | Type | Notes |
+|-------|------|--------|
+| `workspaceId` | ObjectId | denormalized |
+| `channelId` | ObjectId | required |
+| `userId` | ObjectId | required |
+| `lastReadAt` | Date | messages newer than this (by others) are unread |
+| `createdAt` / `updatedAt` | dates | |
+
+**Unique:** `{ channelId: 1, userId: 1 }`
+
+Works for **public and private** channels (unlike `channel_memberships`). Opening a channel upserts `lastReadAt = now`.
+
 ### `messages`
 
 | Field | Type | Notes |
@@ -39,6 +54,7 @@ Public channels do **not** require rows here (workspace membership is enough).
 | `body` | string | max ~4000; may be empty if attachments-only (allow either body or ≥1 attachment) |
 | `attachments` | array | `{ url, name, mime, sizeBytes }` ≤ 3 |
 | `clientMessageId` | string? | optional idempotency |
+| `mentionedUserIds` | ObjectId[] | @mentions (≤ 20); validated as workspace (+ channel for private/DM) members |
 | `createdAt` / `updatedAt` | dates | |
 
 **Indexes:** `{ channelId: 1, createdAt: -1 }` · optional unique `{ channelId, clientMessageId }` sparse
@@ -57,17 +73,20 @@ Public channels do **not** require rows here (workspace membership is enough).
 |------------|-------------------|
 | `public` | Workspace `Membership` exists |
 | `private` | Workspace `Membership` **and** `ChannelMembership` |
+| `dm` | Workspace `Membership` **and** `ChannelMembership` (exactly two users; listed via `GET …/dms`) |
 
-Create channel: workspace role `owner` \| `admin`.
+Create channel: workspace role `owner` \| `admin` (public/private only).  
+Open DM: any workspace member → `POST …/dms` find-or-create.
 
 ---
 
 ## Relationship shape
 
 ```text
-Workspace 1 ──< Channel
-Channel (private) 1 ──< ChannelMembership >── User
-Channel 1 ──< Message >── User (author)
+Workspace 1 ──< Channel (public | private | dm)
+Channel (private | dm) 1 ──< ChannelMembership >── User
+Channel 1 ──< ChannelReadState >── User   (lastReadAt cursor)
+Channel 1 ──< Message >── User (author); Message.mentionedUserIds → User[]
 ```
 
 ---

@@ -19,9 +19,13 @@ import {
   useCreateChannelMutation,
   useCreateMessageMutation,
   useDeleteChannelMutation,
+  useGetChannelByIdQuery,
   useGetChannelMembersQuery,
   useGetChannelsQuery,
+  useGetDmsQuery,
   useGetMessagesQuery,
+  useMarkChannelReadMutation,
+  useOpenDmMutation,
   useRemoveChannelMemberMutation,
   useUpdateChannelMutation,
 } from "@/store/api/channel/channel-api"
@@ -33,15 +37,17 @@ import {
   useChannelRealtime,
   MESSAGE_PAGE_LIMIT,
 } from "@/hooks/channels/use-channel-realtime"
+import { useWorkspaceChannelActivity } from "@/hooks/channels/use-workspace-channel-activity"
 import { useChannelTyping } from "@/hooks/channels/use-channel-typing"
 import { useWorkspacePresence } from "@/hooks/workspace/user-workspace-presence"
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, useMemo } from "react"
 import { useSocket } from "@/components/providers/socket-provider"
 import { usePresignChannelUploadsMutation } from "@/store/api/upload/upload-api"
 import { uploadFilesToS3 } from "@/lib/storage/upload-client"
+import { dmListItemToChannel } from "@/lib/channels/chat-ui-helpers"
 
 /**
- * Chat page — channels + messages RTK + live socket (T16) + typing (T17).
+ * Chat page — channels + DMs + messages RTK + live socket + typing.
  */
 export default function ChannelChatPage() {
   const router = useRouter()
@@ -56,9 +62,37 @@ export default function ChannelChatPage() {
     isError: isChannelsError,
   } = useGetChannelsQuery({ workspaceId }, { skip: !workspaceId })
 
+  const {
+    data: dmsData,
+    isLoading: isDmsLoading,
+    isError: isDmsError,
+  } = useGetDmsQuery({ workspaceId }, { skip: !workspaceId })
+
   const channels = channelsData?.channels ?? []
-  const activeChannel =
-    channels.find((channel) => channel.id === channelId) ?? null
+  const dms = dmsData?.dms ?? []
+
+  const dmAsChannel = useMemo(() => {
+    const dm = dms.find((d) => d.id === channelId)
+    return dm ? dmListItemToChannel(dm) : null
+  }, [dms, channelId])
+
+  const listedChannel =
+    channels.find((channel) => channel.id === channelId) ?? dmAsChannel
+
+  const { data: fetchedChannel, isLoading: isFetchingChannel } =
+    useGetChannelByIdQuery(
+      { workspaceId, channelId },
+      {
+        skip:
+          !workspaceId ||
+          !channelId ||
+          Boolean(listedChannel) ||
+          isChannelsLoading ||
+          isDmsLoading,
+      }
+    )
+
+  const activeChannel = listedChannel ?? fetchedChannel ?? null
   const isPrivate = activeChannel?.visibility === ChannelVisibilityEnum.Private
 
   const realtimeEnabled = Boolean(workspaceId && channelId && activeChannel)
@@ -69,17 +103,64 @@ export default function ChannelChatPage() {
     enabled: realtimeEnabled,
   })
 
+  useWorkspaceChannelActivity({
+    workspaceId,
+    activeChannelId: channelId,
+    currentUserId,
+    enabled: Boolean(workspaceId && currentUserId),
+  })
+
   const { typingLabel } = useChannelTyping({
     channelId,
     currentUserId,
     enabled: realtimeEnabled,
   })
 
-  // Workspace-wide online set → drives m.online dots + header count
   const { isOnline } = useWorkspacePresence({
     workspaceId,
     enabled: Boolean(workspaceId),
   })
+
+  const [markChannelRead] = useMarkChannelReadMutation()
+  const [openDm] = useOpenDmMutation()
+  const [lastVisitByChannel, setLastVisitByChannel] = useState<
+    Record<string, string | null>
+  >({})
+  const lastVisitSince = channelId
+    ? (lastVisitByChannel[channelId] ?? null)
+    : null
+
+  useEffect(() => {
+    if (!workspaceId || !channelId || !activeChannel) return
+
+    let cancelled = false
+    void (async () => {
+      try {
+        const result = await markChannelRead({
+          workspaceId,
+          channelId,
+        }).unwrap()
+        if (!cancelled) {
+          setLastVisitByChannel((prev) => ({
+            ...prev,
+            [channelId]: result.previousLastReadAt,
+          }))
+        }
+      } catch {
+        if (!cancelled) {
+          setLastVisitByChannel((prev) => ({
+            ...prev,
+            [channelId]: activeChannel.lastReadAt,
+          }))
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- snapshot lastReadAt only on open
+  }, [workspaceId, channelId, activeChannel?.id, markChannelRead])
 
   const {
     data: workspaceData,
@@ -87,7 +168,6 @@ export default function ChannelChatPage() {
     isError: isWorkspaceError,
   } = useGetWorkspaceByIdQuery({ workspaceId }, { skip: !workspaceId })
 
-  // History for the open channel (skip until ids exist; list shows its own loader)
   const {
     data: messagesData,
     isLoading: isMessagesLoading,
@@ -97,7 +177,6 @@ export default function ChannelChatPage() {
     { skip: !workspaceId || !channelId }
   )
 
-  // Private only — public channels do not use ChannelMembership
   const {
     data: channelMembersData,
     isLoading: isChannelMembersLoading,
@@ -107,15 +186,11 @@ export default function ChannelChatPage() {
     { skip: !workspaceId || !channelId || !isPrivate }
   )
 
-  // Invite picker needs workspace roster − channel members (private + manage)
   const {
     data: workspaceMembersData,
     isLoading: isWorkspaceMembersLoading,
     isError: isWorkspaceMembersError,
-  } = useGetWorkspaceMembersQuery(
-    { workspaceId },
-    { skip: !workspaceId || !isPrivate }
-  )
+  } = useGetWorkspaceMembersQuery({ workspaceId }, { skip: !workspaceId })
 
   const channelMembers = (channelMembersData?.members ?? []).map((m) => {
     return {
@@ -124,19 +199,16 @@ export default function ChannelChatPage() {
     }
   })
 
-  const workspaceMembers = workspaceMembersData?.members ?? []
+  const workspaceMembers = (workspaceMembersData?.members ?? []).map((m) => ({
+    userId: m.userId,
+    fullName: m.fullName,
+    email: m.email,
+  }))
 
   const channelMemberIds = new Set(channelMembers.map((m) => m.userId))
-  const inviteCandidates = workspaceMembers
-    .filter(
-      (m) => !channelMemberIds.has(m.userId) && m.userId !== currentUserId
-    )
-    .map((m) => ({
-      userId: m.userId,
-      fullName: m.fullName,
-      email: m.email,
-    }))
-
+  const inviteCandidates = workspaceMembers.filter(
+    (m) => !channelMemberIds.has(m.userId) && m.userId !== currentUserId
+  )
   const [createMessage, { isLoading: isSending }] = useCreateMessageMutation()
   const [presignUploads] = usePresignChannelUploadsMutation()
   const [isUploading, setIsUploading] = useState(false)
@@ -193,8 +265,11 @@ export default function ChannelChatPage() {
   if (
     !workspaceId ||
     isChannelsLoading ||
+    isDmsLoading ||
     isWorkspaceLoading ||
-    waitingOnPrivateExtras
+    isWorkspaceMembersLoading ||
+    waitingOnPrivateExtras ||
+    (channelId && !listedChannel && isFetchingChannel)
   ) {
     return (
       <div className="flex h-full flex-1 items-center justify-center">
@@ -203,7 +278,7 @@ export default function ChannelChatPage() {
     )
   }
 
-  if (isChannelsError || isWorkspaceError) {
+  if (isChannelsError || isDmsError || isWorkspaceError || isWorkspaceMembersError) {
     return (
       <ChannelStatus
         title="Couldn’t load channels"
@@ -214,7 +289,7 @@ export default function ChannelChatPage() {
     )
   }
 
-  if (isPrivate && (isChannelMembersError || isWorkspaceMembersError)) {
+  if (isPrivate && isChannelMembersError) {
     return (
       <ChannelStatus
         title="Couldn’t load channel members"
@@ -225,8 +300,8 @@ export default function ChannelChatPage() {
     )
   }
 
-  // Not in list = missing, wrong workspace, or private without membership (API 404 shape)
-  if (!activeChannel) {
+  // Not in list = missing, wrong workspace, or private/DM without access
+  if (channelId && !activeChannel) {
     return (
       <ChannelStatus
         icon="search"
@@ -243,6 +318,8 @@ export default function ChannelChatPage() {
       <ChannelChatShell
         workspaceId={workspaceId}
         channels={channels}
+        dms={dms}
+        workspaceMembers={workspaceMembers}
         activeChannel={activeChannel}
         messages={messagesData?.messages ?? []}
         messagesLoading={isMessagesLoading}
@@ -255,6 +332,7 @@ export default function ChannelChatPage() {
         typingLabel={typingLabel}
         onTyping={onTyping}
         isSending={isSending || isUploading}
+        lastVisitSince={lastVisitSince}
         onCreateChannel={async (data) => {
           try {
             const created = await createChannel({
@@ -267,6 +345,18 @@ export default function ChannelChatPage() {
           } catch {
             toast.error("Could not create channel")
             throw new Error("create failed")
+          }
+        }}
+        onOpenDm={async (peerUserId) => {
+          try {
+            const dm = await openDm({
+              workspaceId,
+              userId: peerUserId,
+            }).unwrap()
+            router.push(`/workspace/${workspaceId}/channels/${dm.id}`)
+          } catch {
+            toast.error("Could not open direct message")
+            throw new Error("dm failed")
           }
         }}
         onRenameChannel={async (data) => {
@@ -335,7 +425,7 @@ export default function ChannelChatPage() {
             throw new Error("remove failed")
           }
         }}
-        onSendMessage={async ({ body, files }) => {
+        onSendMessage={async ({ body, files, mentionedUserIds }) => {
           const text = body.trim()
           if (!text && files.length === 0) {
             toast.error("Type a message or attach a file")
@@ -368,6 +458,7 @@ export default function ChannelChatPage() {
               channelId,
               body: text,
               attachments,
+              mentionedUserIds,
               clientMessageId: crypto.randomUUID(),
             }).unwrap()
             // Clear typing so peers don't keep seeing you after send

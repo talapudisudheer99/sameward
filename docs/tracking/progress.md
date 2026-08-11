@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|--------|
 | **Current phase** | Phase 8 — Quality & deploy (**next**) |
-| **Current feature** | Profile ✅ · workspace description ✅ · Phase 8 next |
+| **Current feature** | Unread + 1:1 DMs + @mentions ✅ · Phase 8 next |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
 | **Last updated** | 2026-08-11 |
 
@@ -21,7 +21,7 @@
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
 | 4 | State & data layer | 🟡 Partial | RTK used across workspaces/channels/AI; deepen in Phase 8 tests |
-| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; mobile picker + lightbox polish (Aug 11). Edit/delete → Slice 8. [`docs/channels/`](../channels/README.md) |
+| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; unread + 1:1 DMs + @mentions (Aug 11). Edit/delete → Slice 8. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
 | 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
 | 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
@@ -81,6 +81,9 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | Push + Profile v1 kickoff | `65f50ab` pushed; Profile docs + model/API/UI in progress |
 | 2026-08-11 | Profile v1 E2E | User verified → **Profile closed** (`cc0e6cf`) |
 | 2026-08-11 | Workspace description | Optional ≤280 char note on create/edit + home/list |
+| 2026-08-11 | Unread tracking | `channel_read_states` · mark-read · sidebar badges · Catch up “Since last visit” |
+| 2026-08-11 | 1:1 DMs + @mentions | `visibility: dm` · `…/dms` · composer `@` · transcript highlight |
+| 2026-08-11 | Repo cleanup | Removed unused marketing collage assets; docs + helpers aligned |
 
 ## GitHub
 

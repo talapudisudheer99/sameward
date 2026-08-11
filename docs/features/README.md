@@ -16,7 +16,10 @@ Jump from a **product feature** to the right doc.
 | Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
 | Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen during channels |
 | Channels + live chat (Socket.IO) | ✅ E2E | [**channels/**](../channels/README.md) |
-| Docs / boards | ⬜ | Later (after channels v1) |
+| Unread + catch-up cursor | ✅ | [channels DATA-MODEL](../channels/DATA-MODEL.md) · [API](../channels/API-ROUTES.md) |
+| 1:1 DMs | ✅ | [channels VISION](../channels/VISION.md) · `…/dms` |
+| @mentions | ✅ | [channels USER-STORIES US-C12](../channels/USER-STORIES.md) |
+| Docs / boards | ⬜ | Later |
 | AI assist (Path A) | ✅ E2E | [**ai/**](../ai/README.md) |
 | Member profiles (thin v1) | ✅ E2E | [**profiles/**](../profiles/README.md) |
 | Workspace description | ✅ | Optional ≤280 chars · [workspaces](../workspaces/DATA-MODEL.md) |

@@ -69,12 +69,16 @@ With channels:
 
 **Out of scope (later)**
 - Threads  
-- DMs / group DMs  
+- Group DMs  
 - Reaction counts / custom emoji  
 - Announcement channels  
 - Unlimited / arbitrary uploads  
 - Docs & boards  
 - Managed realtime vendors (Ably/Pusher) as primary — we own Socket.IO service  
+
+**In scope (added)**
+- **1:1 DMs** — `visibility: "dm"` channels + `GET/POST …/dms`; reuse messages, unread, Channel AI  
+- **@mentions** — `mentionedUserIds` on messages + composer autocomplete + transcript highlight  
 
 ---
 

@@ -4,19 +4,18 @@ import type {
   MessagesListResponse,
   ChannelListItem,
   ChannelMemberRow,
-  ChannelVisibility,
+  MarkChannelReadResponse,
+  DmListItem,
 } from "@/lib/types/channel/channel-types"
 import type { Attachment } from "@/lib/types/upload/upload-types"
+import type { AppDispatch } from "@/store"
 import { baseApi } from "@/store/api/base-api"
 
 /**
- * Channels RTK — channel CRUD + members (T6–T8) + messages (T12).
- * Cache: Channel · ChannelMember · Message (per channelId)
- * Uploads / sockets: later slices.
+ * Channels RTK — channel CRUD + members + messages + read state + DMs.
  */
 export const channelsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    /** GET /api/workspaces/:id/channels — only channels caller may access */
     getChannels: builder.query<
       { channels: ChannelListItem[] },
       { workspaceId: string }
@@ -35,7 +34,50 @@ export const channelsApi = baseApi.injectEndpoints({
       },
     }),
 
-    /** GET …/channels/:channelId — flat ChannelListItem */
+    getDms: builder.query<{ dms: DmListItem[] }, { workspaceId: string }>({
+      query: ({ workspaceId }) => `workspaces/${workspaceId}/dms`,
+      providesTags: (result) => {
+        const tags: { type: "Channel"; id: string }[] = [
+          { type: "Channel", id: "DM_LIST" },
+        ]
+        if (result?.dms) {
+          for (const dm of result.dms) {
+            tags.push({ type: "Channel", id: dm.id })
+          }
+        }
+        return tags
+      },
+    }),
+
+    openDm: builder.mutation<
+      DmListItem,
+      { workspaceId: string; userId: string }
+    >({
+      query: ({ workspaceId, userId }) => ({
+        url: `workspaces/${workspaceId}/dms`,
+        method: "POST",
+        body: { userId },
+      }),
+      async onQueryStarted({ workspaceId }, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getDms",
+              { workspaceId },
+              (draft) => {
+                if (draft.dms.some((d) => d.id === data.id)) return
+                draft.dms.unshift(data)
+              }
+            )
+          )
+        } catch {
+          /* leave cache alone */
+        }
+      },
+      invalidatesTags: [{ type: "Channel", id: "DM_LIST" }],
+    }),
+
     getChannelById: builder.query<
       ChannelListItem,
       { workspaceId: string; channelId: string }
@@ -47,13 +89,12 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /** POST …/channels — owner | admin; returns created channel */
     createChannel: builder.mutation<
       ChannelListItem,
       {
         workspaceId: string
         name: string
-        visibility: ChannelVisibility
+        visibility: "public" | "private"
       }
     >({
       query: ({ workspaceId, name, visibility }) => ({
@@ -64,7 +105,6 @@ export const channelsApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: "Channel", id: "LIST" }],
     }),
 
-    /** PATCH …/channels/:channelId — rename */
     updateChannel: builder.mutation<
       ChannelListItem,
       { workspaceId: string; channelId: string; name: string }
@@ -80,7 +120,6 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /** DELETE …/channels/:channelId — blocked for isDefault on server */
     deleteChannel: builder.mutation<
       { ok: boolean },
       { workspaceId: string; channelId: string }
@@ -95,7 +134,50 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /** GET …/members — private channels only (public → 400) */
+    markChannelRead: builder.mutation<
+      MarkChannelReadResponse,
+      { workspaceId: string; channelId: string }
+    >({
+      query: ({ workspaceId, channelId }) => ({
+        url: `workspaces/${workspaceId}/channels/${channelId}/read`,
+        method: "POST",
+      }),
+      async onQueryStarted(
+        { workspaceId, channelId },
+        { dispatch, queryFulfilled }
+      ) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getChannels",
+              { workspaceId },
+              (draft) => {
+                const ch = draft.channels.find((c) => c.id === channelId)
+                if (!ch) return
+                ch.unreadCount = 0
+                ch.lastReadAt = data.lastReadAt
+              }
+            )
+          )
+          dispatch(
+            channelsApi.util.updateQueryData(
+              "getDms",
+              { workspaceId },
+              (draft) => {
+                const dm = draft.dms.find((d) => d.id === channelId)
+                if (!dm) return
+                dm.unreadCount = 0
+                dm.lastReadAt = data.lastReadAt
+              }
+            )
+          )
+        } catch {
+          /* leave cache alone on error */
+        }
+      },
+    }),
+
     getChannelMembers: builder.query<
       { members: ChannelMemberRow[] },
       { workspaceId: string; channelId: string }
@@ -107,7 +189,6 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /** POST …/members — { userIds }; returns added + failed */
     addChannelMembers: builder.mutation<
       {
         added: { userId: string }[]
@@ -125,7 +206,6 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /** DELETE …/members/:userId */
     removeChannelMember: builder.mutation<
       { ok: boolean },
       { workspaceId: string; channelId: string; userId: string }
@@ -139,10 +219,6 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /**
-     * GET …/messages — newest page first; response messages are oldest→newest.
-     * Omit cursor for the latest page; pass nextCursor to load older later.
-     */
     getMessages: builder.query<
       MessagesListResponse,
       {
@@ -164,12 +240,6 @@ export const channelsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /**
-     * POST …/messages — text only for now (attachments ignored until S3).
-     * clientMessageId makes retries idempotent.
-     * Cache: append on success (socket message:new also upserts — dedupe by id).
-     */
-
     createMessage: builder.mutation<
       CreateMessageResponse,
       {
@@ -177,6 +247,7 @@ export const channelsApi = baseApi.injectEndpoints({
         channelId: string
         body: string
         attachments?: Attachment[]
+        mentionedUserIds?: string[]
         clientMessageId?: string
       }
     >({
@@ -185,6 +256,7 @@ export const channelsApi = baseApi.injectEndpoints({
         channelId,
         body,
         attachments,
+        mentionedUserIds,
         clientMessageId,
       }) => ({
         url: `workspaces/${workspaceId}/channels/${channelId}/messages`,
@@ -192,6 +264,9 @@ export const channelsApi = baseApi.injectEndpoints({
         body: {
           body,
           ...(attachments && attachments.length > 0 ? { attachments } : {}),
+          ...(mentionedUserIds && mentionedUserIds.length > 0
+            ? { mentionedUserIds }
+            : {}),
           ...(clientMessageId ? { clientMessageId } : {}),
         } satisfies CreateMessageRequest,
       }),
@@ -219,12 +294,41 @@ export const channelsApi = baseApi.injectEndpoints({
   }),
 })
 
+/** Live unread bump when someone posts in a channel/DM you’re not viewing. */
+export function bumpChannelUnread(
+  dispatch: AppDispatch,
+  workspaceId: string,
+  channelId: string
+): void {
+  dispatch(
+    channelsApi.util.updateQueryData(
+      "getChannels",
+      { workspaceId },
+      (draft) => {
+        const ch = draft.channels.find((c) => c.id === channelId)
+        if (!ch) return
+        ch.unreadCount += 1
+      }
+    )
+  )
+  dispatch(
+    channelsApi.util.updateQueryData("getDms", { workspaceId }, (draft) => {
+      const dm = draft.dms.find((d) => d.id === channelId)
+      if (!dm) return
+      dm.unreadCount += 1
+    })
+  )
+}
+
 export const {
   useGetChannelsQuery,
+  useGetDmsQuery,
+  useOpenDmMutation,
   useGetChannelByIdQuery,
   useCreateChannelMutation,
   useUpdateChannelMutation,
   useDeleteChannelMutation,
+  useMarkChannelReadMutation,
   useGetChannelMembersQuery,
   useAddChannelMembersMutation,
   useRemoveChannelMemberMutation,

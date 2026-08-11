@@ -75,6 +75,16 @@ const messageSchema = new Schema(
       ref: "Message",
       default: null,
     },
+    /** @mentions — validated against workspace/channel members in the API */
+    mentionedUserIds: {
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+      validate: {
+        validator: (v: unknown[]) => Array.isArray(v) && v.length <= 20,
+        message: "At most 20 mentions per message",
+      },
+    },
   },
   { timestamps: true }
 )

@@ -12,6 +12,8 @@ import type { ChatMessage } from "@/lib/types/channel/channel-types"
 type ChatMessageListProps = {
   messages: ChatMessage[]
   currentUserId: string
+  /** userId → display name for highlighting @mentions */
+  mentionNameById?: Record<string, string>
   /** Initial history fetch in flight */
   isLoading?: boolean
   /** History request failed */
@@ -39,6 +41,46 @@ function formatTime(iso: string) {
   }
 }
 
+/** Highlight @Full Name tokens for mentioned users. */
+function renderBodyWithMentions(
+  body: string,
+  mentionedUserIds: string[] | undefined,
+  mentionNameById: Record<string, string> | undefined,
+  mine: boolean
+) {
+  const names = (mentionedUserIds ?? [])
+    .map((id) => mentionNameById?.[id])
+    .filter((n): n is string => Boolean(n))
+    .sort((a, b) => b.length - a.length)
+
+  if (names.length === 0) return body
+
+  const escaped = names.map((n) =>
+    n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  )
+  const re = new RegExp(`(@(?:${escaped.join("|")}))`, "g")
+  const parts = body.split(re)
+
+  return parts.map((part, i) => {
+    if (part.startsWith("@") && names.some((n) => part === `@${n}`)) {
+      return (
+        <span
+          key={`${part}-${i}`}
+          className={cn(
+            "font-semibold",
+            mine
+              ? "text-primary-foreground underline decoration-primary-foreground/50"
+              : "text-primary"
+          )}
+        >
+          {part}
+        </span>
+      )
+    }
+    return <span key={`t-${i}`}>{part}</span>
+  })
+}
+
 /**
  * Ch-D transcript — presentational.
  * Parent passes messages from RTK GET; socket appends later.
@@ -46,6 +88,7 @@ function formatTime(iso: string) {
 export default function ChatMessageList({
   messages,
   currentUserId,
+  mentionNameById,
   isLoading = false,
   isError = false,
   className,
@@ -206,7 +249,12 @@ export default function ChatMessageList({
                   )}
                 >
                   <p className="[overflow-wrap:anywhere] break-words whitespace-pre-wrap">
-                    {msg.body}
+                    {renderBodyWithMentions(
+                      msg.body,
+                      msg.mentionedUserIds,
+                      mentionNameById,
+                      mine
+                    )}
                   </p>
                   {onExplainMessage && !msg.pending ? (
                     <Button

@@ -1,9 +1,15 @@
 "use client"
 
-import { useRef, useState, type KeyboardEvent } from "react"
+import {
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react"
 import { FileText, Paperclip, Send, Smile, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import type { WorkspaceMemberOption } from "@/lib/types/workspace/workspace-types"
 import { cn } from "@/lib/utils"
 
 const MAX_FILES = 3
@@ -26,12 +32,18 @@ export type ComposerPendingFile = {
 type ChatComposerProps = {
   channelName: string
   disabled?: boolean
+  /** People available for @mentions */
+  mentionCandidates?: WorkspaceMemberOption[]
   /**
    * Wire RTK + S3:
    * 1) upload pending files → attachment metadata
-   * 2) POST message { body, attachments, clientMessageId }
+   * 2) POST message { body, attachments, mentionedUserIds, clientMessageId }
    */
-  onSend: (payload: { body: string; files: File[] }) => Promise<void>
+  onSend: (payload: {
+    body: string
+    files: File[]
+    mentionedUserIds?: string[]
+  }) => Promise<void>
   /** Optional: emit typing (socket later) */
   onTyping?: () => void
   isSending?: boolean
@@ -43,13 +55,27 @@ type ChatComposerProps = {
   draftText?: string
 }
 
+type MentionQuery = {
+  start: number
+  query: string
+}
+
+function findMentionQuery(text: string, caret: number): MentionQuery | null {
+  const before = text.slice(0, caret)
+  const match = before.match(/(^|[\s])@([^\s@]*)$/)
+  if (!match) return null
+  const query = match[2] ?? ""
+  const start = before.length - query.length - 1
+  return { start, query }
+}
+
 /**
- * Ch-D composer — text + local file chips (limits enforced client-side).
- * Upload to S3 happens in onSend (your RTK/files slice).
+ * Ch-D composer — text + @mentions + local file chips.
  */
 export default function ChatComposer({
   channelName,
   disabled,
+  mentionCandidates = [],
   onSend,
   onTyping,
   isSending = false,
@@ -60,12 +86,42 @@ export default function ChatComposer({
   const [pending, setPending] = useState<ComposerPendingFile[]>([])
   const [error, setError] = useState<string | null>(null)
   const [seenDraftNonce, setSeenDraftNonce] = useState(0)
+  const [mentionIds, setMentionIds] = useState<string[]>([])
+  const [caret, setCaret] = useState(0)
+  const [mentionIndex, setMentionIndex] = useState(0)
+  const [mentionQueryKey, setMentionQueryKey] = useState("")
   const fileRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   if (draftNonce > 0 && draftNonce !== seenDraftNonce) {
     setSeenDraftNonce(draftNonce)
     setBody(draftText)
   }
+
+  const mentionQuery = useMemo(
+    () => findMentionQuery(body, caret),
+    [body, caret]
+  )
+
+  const nextMentionQueryKey = mentionQuery
+    ? `${mentionQuery.start}:${mentionQuery.query}`
+    : ""
+  if (nextMentionQueryKey !== mentionQueryKey) {
+    setMentionQueryKey(nextMentionQueryKey)
+    setMentionIndex(0)
+  }
+
+  const mentionMatches = useMemo(() => {
+    if (!mentionQuery) return []
+    const q = mentionQuery.query.toLowerCase()
+    return mentionCandidates
+      .filter(
+        (m) =>
+          m.fullName.toLowerCase().includes(q) ||
+          m.email.toLowerCase().includes(q)
+      )
+      .slice(0, 8)
+  }, [mentionCandidates, mentionQuery])
 
   function clearPending() {
     for (const p of pending) {
@@ -111,16 +167,46 @@ export default function ChatComposer({
     })
   }
 
+  function insertMention(member: WorkspaceMemberOption) {
+    if (!mentionQuery) return
+    const before = body.slice(0, mentionQuery.start)
+    const after = body.slice(caret)
+    const token = `@${member.fullName}`
+    const next = `${before}${token} ${after}`
+    setBody(next)
+    setMentionIds((prev) =>
+      prev.includes(member.userId) ? prev : [...prev, member.userId]
+    )
+    const nextCaret = before.length + token.length + 1
+    setCaret(nextCaret)
+    requestAnimationFrame(() => {
+      const el = textareaRef.current
+      if (!el) return
+      el.focus()
+      el.setSelectionRange(nextCaret, nextCaret)
+    })
+  }
+
   async function handleSend() {
     const trimmed = body.trim()
     if (!trimmed && pending.length === 0) return
     setError(null)
+
+    // Keep only mention ids still referenced as @Full Name in the body
+    const stillMentioned = mentionIds.filter((id) => {
+      const name = mentionCandidates.find((m) => m.userId === id)?.fullName
+      return name ? trimmed.includes(`@${name}`) : false
+    })
+
     try {
       await onSend({
         body: trimmed,
         files: pending.map((p) => p.file),
+        mentionedUserIds:
+          stillMentioned.length > 0 ? stillMentioned : undefined,
       })
       setBody("")
+      setMentionIds([])
       clearPending()
     } catch {
       // Keep draft so the user can retry; toast lives in the page
@@ -128,6 +214,32 @@ export default function ChatComposer({
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if (mentionMatches.length > 0 && mentionQuery) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+        setMentionIndex((i) => (i + 1) % mentionMatches.length)
+        return
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault()
+        setMentionIndex(
+          (i) => (i - 1 + mentionMatches.length) % mentionMatches.length
+        )
+        return
+      }
+      if (e.key === "Enter" || e.key === "Tab") {
+        e.preventDefault()
+        const pick = mentionMatches[mentionIndex]
+        if (pick) insertMention(pick)
+        return
+      }
+      if (e.key === "Escape") {
+        e.preventDefault()
+        setCaret(caret) // keep; clearing query by moving isn't needed
+        return
+      }
+    }
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       void handleSend()
@@ -170,19 +282,63 @@ export default function ChatComposer({
       ) : null}
 
       <p className="mb-1.5 text-[11px] text-muted-foreground">
-        Max {MAX_FILES} files · 10 MB · images &amp; PDF
+        Max {MAX_FILES} files · 10 MB · images &amp; PDF · type @ to mention
       </p>
 
-      <div className="rounded-[var(--radius)] border border-border bg-background">
+      <div className="relative rounded-[var(--radius)] border border-border bg-background">
+        {mentionMatches.length > 0 && mentionQuery ? (
+          <ul
+            className="absolute bottom-full left-0 z-20 mb-1 max-h-48 w-full max-w-sm overflow-y-auto rounded-md border border-border bg-card py-1 shadow-md"
+            role="listbox"
+            aria-label="Mention someone"
+          >
+            {mentionMatches.map((m, i) => (
+              <li key={m.userId}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={i === mentionIndex}
+                  className={cn(
+                    "flex w-full flex-col px-3 py-2 text-left text-sm",
+                    i === mentionIndex ? "bg-primary/10" : "hover:bg-muted"
+                  )}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    insertMention(m)
+                  }}
+                >
+                  <span className="font-medium">{m.fullName}</span>
+                  {m.email ? (
+                    <span className="text-xs text-muted-foreground">
+                      {m.email}
+                    </span>
+                  ) : null}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
         <textarea
+          ref={textareaRef}
           value={body}
           onChange={(e) => {
             setBody(e.target.value)
+            setCaret(e.target.selectionStart)
             onTyping?.()
+          }}
+          onSelect={(e) => {
+            setCaret(e.currentTarget.selectionStart)
+          }}
+          onKeyUp={(e) => {
+            setCaret(e.currentTarget.selectionStart)
+          }}
+          onClick={(e) => {
+            setCaret(e.currentTarget.selectionStart)
           }}
           onKeyDown={onKeyDown}
           disabled={disabled || isSending}
-          placeholder={`Message #${channelName}`}
+          placeholder={`Message ${channelName.startsWith("#") ? channelName : channelName}`}
           rows={3}
           maxLength={4000}
           className="w-full resize-none bg-transparent px-3 pt-3 text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"

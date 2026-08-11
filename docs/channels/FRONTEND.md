@@ -20,10 +20,15 @@
 | — | Rename / delete | `rename-channel-dialog` · `ConfirmDialog` | ✅ UI |
 | — | Typing / reconnect | `typing-indicator` · `reconnect-banner` | ✅ UI (props only) |
 | — | Channel AI | `components/channel/ai/*` | ✅ → [docs/ai](../ai/FRONTEND.md) |
+| — | Start DM | `dialogs/channel/start-dm-dialog.tsx` | ✅ UI |
+| — | Unread badges | sidebar + DM list | ✅ UI |
+| — | @mentions | composer autocomplete + transcript | ✅ UI |
 
 **Shell:** `components/channel/channel-chat-shell.tsx` — all data via props + callbacks. No RTK inside.
 
-**Page:** `app/(app)/workspace/[workspaceId]/channels/[channelId]/page.tsx` wires RTK + sockets + uploads.
+**Page:** `app/(app)/workspace/[workspaceId]/channels/[channelId]/page.tsx` wires RTK + sockets + uploads + DMs/unread.
+
+**Helpers:** `lib/channels/chat-ui-helpers.ts` — `dmListItemToChannel`, `resolveMentionCandidates`.
 
 ---
 
@@ -31,7 +36,7 @@
 
 | Breakpoint | Behavior |
 |------------|----------|
-| **&lt; md** (phone) | In a channel: sidebar **hidden**; header **←** → `/channels?list=1` full-screen picker. App nav sidebar also hidden (`app/(app)/layout`). |
+| **&lt; md** (phone) | In a channel: sidebar **hidden**; header **←** → `/channels?list=1` full-screen picker. App `MobileNav` is **hidden** on channel routes (picker/chat headers only — no double bar). |
 | **md–lg** (tablet) | Channel list + chat side-by-side; members panel is an **overlay** (not a permanent third column). |
 | **≥ lg** | Members panel can dock beside chat when opened. |
 
@@ -51,7 +56,7 @@ Desktop `/channels` (no `?list=1`) still auto-opens default/`#general`.
 | Reconnect | `reconnecting` prop → banner + gap fetch |
 | Emoji | Button stub (disabled) — optional later |
 
-**Not v1 UI:** thread panel, reaction picker, DM inbox, member profile card (→ Profile v1).
+**Not v1 UI:** thread panel, reaction picker, group DM inbox. Profile card → [profiles](../profiles/README.md).
 
 ---
 

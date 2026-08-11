@@ -3,9 +3,11 @@ import { Types } from "mongoose"
 
 import { getCurrentUser } from "@/lib/auth/session"
 import { canAccessChannel } from "@/lib/channels/access"
+import { resolveDmPeer } from "@/lib/channels/find-or-create-dm"
 import { slugifyUniqueInWorkspace } from "@/lib/channels/channel-slugify"
-import { Channel } from "@/lib/models/channel/channel"
+import { Channel, ChannelVisibility } from "@/lib/models/channel/channel"
 import { ChannelMembership } from "@/lib/models/channel/channel-membership"
+import { ChannelReadState } from "@/lib/models/channel/channel-read-state"
 import { Message } from "@/lib/models/channel/message"
 import { Membership, MembershipRole } from "@/lib/models/workspace/membership"
 import { renameChannelSchema } from "@/lib/schemas/channel/channel-schema"
@@ -58,17 +60,30 @@ export async function GET(
       return badIdResponse()
     }
 
-    // Locked room? need ChannelMembership
+    // Locked room / DM? need ChannelMembership
     if (!(await canAccessChannel(user.id, channel))) {
       return badIdResponse()
     }
 
+    let name = channel.name
+    let peer: { userId: string; fullName: string } | undefined
+    if (channel.visibility === ChannelVisibility.Dm) {
+      const resolved = await resolveDmPeer(channelId, user.id)
+      if (resolved) {
+        peer = resolved
+        name = resolved.fullName
+      }
+    }
+
     return NextResponse.json({
       id: channel._id.toString(),
-      name: channel.name,
+      name,
       slug: channel.slug,
       visibility: channel.visibility,
       isDefault: channel.isDefault,
+      unreadCount: 0,
+      lastReadAt: null,
+      ...(peer ? { peer } : {}),
     })
   } catch (error) {
     console.error("Get channel failed:", error)
@@ -129,6 +144,13 @@ export async function PATCH(
       return badIdResponse()
     }
 
+    if (channel.visibility === ChannelVisibility.Dm) {
+      return NextResponse.json(
+        { message: "Direct messages cannot be renamed" },
+        { status: 400 }
+      )
+    }
+
     let body: unknown
     try {
       body = await request.json()
@@ -172,6 +194,8 @@ export async function PATCH(
       slug: updated.slug,
       visibility: updated.visibility,
       isDefault: updated.isDefault,
+      unreadCount: 0,
+      lastReadAt: null,
     })
   } catch (error) {
     console.error("Rename channel failed:", error)
@@ -233,6 +257,13 @@ export async function DELETE(
       return badIdResponse()
     }
 
+    if (channel.visibility === ChannelVisibility.Dm) {
+      return NextResponse.json(
+        { message: "Direct messages cannot be deleted this way" },
+        { status: 400 }
+      )
+    }
+
     // Hybrid #general must stay
     if (channel.isDefault) {
       return NextResponse.json(
@@ -241,8 +272,9 @@ export async function DELETE(
       )
     }
 
-    // Cascade: keys → messages → room
+    // Cascade: keys → read cursors → messages → room
     await ChannelMembership.deleteMany({ channelId })
+    await ChannelReadState.deleteMany({ channelId })
     await Message.deleteMany({ channelId })
     await Channel.deleteOne({ _id: channelId, workspaceId })
 
