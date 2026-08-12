@@ -133,7 +133,7 @@ function ChannelsIndexInner() {
         >
           <Hash className="size-6" strokeWidth={1.5} />
         </div>
-        <h1 className="font-heading text-xl font-semibold">
+        <h1 className="font-heading text-lg font-semibold sm:text-xl">
           Couldn’t load channels
         </h1>
         <p className="max-w-md text-sm text-muted-foreground">
@@ -158,7 +158,7 @@ function ChannelsIndexInner() {
         >
           <Hash className="size-6" strokeWidth={1.5} />
         </div>
-        <h1 className="font-heading text-xl font-semibold">No channels yet</h1>
+        <h1 className="font-heading text-lg font-semibold sm:text-xl">No channels yet</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           This workspace doesn’t have any channels you can open.
         </p>

@@ -84,24 +84,31 @@ function renderBodyWithMentions(
     .filter((n): n is string => Boolean(n))
     .sort((a, b) => b.length - a.length)
 
-  if (names.length === 0) return body
-
   const escaped = names.map((n) =>
     n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
   )
-  const re = new RegExp(`(@(?:${escaped.join("|")}))`, "g")
+  const namePattern = escaped.length > 0 ? `(?:${escaped.join("|")})` : null
+  const re = new RegExp(
+    `(@all\\b${namePattern ? `|@${namePattern}` : ""})`,
+    "gi"
+  )
   const parts = body.split(re)
 
+  if (parts.length === 1) return body
+
   return parts.map((part, i) => {
-    if (part.startsWith("@") && names.some((n) => part === `@${n}`)) {
+    const isAll = part.toLowerCase() === "@all"
+    const isNamedMention =
+      part.startsWith("@") && names.some((n) => part === `@${n}`)
+    if (isAll || isNamedMention) {
       return (
         <span
           key={`${part}-${i}`}
           className={cn(
             "font-semibold",
             mine
-              ? "text-primary-foreground underline decoration-primary-foreground/50"
-              : "text-primary"
+              ? "text-primary-foreground underline decoration-primary-foreground/55 underline-offset-2"
+              : "rounded-md bg-primary/12 px-1 py-0.5 text-primary"
           )}
         >
           {part}

@@ -184,7 +184,7 @@ export default function InviteMemberDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="gap-5 p-5 sm:max-w-md">
         <DialogHeader className="gap-1.5 pr-8 text-left">
-          <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
+          <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
             Send invite
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed">

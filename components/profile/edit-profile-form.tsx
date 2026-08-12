@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Loader2, Plus, Trash2, Upload } from "lucide-react"
 import { toast } from "sonner"
 
@@ -8,6 +8,7 @@ import UserAvatar from "@/components/profile/user-avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import updateProfileSchema from "@/lib/schemas/profile/update-profile-schema"
 import { putFileToS3 } from "@/lib/storage/upload-client"
 import type { ProfileLink } from "@/lib/types/profile/profile-types"
 import { useGetCurrentUserQuery } from "@/store/api/auth/auth-api"
@@ -18,6 +19,26 @@ import {
 
 const AVATAR_TYPES = new Set(["image/jpeg", "image/png", "image/webp"])
 const AVATAR_MAX = 2 * 1024 * 1024
+
+type ProfileSnapshot = {
+  fullName: string
+  title: string
+  bio: string
+  timezone: string
+  links: ProfileLink[]
+  avatarUrl: string | null
+}
+
+function normalizeLinks(links: ProfileLink[]): ProfileLink[] {
+  return links
+    .map((l) => ({ label: l.label.trim(), url: l.url.trim() }))
+    .filter((l) => l.label || l.url)
+}
+
+function linksEqual(a: ProfileLink[], b: ProfileLink[]): boolean {
+  if (a.length !== b.length) return false
+  return a.every((link, i) => link.label === b[i]?.label && link.url === b[i]?.url)
+}
 
 /**
  * Edit own Profile v1 fields + avatar upload.
@@ -38,7 +59,12 @@ export default function EditProfileForm() {
   const [pendingCanonical, setPendingCanonical] = useState<
     string | null | undefined
   >(undefined)
+  const [initialSnapshot, setInitialSnapshot] = useState<ProfileSnapshot | null>(
+    null
+  )
   const [hydrated, setHydrated] = useState(false)
+  const [linkErrors, setLinkErrors] = useState<Record<number, string>>({})
+  const [formError, setFormError] = useState<string | null>(null)
 
   const [updateProfile, { isLoading: saving }] = useUpdateMyProfileMutation()
   const [presignAvatar, { isLoading: uploading }] = usePresignAvatarMutation()
@@ -53,6 +79,71 @@ export default function EditProfileForm() {
     setTimezone(user.timezone ?? "")
     setLinks(user.links ?? [])
     setAvatarUrl(user.avatarUrl ?? null)
+    setInitialSnapshot({
+      fullName: user.fullName ?? "",
+      title: user.title ?? "",
+      bio: user.bio ?? "",
+      timezone: user.timezone ?? "",
+      links: user.links ?? [],
+      avatarUrl: user.avatarUrl ?? null,
+    })
+  }
+
+  const trimmedFullName = fullName.trim()
+  const normalizedLinks = useMemo(() => normalizeLinks(links), [links])
+
+  const hasChanges = useMemo(() => {
+    if (!initialSnapshot) return false
+    if (trimmedFullName !== initialSnapshot.fullName.trim()) return true
+    if (title.trim() !== initialSnapshot.title.trim()) return true
+    if (bio.trim() !== initialSnapshot.bio.trim()) return true
+    if (timezone.trim() !== initialSnapshot.timezone.trim()) return true
+    if (!linksEqual(normalizedLinks, normalizeLinks(initialSnapshot.links))) {
+      return true
+    }
+    if (pendingCanonical !== undefined) {
+      return pendingCanonical !== initialSnapshot.avatarUrl
+    }
+    return false
+  }, [
+    initialSnapshot,
+    trimmedFullName,
+    title,
+    bio,
+    timezone,
+    normalizedLinks,
+    pendingCanonical,
+  ])
+
+  function validateClient(): boolean {
+    setFormError(null)
+    const nextLinkErrors: Record<number, string> = {}
+    let hasInvalid = false
+
+    links.forEach((l, i) => {
+      const label = l.label.trim()
+      const url = l.url.trim()
+      if (!label && !url) return
+      if (!label || !url) {
+        nextLinkErrors[i] = "Add both label and URL"
+        hasInvalid = true
+        return
+      }
+      const parsed = updateProfileSchema.shape.links
+        ?.unwrap()
+        .element.safeParse({ label, url })
+      if (!parsed?.success) {
+        nextLinkErrors[i] = "Enter a valid http(s) URL"
+        hasInvalid = true
+      }
+    })
+
+    setLinkErrors(nextLinkErrors)
+    if (!trimmedFullName) {
+      setFormError("Display name is required")
+      hasInvalid = true
+    }
+    return !hasInvalid
   }
 
   async function onPickAvatar(file: File | null) {
@@ -84,6 +175,9 @@ export default function EditProfileForm() {
   }
 
   async function onSave() {
+    if (!hasChanges) return
+    if (!validateClient()) return
+
     try {
       const body: {
         fullName: string
@@ -93,11 +187,11 @@ export default function EditProfileForm() {
         links: ProfileLink[]
         avatarUrl?: string | null
       } = {
-        fullName: fullName.trim(),
+        fullName: trimmedFullName,
         title: title.trim(),
         bio: bio.trim(),
         timezone: timezone.trim(),
-        links: links.filter((l) => l.label.trim() && l.url.trim()),
+        links: normalizedLinks.filter((l) => l.label && l.url),
       }
       if (pendingCanonical !== undefined) {
         body.avatarUrl = pendingCanonical
@@ -109,6 +203,16 @@ export default function EditProfileForm() {
         setLocalPreview(null)
       }
       setAvatarUrl(result.user.avatarUrl ?? null)
+      setInitialSnapshot({
+        fullName: result.user.fullName ?? "",
+        title: result.user.title ?? "",
+        bio: result.user.bio ?? "",
+        timezone: result.user.timezone ?? "",
+        links: result.user.links ?? [],
+        avatarUrl: result.user.avatarUrl ?? null,
+      })
+      setLinkErrors({})
+      setFormError(null)
       toast.success("Profile saved")
     } catch {
       toast.error("Could not save profile")
@@ -236,47 +340,70 @@ export default function EditProfileForm() {
             ) : null}
           </div>
           {links.map((link, i) => (
-            <div key={i} className="flex gap-2">
-              <Input
-                value={link.label}
-                placeholder="Label"
-                className="w-28 shrink-0"
-                maxLength={40}
-                onChange={(e) => {
-                  const next = [...links]
-                  next[i] = { ...link, label: e.target.value }
-                  setLinks(next)
-                }}
-              />
-              <Input
-                value={link.url}
-                placeholder="https://"
-                className="min-w-0 flex-1"
-                maxLength={500}
-                onChange={(e) => {
-                  const next = [...links]
-                  next[i] = { ...link, url: e.target.value }
-                  setLinks(next)
-                }}
-              />
-              <Button
-                type="button"
-                size="icon-sm"
-                variant="ghost"
-                aria-label="Remove link"
-                onClick={() => setLinks((prev) => prev.filter((_, j) => j !== i))}
-              >
-                <Trash2 className="size-3.5" />
-              </Button>
+            <div key={i} className="space-y-1">
+              <div className="flex gap-2">
+                <Input
+                  value={link.label}
+                  placeholder="Label"
+                  className="w-28 shrink-0"
+                  maxLength={40}
+                  onChange={(e) => {
+                    const next = [...links]
+                    next[i] = { ...link, label: e.target.value }
+                    setLinks(next)
+                    if (linkErrors[i]) {
+                      setLinkErrors((prev) => {
+                        const clone = { ...prev }
+                        delete clone[i]
+                        return clone
+                      })
+                    }
+                  }}
+                />
+                <Input
+                  value={link.url}
+                  placeholder="https://"
+                  className="min-w-0 flex-1"
+                  maxLength={500}
+                  onChange={(e) => {
+                    const next = [...links]
+                    next[i] = { ...link, url: e.target.value }
+                    setLinks(next)
+                    if (linkErrors[i]) {
+                      setLinkErrors((prev) => {
+                        const clone = { ...prev }
+                        delete clone[i]
+                        return clone
+                      })
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label="Remove link"
+                  onClick={() => setLinks((prev) => prev.filter((_, j) => j !== i))}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              </div>
+              {linkErrors[i] ? (
+                <p className="text-xs text-destructive">{linkErrors[i]}</p>
+              ) : null}
             </div>
           ))}
         </div>
       </div>
 
+      {formError ? (
+        <p className="text-sm text-destructive">{formError}</p>
+      ) : null}
+
       <Button
         type="button"
         onClick={() => void onSave()}
-        disabled={saving || !fullName.trim()}
+        disabled={saving || !trimmedFullName || !hasChanges}
         className="btn-brand-gradient self-start gap-2"
       >
         {saving ? <Loader2 className="size-3.5 animate-spin" /> : null}

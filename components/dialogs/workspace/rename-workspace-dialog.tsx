@@ -115,7 +115,7 @@ export default function RenameWorkspaceDialog({
             <Pencil className="size-5" strokeWidth={1.75} />
           </div>
           <div className="space-y-1.5">
-            <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
+            <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
               Edit workspace
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">

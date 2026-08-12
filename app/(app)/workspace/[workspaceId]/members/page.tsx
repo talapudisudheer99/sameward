@@ -104,7 +104,7 @@ export default function WorkspaceMembersPage() {
           >
             <SearchX className="size-8" strokeWidth={1.5} />
           </div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight">
+          <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
             Workspace not found
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
@@ -216,7 +216,7 @@ export default function WorkspaceMembersPage() {
 
       <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
             Members
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

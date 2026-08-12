@@ -31,7 +31,7 @@ export default function WorkspacePage() {
       <section className="mx-auto w-full max-w-2xl px-4 py-8">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               Workspaces
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -58,11 +58,11 @@ export default function WorkspacePage() {
           <LayoutTemplate className="size-8" strokeWidth={1.5} />
         </div>
 
-        <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
           Welcome to TeamHub
         </h1>
 
-        <p className="mt-3 max-w-md text-base leading-relaxed text-muted-foreground">
+        <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
           Your team&apos;s conversations, easier to understand. Stay on the same
           page, catch up on what you missed, and see the context behind team
           discussions.

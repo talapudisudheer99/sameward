@@ -63,6 +63,21 @@ type MentionQuery = {
   query: string
 }
 
+type MentionOption =
+  | {
+      kind: "member"
+      member: WorkspaceMemberOption
+      key: string
+      label: string
+      sublabel?: string
+    }
+  | {
+      kind: "all"
+      key: string
+      label: string
+      sublabel: string
+    }
+
 function findMentionQuery(text: string, caret: number): MentionQuery | null {
   const before = text.slice(0, caret)
   const match = before.match(/(^|[\s])@([^\s@]*)$/)
@@ -130,16 +145,47 @@ export default function ChatComposer({
     setMentionIndex(0)
   }
 
-  const mentionMatches = useMemo(() => {
+  const mentionMatches = useMemo<MentionOption[]>(() => {
     if (!mentionQuery) return []
-    const q = mentionQuery.query.toLowerCase()
-    return mentionCandidates
+    const q = mentionQuery.query.toLowerCase().trim()
+    const members = mentionCandidates
       .filter(
         (m) =>
           m.fullName.toLowerCase().includes(q) ||
           m.email.toLowerCase().includes(q)
       )
-      .slice(0, 8)
+      .sort((a, b) => {
+        const an = a.fullName.toLowerCase()
+        const bn = b.fullName.toLowerCase()
+        const aStarts = an.startsWith(q)
+        const bStarts = bn.startsWith(q)
+        if (aStarts !== bStarts) return aStarts ? -1 : 1
+        return an.localeCompare(bn)
+      })
+      .slice(0, 7)
+      .map(
+        (member): MentionOption => ({
+          kind: "member",
+          member,
+          key: member.userId,
+          label: member.fullName,
+          sublabel: member.email,
+        })
+      )
+
+    const allMatches = q.length === 0 || "all".startsWith(q)
+    const allOption: MentionOption[] = allMatches
+      ? [
+          {
+            kind: "all",
+            key: "__all__",
+            label: "@all",
+            sublabel: "Notify everyone in this channel",
+          },
+        ]
+      : []
+
+    return [...allOption, ...members]
   }, [mentionCandidates, mentionQuery])
 
   function clearPending() {
@@ -202,16 +248,21 @@ export default function ChatComposer({
     })
   }
 
-  function insertMention(member: WorkspaceMemberOption) {
+  function insertMention(option: MentionOption) {
     if (!mentionQuery) return
     const before = body.slice(0, mentionQuery.start)
     const after = body.slice(caret)
-    const token = `@${member.fullName}`
+    const token =
+      option.kind === "all" ? "@all" : `@${option.member.fullName}`
     const next = `${before}${token} ${after}`
     setBody(next)
-    setMentionIds((prev) =>
-      prev.includes(member.userId) ? prev : [...prev, member.userId]
-    )
+    if (option.kind === "member") {
+      setMentionIds((prev) =>
+        prev.includes(option.member.userId)
+          ? prev
+          : [...prev, option.member.userId]
+      )
+    }
     const nextCaret = before.length + token.length + 1
     setCaret(nextCaret)
     requestAnimationFrame(() => {
@@ -318,34 +369,54 @@ export default function ChatComposer({
 
       <p className="mb-1.5 text-[11px] text-muted-foreground">
         Max {MAX_FILES} files · 10 MB · images &amp; PDF · type @ to mention
+        teammates or @all
       </p>
 
       <div className="relative rounded-[var(--radius)] border border-border bg-background">
         {mentionMatches.length > 0 && mentionQuery ? (
           <ul
-            className="absolute bottom-full left-0 z-20 mb-1 max-h-48 w-full max-w-sm overflow-y-auto rounded-md border border-border bg-card py-1 shadow-md"
+            className="absolute bottom-full left-0 z-20 mb-2 max-h-56 w-full max-w-md overflow-y-auto rounded-xl border border-border/80 bg-card p-1.5 shadow-[0_10px_30px_-18px_rgba(2,6,23,0.35)]"
             role="listbox"
             aria-label="Mention someone"
           >
             {mentionMatches.map((m, i) => (
-              <li key={m.userId}>
+              <li key={m.key}>
                 <button
                   type="button"
                   role="option"
                   aria-selected={i === mentionIndex}
                   className={cn(
-                    "flex w-full flex-col px-3 py-2 text-left text-sm",
-                    i === mentionIndex ? "bg-primary/10" : "hover:bg-muted"
+                    "flex w-full items-start gap-2.5 rounded-lg border border-transparent px-2.5 py-2 text-left text-sm transition-colors",
+                    i === mentionIndex
+                      ? "bg-primary/10 text-foreground ring-1 ring-primary/25"
+                      : "hover:bg-muted/70"
                   )}
                   onMouseDown={(e) => {
                     e.preventDefault()
                     insertMention(m)
                   }}
                 >
-                  <span className="font-medium">{m.fullName}</span>
-                  {m.email ? (
-                    <span className="text-xs text-muted-foreground">
-                      {m.email}
+                  <span
+                    className={cn(
+                      "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
+                      m.kind === "all"
+                        ? "bg-primary text-primary-foreground"
+                        : "brand-tile"
+                    )}
+                  >
+                    {m.kind === "all" ? "ALL" : m.label.slice(0, 1).toUpperCase()}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-medium">{m.label}</span>
+                    {m.sublabel ? (
+                      <span className="block text-xs text-muted-foreground">
+                        {m.sublabel}
+                      </span>
+                    ) : null}
+                  </span>
+                  {i === mentionIndex ? (
+                    <span className="mt-0.5 shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      Enter
                     </span>
                   ) : null}
                 </button>

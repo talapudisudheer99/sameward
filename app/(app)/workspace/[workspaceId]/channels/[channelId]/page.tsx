@@ -548,7 +548,7 @@ function ChannelStatus({
         >
           <Icon className="size-8" strokeWidth={1.5} />
         </div>
-        <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl">
           {title}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

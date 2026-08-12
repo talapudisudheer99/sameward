@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 8 — Quality & deploy (**next**) |
-| **Current feature** | Settings v1 ✅ · Phase 8 next |
+| **Current phase** | Phase 8 — Quality & deploy (**next**), or AI V1.5 when prioritized |
+| **Current feature** | Settings v1 ✅ · AI Path A V1 ✅ · **AI V1.5 direction locked** |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
-| **Last updated** | 2026-08-11 |
+| **Last updated** | 2026-08-12 |
 
 ## Phase status
 
@@ -23,7 +23,7 @@
 | 4 | State & data layer | 🟡 Partial | RTK used across workspaces/channels/AI; deepen in Phase 8 tests |
 | 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; unread + 1:1 DMs + @mentions; edit/delete + reactions. [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
-| 7 | AI & integrations | ✅ **Path A shipped + E2E verified** | Six capabilities · OpenAI · user E2E Aug 10–11 · [`docs/ai/`](../ai/README.md) |
+| 7 | AI & integrations | ✅ **Path A V1 shipped** · 🎯 **V1.5 locked** | V1 E2E Aug 10–11 · V1.5 = large Catch up + Ask+sources + cache · [`docs/ai/`](../ai/README.md) |
 | 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
 | — | **Profile v1** | ✅ **E2E verified** | [`docs/profiles/`](../profiles/README.md) |
 
@@ -90,6 +90,8 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-11 | Settings v1 | `/settings` · theme · account/verify · change-password · sessions · sidebar |
 | 2026-08-12 | Device session cap | Max 2 sessions · list in Settings · 3rd login expires oldest |
 | 2026-08-12 | Session focus guard | Tab/window focus revalidates `/me` · auto `/login` if session dead |
+| 2026-08-12 | AI understanding architecture | Plain-English catch-up / large-history direction · `docs/ai/CONVERSATION-UNDERSTANDING.md` |
+| 2026-08-12 | AI V1.5 locked | Large Catch up + contextual Ask+sources + cache · V3 folded into V1.5 · V2 later |
 
 ## GitHub
 

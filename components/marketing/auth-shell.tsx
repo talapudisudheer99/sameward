@@ -83,10 +83,10 @@ export function AuthShell({
 
         <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10">
           <div className="w-full max-w-[400px] animate-in duration-500 fade-in slide-in-from-bottom-2">
-            <h1 className="font-heading text-3xl font-bold tracking-tight">
+            <h1 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
               {title}
             </h1>
-            <p className="mt-2 text-muted-foreground">{description}</p>
+            <p className="mt-2 text-sm text-muted-foreground sm:text-base">{description}</p>
             <div className="mt-8">{children}</div>
             <div className="mt-8 text-center text-sm text-muted-foreground">
               {footer}

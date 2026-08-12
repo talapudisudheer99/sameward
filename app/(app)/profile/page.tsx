@@ -9,7 +9,7 @@ export default function ProfilePage() {
   return (
     <section className="mx-auto w-full max-w-xl">
       <header className="mb-8">
-        <h1 className="font-heading text-2xl font-bold tracking-tight md:text-3xl">
+        <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
           Your profile
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">

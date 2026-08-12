@@ -106,7 +106,7 @@ export default function CreateWorkSpaceDialog({
         <DialogHeader className="gap-3 pr-8 text-left">
           <TeamHubLogo variant="mark" size={44} />
           <div className="space-y-1.5">
-            <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
+            <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
               Create workspace
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">

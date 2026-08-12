@@ -284,7 +284,7 @@ export default function ChannelAiPanel({
         <DialogHeader className="gap-1.5 pr-10 text-left">
           <DialogTitle className="flex items-center gap-2.5">
             <Sparkles className="size-5 text-primary" aria-hidden />
-            <span className="font-heading text-lg font-semibold tracking-tight">
+            <span className="font-heading text-base font-semibold tracking-tight sm:text-lg">
               Channel AI
             </span>
             <span className="truncate text-sm font-normal text-muted-foreground">

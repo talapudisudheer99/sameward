@@ -21,7 +21,7 @@ export default function SettingsPage() {
   return (
     <section className="mx-auto w-full max-w-xl space-y-6">
       <header>
-        <h1 className="font-heading text-2xl font-bold tracking-tight md:text-3xl">
+        <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
           Settings
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">

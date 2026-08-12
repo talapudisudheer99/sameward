@@ -93,7 +93,7 @@ export default function WorkspaceDetailPage() {
             <SearchX className="size-8" strokeWidth={1.5} />
           </div>
 
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
             Workspace not found
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -178,7 +178,7 @@ export default function WorkspaceDetailPage() {
               <OverflowText
                 as="h1"
                 variant="title"
-                className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl"
+                className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl"
               >
                 {data.name}
               </OverflowText>
