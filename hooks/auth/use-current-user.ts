@@ -1,9 +1,6 @@
 "use client"
 
-import {
-  useGetCurrentUserQuery
-} from "@/store/api/auth-api"
-
+import { useGetCurrentUserQuery } from "@/store/api/auth/auth-api"
 
 /**
  * App-wide “who am I?” for client UI gates.

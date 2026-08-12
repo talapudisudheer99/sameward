@@ -23,13 +23,14 @@ Each story has **acceptance criteria** we can demo.
 ## US-1 — Create first workspace
 
 **As a** newly signed-in user with no workspaces,  
-**I want** to create a workspace with a name,  
-**So that** my team has a home in TeamHub.
+**I want** to create a workspace with a name (and optional short description),  
+**So that** my team has a home in TeamHub and members know what it’s for.
 
 **Acceptance**
 - [x] From `/workspace` empty state, I open Create Workspace and submit a valid name
+- [x] Optional description (≤280) can be left blank
 - [x] API creates `Workspace` + `Membership` with role `owner` for me
-- [x] I see the new workspace in my list (or land in its view)
+- [x] I see the new workspace in my list (or land in its view); description shows on home when set
 - [x] Invalid name (too short/long) shows validation errors (Zod)
 - [x] Unauthenticated request → 401
 

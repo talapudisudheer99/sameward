@@ -1,7 +1,6 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LayoutTemplate } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -9,6 +8,7 @@ import { z } from "zod"
 import CancelButton from "@/components/buttons/cancel-button"
 import SubmitButton from "@/components/buttons/submit-button"
 import { AppFormField } from "@/components/forms/app-form-field"
+import { TeamHubLogo } from "@/components/layout/teamhub-logo"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,11 +19,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Form } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import workSpaceSchema, {
   WorkSpaceSchema,
 } from "@/lib/schemas/workspace/workspace-schema"
-import { useCreateWorkspaceMutation } from "@/store/api/workspaces-api"
+import { useCreateWorkspaceMutation } from "@/store/api/workspace/workspaces-api"
 
 type WorkspaceFormValues = z.infer<typeof workSpaceSchema>
 
@@ -43,7 +51,7 @@ export default function CreateWorkSpaceDialog({
 
   const form = useForm<WorkSpaceSchema>({
     resolver: zodResolver(workSpaceSchema),
-    defaultValues: { name: "" },
+    defaultValues: { name: "", description: "" },
     mode: "onChange",
   })
 
@@ -55,14 +63,17 @@ export default function CreateWorkSpaceDialog({
 
   function handleOpenChange(next: boolean) {
     if (!next) {
-      form.reset({ name: "" })
+      form.reset({ name: "", description: "" })
     }
     onOpenChange(next)
   }
 
   const onSubmit = async (data: WorkspaceFormValues) => {
     try {
-      const response = await createWorkspace(data).unwrap()
+      const response = await createWorkspace({
+        name: data.name,
+        description: data.description?.trim() ?? "",
+      }).unwrap()
       handleOpenChange(false)
       toast.success("Workspace created", {
         description: `${response.name} is ready for your team.`,
@@ -79,7 +90,13 @@ export default function CreateWorkSpaceDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       {showTrigger ? (
         <DialogTrigger
-          render={<Button type="button" size="lg" className="h-10 px-4" />}
+          render={
+            <Button
+              type="button"
+              size="lg"
+              className="btn-brand-gradient h-10 px-4 text-white shadow-sm"
+            />
+          }
         >
           Create Workspace
         </DialogTrigger>
@@ -87,18 +104,14 @@ export default function CreateWorkSpaceDialog({
 
       <DialogContent className="gap-5 p-5 sm:max-w-md">
         <DialogHeader className="gap-3 pr-8 text-left">
-          <div
-            className="flex size-11 items-center justify-center rounded-xl border border-border bg-primary/10 text-primary"
-            aria-hidden
-          >
-            <LayoutTemplate className="size-5" strokeWidth={1.75} />
-          </div>
+          <TeamHubLogo variant="mark" size={44} />
           <div className="space-y-1.5">
-            <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
+            <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
               Create workspace
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">
-              Name your workspace. You can always change it later.
+              Name your team home. A short description helps members know what
+              this workspace is for.
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -116,7 +129,37 @@ export default function CreateWorkSpaceDialog({
               inputClassName="h-10"
               maxLength={50}
             />
-            <DialogFooter className="gap-2 pt-1 sm:justify-end">
+
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Description{" "}
+                    <span className="font-normal text-muted-foreground">
+                      (optional)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="e.g. Product engineering for the Acme mobile app"
+                      maxLength={280}
+                      rows={3}
+                      className="w-full min-w-0 resize-none rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Up to 280 characters. Shown on the workspace home.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="gap-2">
               <CancelButton
                 onClick={() => handleOpenChange(false)}
                 className="h-9 min-w-24"

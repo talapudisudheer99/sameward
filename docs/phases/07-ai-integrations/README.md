@@ -1,73 +1,49 @@
 # Phase 7 — AI & Third-Party Integrations
 
-**Status:** ⬜ Not started  
+**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · 🎯 **V1.5 next** — module SoT: [`docs/ai/`](../../ai/README.md)  
 **Prev:** [← Phase 6](../06-realtime/README.md) · **Next:** [Phase 8 — Quality →](../08-quality-deployment/README.md)
 
 ---
 
-## 1. Business requirement
+## PO locks (Aug 10, 2026) — V1 foundation
 
-AI should earn its place: e.g. summarize a channel, draft a doc, suggest card titles. Other vendors handle hard infrastructure (email, images, payments).
+1. **Path A — Understand** (read-only knowledge assistant over channel messages)
+2. **OpenAI** behind `lib/ai/provider.ts` (Gemini/Anthropic later)
+3. Six capabilities: summarize · catch-up · ask · explain · draft reply · meeting notes
+4. No agents/tools that mutate workspace data; no vector search in V1
+5. Optional third-party “buy” integrations (Stripe, etc.) deferred
 
-## 2. What you will build (pick with mentor)
+## V1.5 locks (Aug 12, 2026) — next to build
 
-- AI summarize / draft via OpenAI or Gemini (server-side key)
-- Optional: Cloudinary uploads, Resend email invites, Stripe test mode, GitHub OAuth
+1. Large-history Catch up (chunk → merge when needed)
+2. Contextual Ask with **source messages** (DB find / simple scoring — no embeddings yet)
+3. Cache expensive Catch-up / Summarize results
+4. Per channel only; no workspace-wide overview
+5. V2 later = persistent knowledge + stronger retrieval; no separate V3
 
-## 3. Architecture
+Plain English: [`docs/ai/CONVERSATION-UNDERSTANDING.md`](../../ai/CONVERSATION-UNDERSTANDING.md)
 
-```
-Client → POST /api/ai/summarize
-      → Route Handler (auth + rate limit mindset)
-      → Provider SDK
-      → Never expose API keys to browser
-```
+Full vision, API, tasks: **[docs/ai/](../../ai/README.md)**
 
-## 4. Why buy vs build
+---
 
-| Build yourself | Buy a service |
-|----------------|---------------|
-| Core product differentiator | Undifferentiated heavy lifting |
-| Learning exercise | Email deliverability, card PCI, ML infra |
-
-## 5. Concepts covered
-
-- [ ] Env vars & secrets
-- [ ] Server-only keys
-- [ ] Timeouts / retries / user-facing errors
-- [ ] Cost & abuse awareness
-- [ ] Webhooks (Stripe/Resend) concepts
-
-## 6. Folder structure (target)
+## Architecture (V1 today)
 
 ```
-app/api/ai/...
-lib/ai/provider.ts
+Client → POST /api/workspaces/.../channels/.../ai/*
+      → requireChannelAccess
+      → windowed messages → AiProvider (OpenAI)
+      → { text, meta }  (never auto-writes messages)
 ```
 
-## 7. Backend (Next + MongoDB)
+V1.5 adds: large-window chunking, smarter Ask context selection + sources, result cache.
 
-- Log AI jobs optionally in Mongo (`ai_runs`) for debugging
-- Still authorize against workspace membership
+## Definition of done
 
-## 8. Micro-tasks
+V1: see [`docs/ai/TASKS.md`](../../ai/TASKS.md).  
+V1.5: US-AI7…US-AI9 when implemented.
 
-Mentor picks one integration first (usually AI summarize).
-
-## 9. Testing & production notes
-
-- Mock provider in tests
-- Rate limit sensitive routes
-
-## 10. Interview questions (preview)
-
-1. Why must LLM API keys stay on the server?
-2. How do you handle provider downtime in UX?
-3. What is a webhook and how do you verify it?
-
-## 11. Definition of done
-
-One integration works end-to-end with secure key handling; you can defend why that service was chosen.
+See [docs/ai/TASKS.md](../../ai/TASKS.md) — all six capabilities E2E, private isolation, draft never auto-posts, docs match code.
 
 ---
 

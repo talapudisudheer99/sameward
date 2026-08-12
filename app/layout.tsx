@@ -1,5 +1,4 @@
-
-
+import type { Metadata } from "next"
 import { Manrope, Plus_Jakarta_Sans } from "next/font/google"
 
 import "./globals.css"
@@ -19,6 +18,15 @@ const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
 })
 
+export const metadata: Metadata = {
+  title: {
+    default: "TeamHub AI",
+    template: "%s · TeamHub AI",
+  },
+  description: "Team collaboration — workspaces, channels, and realtime chat.",
+  applicationName: "TeamHub AI",
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +36,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("font-sans antialiased", sans.variable, heading.variable)}
+      className={cn(
+        "scroll-smooth font-sans antialiased",
+        sans.variable,
+        heading.variable
+      )}
     >
       <body>
         {/* Toaster must sit inside ThemeProvider so it can follow light/dark theme */}
@@ -36,7 +48,7 @@ export default function RootLayout({
           <ReduxProvider>
             <TooltipProvider delay={300}>
               {children}
-              <Toaster richColors closeButton position="top-right" />
+              <Toaster />
             </TooltipProvider>
           </ReduxProvider>
         </ThemeProvider>

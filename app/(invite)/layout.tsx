@@ -14,14 +14,11 @@ export default function InviteLayout({
   return (
     <div className="flex min-h-svh flex-col bg-background text-foreground">
       <header className="flex items-center border-b border-border px-6 py-4">
-        <Link href="/" className="flex items-center gap-2.5">
-          <TeamHubLogo className="size-7" />
-          <span className="font-heading text-sm font-semibold tracking-tight">
-            TeamHub AI
-          </span>
+        <Link href="/" className="flex items-center">
+          <TeamHubLogo variant="horizontal" size={28} />
         </Link>
       </header>
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <main className="bg-brand-wash flex flex-1 items-center justify-center px-4 py-12">
         {children}
       </main>
     </div>

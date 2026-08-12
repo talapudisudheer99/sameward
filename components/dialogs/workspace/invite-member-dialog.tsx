@@ -14,9 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
-import { useInviteWorkspaceMembersMutation } from "@/store/api/workspaces-api"
+import { useInviteWorkspaceMembersMutation } from "@/store/api/workspace/workspaces-api"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -178,15 +178,13 @@ export default function InviteMemberDialog({
 
   const busy = isLoading || userLoading
   const canSubmit =
-    emailVerified &&
-    (emails.length > 0 || draft.trim().length > 0) &&
-    !busy
+    emailVerified && (emails.length > 0 || draft.trim().length > 0) && !busy
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="gap-5 p-5 sm:max-w-md">
         <DialogHeader className="gap-1.5 pr-8 text-left">
-          <DialogTitle className="font-heading text-xl font-semibold tracking-tight">
+          <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
             Send invite
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed">
@@ -202,10 +200,10 @@ export default function InviteMemberDialog({
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label
               htmlFor="member-emails"
-              className="text-sm font-medium text-foreground"
+              className="block text-sm font-medium leading-none text-foreground"
             >
               Email addresses
             </label>
@@ -271,7 +269,7 @@ export default function InviteMemberDialog({
             )}
           </div>
 
-          <DialogFooter className="gap-2 sm:justify-end">
+          <DialogFooter className="gap-2">
             <CancelButton
               onClick={() => handleOpenChange(false)}
               className="h-9"

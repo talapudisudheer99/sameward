@@ -21,11 +21,13 @@ If they have **no workspace yet**, the product must not show a fake dashboard �
 
 | Element | Purpose |
 |---------|---------|
-| Headline | “Create your first workspace” |
-| Supporting copy | Invite teammates, organize projects, use AI later |
+| Headline | “Welcome to TeamHub” |
+| Supporting copy | Conversations easier to understand · stay on the same page · catch up |
 | Primary action | **Create Workspace** |
-| Secondary action | **Import Existing Data** (stub for now — logs “coming soon”) |
-| Optional tip | “A workspace is your team’s shared home (channels, docs, boards).” |
+| Secondary action | **Explore TeamHub** → `/explore` (read-only Acme Studio demo) |
+| Optional tip | A workspace is your team’s shared home |
+
+See also: [explore-demo.md](./explore-demo.md).
 
 No charts, no fake activity feed, no “trusted by” logos here.
 

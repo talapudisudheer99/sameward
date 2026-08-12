@@ -15,13 +15,10 @@ import {
 } from "@/lib/workspaces/invite"
 import { WorkspaceAuditEvent } from "@/lib/workspaces/workspace-audit-events"
 import { logWorkspaceEvent } from "@/lib/workspaces/workspace-audit-logger"
+import { presignAttachmentGet } from "@/lib/storage/s3"
 
 type InviteFailureReason =
-  | "not_found"
-  | "already_member"
-  | "invite_failed"
-  | "email_send_failed"
-
+  "not_found" | "already_member" | "invite_failed" | "email_send_failed"
 
 /**
  * POST /api/workspaces/[workspaceId]/members
@@ -224,19 +221,30 @@ export async function GET(
 
     const users = await User.find({
       _id: { $in: memberships.map((m) => m.userId) },
-    }).select("fullName email")
+    }).select("fullName email avatarUrl")
 
     const userById = new Map(users.map((u) => [u._id.toString(), u] as const))
 
-    const members = memberships.map((m) => {
-      const u = userById.get(m.userId.toString())
-      return {
-        userId: m.userId.toString(),
-        fullName: u?.fullName ?? "Unknown",
-        email: u?.email ?? "",
-        role: m.role,
-      }
-    })
+    const members = await Promise.all(
+      memberships.map(async (m) => {
+        const u = userById.get(m.userId.toString())
+        const canonical =
+          typeof u?.avatarUrl === "string" && u.avatarUrl.trim()
+            ? u.avatarUrl.trim()
+            : null
+        const avatarUrl = canonical
+          ? await presignAttachmentGet(canonical)
+          : null
+
+        return {
+          userId: m.userId.toString(),
+          fullName: u?.fullName ?? "Unknown",
+          email: u?.email ?? "",
+          role: m.role,
+          avatarUrl,
+        }
+      })
+    )
 
     return NextResponse.json({ members }, { status: 200 })
   } catch (error) {

@@ -14,11 +14,17 @@ Jump from a **product feature** to the right doc.
 | Create / list / rename / delete workspaces | ✅ v1 | [**workspaces/**](../workspaces/README.md) |
 | Invite → accept + members / leave / remove / roles | ✅ v1 | [workspaces stories](../workspaces/USER-STORIES.md) |
 | Tenant isolation + workspace audit | ✅ v1 | [workspaces SECURITY](../workspaces/SECURITY.md) |
-| Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen in [Phase 4](../phases/04-state-data-layer/README.md) |
-| Channels / docs / boards | ⬜ | [Phase 5](../phases/05-collaboration-core/README.md) |
-| Live chat / presence | ⬜ | [Phase 6](../phases/06-realtime/README.md) |
-| AI assist | ⬜ | [Phase 7](../phases/07-ai-integrations/README.md) |
-| Tests + Vercel deploy | ⬜ | [Phase 8](../phases/08-quality-deployment/README.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
+| Redux / RTK Query | 🟡 Partial | Used for workspaces; deepen during channels |
+| Channels + live chat (Socket.IO) | ✅ E2E | [**channels/**](../channels/README.md) |
+| Unread + catch-up cursor | ✅ | [channels DATA-MODEL](../channels/DATA-MODEL.md) · [API](../channels/API-ROUTES.md) |
+| 1:1 DMs | ✅ | [channels VISION](../channels/VISION.md) · `…/dms` |
+| @mentions | ✅ | [channels USER-STORIES US-C12](../channels/USER-STORIES.md) |
+| Docs / boards | ⬜ | Later |
+| AI assist (Path A) | ✅ E2E | [**ai/**](../ai/README.md) |
+| Member profiles (thin v1) | ✅ E2E | [**profiles/**](../profiles/README.md) |
+| Workspace description | ✅ | Optional ≤280 chars · [workspaces](../workspaces/DATA-MODEL.md) |
+| Explore TeamHub demo | ✅ | Read-only Acme Studio · [explore-demo](./explore-demo.md) |
+| Tests + Railway deploy | ⬜ next | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) · [auth PRODUCTION](../auth/PRODUCTION.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)
 

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import {
   ChevronRight,
-  FolderKanban,
+  Hash,
   LogOut,
   Pencil,
   SearchX,
@@ -21,6 +21,7 @@ import RenameWorkspaceDialog from "@/components/dialogs/workspace/rename-workspa
 import Loader from "@/components/sharable/loader"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
+import WorkspaceDescription from "@/components/workspace/workspace-description"
 import {
   Tooltip,
   TooltipContent,
@@ -29,15 +30,14 @@ import {
 import {
   WORKSPACE_ROLE_STYLES,
   workspaceInitials,
-  workspaceTileColor,
 } from "@/components/workspace/workspace-display"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
 import {
   useDeleteWorkspaceMutation,
   useGetWorkspaceByIdQuery,
   useLeaveWorkspaceMutation,
-} from "@/store/api/workspaces-api"
+} from "@/store/api/workspace/workspaces-api"
 
 function isNotFoundError(error: unknown): boolean {
   return (
@@ -84,7 +84,7 @@ export default function WorkspaceDetailPage() {
 
   if (isError || !data) {
     return (
-      <section className="flex min-h-[70vh] flex-col items-center justify-center px-4">
+      <section className="bg-brand-wash flex min-h-[70vh] flex-col items-center justify-center px-4">
         <div className="flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
@@ -93,7 +93,7 @@ export default function WorkspaceDetailPage() {
             <SearchX className="size-8" strokeWidth={1.5} />
           </div>
 
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
             Workspace not found
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -119,6 +119,7 @@ export default function WorkspaceDetailPage() {
   const isOwner = role === "owner"
   const canInvite = manage && emailVerified
   const membersHref = `/workspace/${workspaceId}/members`
+  const channelsHref = `/workspace/${workspaceId}/channels`
 
   const onLeaveConfirm = async () => {
     try {
@@ -137,9 +138,7 @@ export default function WorkspaceDetailPage() {
       toast.success(`${data.name} deleted`)
       router.replace("/workspace")
     } catch (err) {
-      toast.error(
-        getErrorMessage(err, "Couldn’t delete workspace. Try again.")
-      )
+      toast.error(getErrorMessage(err, "Couldn’t delete workspace. Try again."))
       throw err
     }
   }
@@ -168,10 +167,7 @@ export default function WorkspaceDetailPage() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 flex-1 items-start gap-4">
           <div
-            className={cn(
-              "flex size-14 shrink-0 items-center justify-center rounded-xl text-lg font-bold text-white shadow-sm",
-              workspaceTileColor(data.name)
-            )}
+            className="brand-tile flex size-14 shrink-0 items-center justify-center rounded-xl font-heading text-lg font-semibold tracking-tight"
             aria-hidden
           >
             {workspaceInitials(data.name)}
@@ -182,7 +178,7 @@ export default function WorkspaceDetailPage() {
               <OverflowText
                 as="h1"
                 variant="title"
-                className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl"
+                className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl"
               >
                 {data.name}
               </OverflowText>
@@ -205,20 +201,24 @@ export default function WorkspaceDetailPage() {
                           size="icon-sm"
                           className="text-muted-foreground hover:text-foreground"
                           onClick={() => setRenameOpen(true)}
-                          aria-label="Rename workspace"
+                          aria-label="Edit workspace"
                         />
                       }
                     >
                       <Pencil className="size-3.5" />
                     </TooltipTrigger>
-                    <TooltipContent side="top">Rename workspace</TooltipContent>
+                    <TooltipContent side="top">Edit workspace</TooltipContent>
                   </Tooltip>
                 ) : null}
               </div>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Your team&apos;s shared home in TeamHub
-            </p>
+            {data.description?.trim() ? (
+              <WorkspaceDescription text={data.description} />
+            ) : (
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Your team&apos;s shared home in TeamHub
+              </p>
+            )}
           </div>
         </div>
 
@@ -262,15 +262,10 @@ export default function WorkspaceDetailPage() {
       {/* Everyone can open members (read-only for role=member) */}
       <Link
         href={membersHref}
-        className="mt-8 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="mt-8 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         <div className="flex -space-x-2" aria-hidden>
-          <div
-            className={cn(
-              "flex size-9 items-center justify-center rounded-full border-2 border-card text-xs font-semibold text-white",
-              workspaceTileColor(data.name)
-            )}
-          >
+          <div className="brand-tile flex size-9 items-center justify-center rounded-full border-2 border-card text-xs font-semibold">
             {workspaceInitials(data.name).slice(0, 1)}
           </div>
           <div className="flex size-9 items-center justify-center rounded-full border-2 border-card bg-muted text-xs font-medium text-muted-foreground">
@@ -295,20 +290,27 @@ export default function WorkspaceDetailPage() {
         />
       </Link>
 
-      <div className="mt-6 flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
+      <Link
+        href={channelsHref}
+        className="mt-4 flex w-full items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
         <div
-          className="mb-5 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
           aria-hidden
         >
-          <FolderKanban className="size-7" strokeWidth={1.5} />
+          <Hash className="size-4" strokeWidth={2} />
         </div>
-        <h2 className="font-heading text-lg font-semibold text-foreground">
-          Channels, docs, and boards will live here
-        </h2>
-        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Everything your team creates will be organized in this workspace.
-        </p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-foreground">Channels</p>
+          <p className="text-xs text-muted-foreground">
+            Team chat — open #general and create topic channels
+          </p>
+        </div>
+        <ChevronRight
+          className="size-4 shrink-0 text-muted-foreground"
+          strokeWidth={2}
+        />
+      </Link>
 
       {/* Danger zone — leave (everyone) · delete (owner only) */}
       <div className="mt-10 space-y-6 border-t border-border pt-6">
@@ -405,6 +407,7 @@ export default function WorkspaceDetailPage() {
           onOpenChange={setRenameOpen}
           workspaceId={workspaceId}
           currentName={data.name}
+          currentDescription={data.description ?? ""}
         />
       ) : null}
 

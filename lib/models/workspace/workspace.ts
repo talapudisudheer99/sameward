@@ -27,6 +27,13 @@ const workspaceSchema = new Schema(
       lowercase: true,
       trim: true,
     },
+    /** Optional short note — what this workspace is for (members see it) */
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 280,
+      default: "",
+    },
     // Who created it — permissions / billing root later
     ownerId: {
       type: Schema.Types.ObjectId,
@@ -42,12 +49,11 @@ export type WorkspaceDocument = InferSchemaType<typeof workspaceSchema> & {
   _id: Types.ObjectId
 }
 
-let Workspace: Model<WorkspaceDocument>
-
-if (models.Workspace) {
-  Workspace = models.Workspace as Model<WorkspaceDocument>
-} else {
-  Workspace = model<WorkspaceDocument>("Workspace", workspaceSchema)
+// Dev HMR can keep a stale schema without `description` — clear like User.
+if (process.env.NODE_ENV !== "production" && models.Workspace) {
+  delete models.Workspace
 }
 
-export { Workspace }
+export const Workspace: Model<WorkspaceDocument> =
+  (models.Workspace as Model<WorkspaceDocument>) ??
+  model<WorkspaceDocument>("Workspace", workspaceSchema)

@@ -12,12 +12,11 @@ import {
 
 import {
   workspaceInitials,
-  workspaceTileColor,
 } from "@/components/workspace/workspace-display"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { InvitePreview } from "@/store/api/workspaces-api"
+import type { InvitePreview } from "@/lib/types/workspace/workspace-types"
 
 export type { InvitePreview }
 
@@ -62,7 +61,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "not_found") {
     return (
       <InviteShell
-        icon={<SearchX className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="neutral">
+            <SearchX className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite not found"
         description="This link is invalid or no longer exists. Ask your teammate to send a new invite."
         actions={
@@ -80,7 +83,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "expired") {
     return (
       <InviteShell
-        icon={<Clock className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="brand">
+            <Clock className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite expired"
         description="This invite link has expired. Ask the workspace owner or admin to send a new one."
         actions={
@@ -98,7 +105,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "accepted") {
     return (
       <InviteShell
-        icon={<CheckCircle2 className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="brand">
+            <CheckCircle2 className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Invite already used"
         description="This invite was already accepted. If you’re a member, open the workspace from your list."
         actions={
@@ -116,7 +127,11 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   if (state.kind === "error") {
     return (
       <InviteShell
-        icon={<SearchX className="size-8" strokeWidth={1.5} />}
+        icon={
+          <StatusTile tone="neutral">
+            <SearchX className="size-8" strokeWidth={1.5} />
+          </StatusTile>
+        }
         title="Something went wrong"
         description={state.message}
         actions={
@@ -134,10 +149,7 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   const { invite } = state
   const tile = (
     <div
-      className={cn(
-        "mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] text-lg font-semibold text-white",
-        workspaceTileColor(invite.workspaceName)
-      )}
+      className="brand-tile mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] font-heading text-lg font-semibold tracking-tight"
       aria-hidden
     >
       {workspaceInitials(invite.workspaceName)}
@@ -160,10 +172,7 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
         actions={
           <Link
             href={state.loginHref}
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "h-10 gap-2 px-5"
-            )}
+            className={cn(buttonVariants({ size: "lg" }), "h-10 gap-2 px-5")}
           >
             <LogIn className="size-4" />
             Sign in to accept
@@ -177,12 +186,9 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
     return (
       <InviteShell
         icon={
-          <div
-            className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
-            aria-hidden
-          >
+          <StatusTile tone="neutral">
             <UserRoundX className="size-8" strokeWidth={1.5} />
-          </div>
+          </StatusTile>
         }
         title="Wrong account"
         description={`This invite is for ${invite.email}, but you’re signed in as ${state.currentEmail}. Sign out and sign in with the invited email.`}
@@ -244,6 +250,29 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
   )
 }
 
+/** Consistent icon tile for invite status states. */
+function StatusTile({
+  tone,
+  children,
+}: {
+  tone: "brand" | "neutral"
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "mb-6 flex size-16 items-center justify-center rounded-[var(--radius)]",
+        tone === "brand"
+          ? "brand-tile"
+          : "border border-border bg-card text-muted-foreground"
+      )}
+      aria-hidden
+    >
+      {children}
+    </div>
+  )
+}
+
 function InviteShell({
   icon,
   title,
@@ -258,10 +287,10 @@ function InviteShell({
   return (
     <section className="flex w-full max-w-md flex-col items-center text-center">
       {icon}
-      <h1 className="font-heading w-full text-2xl font-bold tracking-tight break-words text-foreground [overflow-wrap:anywhere] md:text-3xl">
+      <h1 className="w-full font-heading text-2xl font-bold tracking-tight [overflow-wrap:anywhere] break-words text-foreground md:text-3xl">
         {title}
       </h1>
-      <p className="mt-3 w-full text-sm leading-relaxed break-words text-muted-foreground [overflow-wrap:anywhere] md:text-base">
+      <p className="mt-3 w-full text-sm leading-relaxed [overflow-wrap:anywhere] break-words text-muted-foreground md:text-base">
         {description}
       </p>
       <div className="mt-8 flex w-full justify-center">{actions}</div>

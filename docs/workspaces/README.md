@@ -42,7 +42,7 @@ This folder is the **single source of truth** for the workspaces module (same id
 - Transfer ownership  
 - Notify members on delete  
 - Audit UI / export  
-- Channels / docs / boards  
+- Docs / boards (channels = next module → [`docs/channels/`](../channels/README.md))  
 
 ---
 

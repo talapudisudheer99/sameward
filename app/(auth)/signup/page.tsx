@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -37,8 +38,20 @@ export default function SignUpPage() {
     control,
     handleSubmit,
     setError,
+    watch,
+    trigger,
+    getValues,
     formState: { errors, isSubmitting, isValid },
   } = form
+
+  const password = watch("password")
+
+  // Match refine lives on confirmPassword — re-check when password changes.
+  useEffect(() => {
+    if (getValues("confirmPassword").length > 0) {
+      void trigger("confirmPassword")
+    }
+  }, [password, getValues, trigger])
 
   /**
    * React Hook Form calls this only after client-side Zod validation passes.

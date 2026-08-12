@@ -35,8 +35,20 @@ export default function ResetPasswordPage() {
     handleSubmit,
     setValue,
     setError,
+    watch,
+    trigger,
+    getValues,
     formState: { errors, isSubmitting, isValid },
   } = form
+
+  const password = watch("password")
+
+  // Match refine lives on confirmPassword — re-check when password changes.
+  useEffect(() => {
+    if (getValues("confirmPassword").length > 0) {
+      void trigger("confirmPassword")
+    }
+  }, [password, getValues, trigger])
 
   // Read ?token= from the email link (same pattern as login ?error=)
   useEffect(() => {

@@ -50,13 +50,15 @@ Earlier planning mentioned Supabase (Postgres). We are documenting **MongoDB** a
 | Route protection | Next.js Middleware |
 | Authorization | Role-based access (owner / admin / member) |
 
-## Realtime (Phase 6)
+## Realtime (Channels module — Phase 5+6 merged)
 
 | Technology | Role |
 |------------|------|
-| **Socket.IO** | Persistent connections for chat, presence, typing |
+| **Socket.IO** (separate Node service) | Live messages, typing, presence |
+| **REST (Next Route Handlers)** | Channels CRUD, message history, uploads |
 
-HTTP for CRUD; WebSockets for live events. Don’t use sockets for everything.
+HTTP is source of truth; sockets fan out after successful writes.  
+Spec: [`docs/channels/SOCKETS.md`](../channels/SOCKETS.md).
 
 ## Testing & deploy
 
@@ -64,7 +66,12 @@ HTTP for CRUD; WebSockets for live events. Don’t use sockets for everything.
 |------------|------|
 | **Jest + React Testing Library** | Unit / integration of UI behavior |
 | **GitHub** | Source control + collaboration |
-| **Vercel** | Hosting Next.js apps |
+| **Railway** | Always-on host: Next (UI+REST) + Socket.IO (`server/realtime`) |
+| **MongoDB Atlas** | Database |
+| **AWS S3** | Message file storage |
+
+**Topology + folder boundaries:** [deploy.md](./deploy.md) (Option B).  
+Vercel is **not** required for v1 production; optional later for previews only.
 
 ## Third-party (only when earned)
 
@@ -74,4 +81,4 @@ Always ask: *What problem does buying this solve that we shouldn’t build?*
 
 ---
 
-[← Product vision](./product-vision.md) · [Docs hub](../README.md) · [Folder structure](./folder-structure.md) · [Concept map →](./concept-dependency-map.md)
+[← Product vision](./product-vision.md) · [Docs hub](../README.md) · [Deploy](./deploy.md) · [Folder structure](./folder-structure.md) · [Concept map →](./concept-dependency-map.md)

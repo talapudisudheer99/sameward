@@ -4,8 +4,8 @@ import {
   models,
   type InferSchemaType,
   type Model,
-  type Types,
-} from "mongoose"
+} from "@/lib/db/mongoose-ns"
+import type { Types } from "mongoose"
 
 // String enum = runtime values + TypeScript type in one
 export enum MembershipRole {
@@ -43,7 +43,6 @@ const membershipSchema = new Schema(
 
 // One person can only be in a workspace once , compound unique index
 membershipSchema.index({ workspaceId: 1, userId: 1 }, { unique: true })
-
 
 export type MembershipDocument = InferSchemaType<typeof membershipSchema> & {
   _id: Types.ObjectId

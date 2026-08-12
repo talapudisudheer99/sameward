@@ -14,21 +14,22 @@ import { toast } from "sonner"
 
 import ConfirmDialog from "@/components/dialogs/confirm-dialog"
 import InviteMemberDialog from "@/components/dialogs/workspace/invite-member-dialog"
+import ProfileCardDialog from "@/components/profile/profile-card-dialog"
 import Loader from "@/components/sharable/loader"
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button, buttonVariants } from "@/components/ui/button"
 import MembersTable, {
   type MemberRoleOption,
 } from "@/components/workspace/members-table"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { cn } from "@/lib/utils"
+import type { WorkspaceMemberListItem } from "@/lib/types/workspace/workspace-types"
 import {
   useGetWorkspaceByIdQuery,
   useGetWorkspaceMembersQuery,
   useRemoveWorkspaceMemberMutation,
   useUpdateWorkspaceMemberRoleMutation,
-  type WorkspaceMemberListItem,
-} from "@/store/api/workspaces-api"
+} from "@/store/api/workspace/workspaces-api"
 
 function canManageMembers(role: string | undefined): boolean {
   const r = role?.toLowerCase()
@@ -62,21 +63,24 @@ export default function WorkspaceMembersPage() {
   const [inviteOpen, setInviteOpen] = useState(false)
   const [memberToRemove, setMemberToRemove] =
     useState<WorkspaceMemberListItem | null>(null)
-  const [pendingDemote, setPendingDemote] = useState<PendingDemote | null>(
-    null
-  )
+  const [pendingDemote, setPendingDemote] = useState<PendingDemote | null>(null)
   const [roleUpdatingUserId, setRoleUpdatingUserId] = useState<string | null>(
     null
   )
+  const [profileTarget, setProfileTarget] = useState<{
+    userId: string
+    name: string
+  } | null>(null)
 
   const { user, emailVerified } = useCurrentUser()
   const [removeMember] = useRemoveWorkspaceMemberMutation()
   const [updateMemberRole] = useUpdateWorkspaceMemberRoleMutation()
 
-  const { data: workspace, isLoading, isError } = useGetWorkspaceByIdQuery(
-    { workspaceId },
-    { skip: !workspaceId }
-  )
+  const {
+    data: workspace,
+    isLoading,
+    isError,
+  } = useGetWorkspaceByIdQuery({ workspaceId }, { skip: !workspaceId })
 
   const { data: membersData, isLoading: membersLoading } =
     useGetWorkspaceMembersQuery({ workspaceId }, { skip: !workspaceId })
@@ -92,7 +96,7 @@ export default function WorkspaceMembersPage() {
 
   if (isError || !workspace) {
     return (
-      <section className="flex min-h-[70vh] flex-col items-center justify-center px-4">
+      <section className="bg-brand-wash flex min-h-[70vh] flex-col items-center justify-center px-4">
         <div className="flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex size-16 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-muted-foreground"
@@ -100,7 +104,7 @@ export default function WorkspaceMembersPage() {
           >
             <SearchX className="size-8" strokeWidth={1.5} />
           </div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight">
+          <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
             Workspace not found
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
@@ -201,7 +205,7 @@ export default function WorkspaceMembersPage() {
         <ChevronRight className="size-3.5 shrink-0 opacity-60" aria-hidden />
         <Link
           href={`/workspace/${workspaceId}`}
-          className="min-w-0 max-w-[40%] truncate transition-colors hover:text-foreground sm:max-w-[50%]"
+          className="max-w-[40%] min-w-0 truncate transition-colors hover:text-foreground sm:max-w-[50%]"
           title={workspace.name}
         >
           {workspace.name}
@@ -212,7 +216,7 @@ export default function WorkspaceMembersPage() {
 
       <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          <h1 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">
             Members
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -248,6 +252,22 @@ export default function WorkspaceMembersPage() {
         roleUpdatingUserId={roleUpdatingUserId}
         onRemoveMember={setMemberToRemove}
         onRoleChange={onRoleChange}
+        onOpenProfile={(member) =>
+          setProfileTarget({
+            userId: member.userId,
+            name: member.fullName || member.email,
+          })
+        }
+      />
+
+      <ProfileCardDialog
+        open={profileTarget != null}
+        onOpenChange={(open) => {
+          if (!open) setProfileTarget(null)
+        }}
+        workspaceId={workspaceId}
+        userId={profileTarget?.userId ?? null}
+        fallbackName={profileTarget?.name}
       />
 
       {canInvite ? (

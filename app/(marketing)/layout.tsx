@@ -6,7 +6,7 @@ export default function MarketingLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen scroll-smooth bg-background text-foreground">
       <SiteHeader />
       <main>{children}</main>
     </div>

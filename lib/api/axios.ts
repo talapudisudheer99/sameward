@@ -1,4 +1,6 @@
-import axios from "axios"
+import axios, { isAxiosError } from "axios"
+
+import { redirectIfSessionLost } from "@/lib/auth/redirect-if-session-lost"
 
 /**
  * Shared Axios instance for browser → our Next.js API routes.
@@ -20,3 +22,28 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 })
+
+/** Auth form endpoints return 401 for bad credentials — never treat as session loss. */
+function isCredentialCheckUrl(url: string | undefined): boolean {
+  if (!url) return false
+  return (
+    url.includes("/api/auth/signin") ||
+    url.includes("/api/auth/signup") ||
+    url.includes("/api/auth/forgot-password") ||
+    url.includes("/api/auth/reset-password")
+  )
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !isCredentialCheckUrl(error.config?.url)
+    ) {
+      redirectIfSessionLost()
+    }
+    return Promise.reject(error)
+  }
+)

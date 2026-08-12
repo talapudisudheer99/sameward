@@ -1,8 +1,8 @@
 # TeamHub AI — Visual Identity & Design System v1.0
 
-> Source of truth for UI. Implement via CSS variables in `app/globals.css` + fonts in `app/layout.tsx`.
->
-> Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)
+> Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)  
+> Logo system: [references/teamhub-logo-system.png](./references/teamhub-logo-system.png)  
+> Channels chat components: [references/channels-mockups-dialogs.png](./references/channels-mockups-dialogs.png)
 
 ## Brand summary
 
@@ -19,7 +19,37 @@ TeamHub AI is a collaboration platform for teams that spend their workday in one
 
 **Voice:** “Everything has its place.” — not “Look how futuristic our AI is.”
 
-**Accent:** Electric Teal `#0F9D94` (dark: `#19B6AC`) — one accent only.
+**Accent:** Ocean Blue `#0369A1` (dark: `#0EA5E9`) — one accent only.
+Brand gradient endpoints: `--brand-a #0EA5E9` → `--brand-b #22D3EE` (sky → cyan), used only for brand moments (logo mark, hero, auth panel).
+
+> **Palette v1.1 (Aug 2026):** switched from Electric Teal to Ocean Blue. All colors live as tokens in `app/globals.css`; components reference tokens only, so the swap required no component edits.
+
+## Logo
+
+**Mark:** Rounded squircle with a `--brand-a → --primary` gradient + three team silhouettes (collaboration).  
+**Wordmark:** `TeamHub` in foreground ink + `AI` in `--primary` (Ocean Blue). Both are theme tokens, so the mark follows the active palette automatically.  
+**Component:** `components/layout/teamhub-logo.tsx`
+
+| Variant | Use |
+|---------|-----|
+| `mark` | Favicon-style, collapsed chrome |
+| `horizontal` | Headers, sidebar, marketing (default for nav) |
+| `stacked` | Centered / tight vertical spaces |
+| `tone="onDark"` | Navy marketing panels (white TeamHub + teal AI) |
+
+Clear space ≈ mark height on all sides. Do not stretch or recolor the mark off-token.
+
+**Where it ships in the app**
+
+| Surface | Status |
+|---------|--------|
+| App sidebar | ✅ `TeamHubLogo` horizontal |
+| Marketing header | ✅ |
+| Auth shell (dark + mobile) | ✅ |
+| Invite layout | ✅ |
+| Browser favicon | ✅ `app/icon.svg` |
+| Create-workspace dialog header icon | ✅ `TeamHubLogo` mark |
+| Emails (Resend HTML) | Text-only “TeamHub” for now (no embedded SVG logo) |
 
 ## Design tokens
 
@@ -27,39 +57,45 @@ TeamHub AI is a collaboration platform for teams that spend their workday in one
 
 | Token | Hex |
 |-------|-----|
-| background | `#F7F9FB` |
-| foreground | `#111827` |
+| background | `#F7FAFC` |
+| foreground | `#0F172A` |
 | card | `#FFFFFF` |
-| muted | `#EEF2F6` |
-| muted-foreground | `#64748B` |
-| border / input | `#D9E2EC` |
-| primary | `#0F9D94` |
+| muted | `#EEF3F8` |
+| muted-foreground | `#475569` |
+| border / input | `#CBD8E6` |
+| primary | `#0369A1` |
 | primary-foreground | `#FFFFFF` |
-| secondary | `#E8F5F4` |
-| accent | `#12B5A8` |
+| secondary | `#E7F1F9` |
+| secondary-foreground | `#0C4A6E` |
+| accent | `#E0F2FE` |
+| accent-foreground | `#075985` |
 | destructive | `#DC2626` |
 | success | `#16A34A` |
 | warning | `#D97706` |
-| ring | `#0F9D94` |
+| ring | `#0369A1` |
+| brand-a / brand-b | `#0EA5E9` / `#22D3EE` |
 
 ### Dark
 
 | Token | Hex |
 |-------|-----|
-| background | `#111827` |
-| foreground | `#F8FAFC` |
-| card | `#1A2333` |
-| muted | `#253041` |
+| background | `#0B1220` |
+| foreground | `#F1F5F9` |
+| card | `#0F1A2E` |
+| muted | `#16273D` |
 | muted-foreground | `#94A3B8` |
-| border / input | `#314155` |
-| primary | `#19B6AC` |
-| primary-foreground | `#081513` |
-| secondary | `#203B39` |
-| accent | `#25C4B7` |
+| border / input | `#23344B` |
+| primary | `#0EA5E9` |
+| primary-foreground | `#04283B` |
+| secondary | `#16273D` |
+| secondary-foreground | `#E2E8F0` |
+| accent | `#0C3A57` |
+| accent-foreground | `#BAE6FD` |
 | destructive | `#EF4444` |
 | success | `#22C55E` |
 | warning | `#F59E0B` |
-| ring | `#19B6AC` |
+| ring | `#38BDF8` |
+| brand-a / brand-b | `#0EA5E9` / `#22D3EE` |
 
 ### Radius
 
@@ -118,86 +154,108 @@ No metric strips, badge clouds, floating stickers on hero media.
 | Primary button | bg-primary, h-10, px-4, radius md, no shadow |
 | Secondary | border + transparent, hover muted |
 | Ghost | no border, hover muted |
-| Sidebar item | hover muted; active = secondary + **4px teal left bar**; icon 20px; label 14px medium |
+| Sidebar item | hover muted; active = secondary + **4px primary (Ocean Blue) left bar**; icon 20px; label 14px medium |
 | Input | h-10, border, radius md, focus ring primary |
 | Empty workspace | “Create your first workspace” + Create / Import CTAs |
 
-## CSS variables (implement in `globals.css`)
+## CSS variables — Ocean Blue v1.1
+
+> Source of truth is [`app/globals.css`](../../app/globals.css). Mirror below; if they diverge, `globals.css` wins.
 
 ```css
 :root {
-  --background: #F7F9FB;
-  --foreground: #111827;
+  --background: #F7FAFC;
+  --foreground: #0F172A;
   --card: #FFFFFF;
-  --card-foreground: #111827;
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
-  --primary: #0F9D94;
+  --popover-foreground: #0F172A;
+  --primary: #0369A1;
   --primary-foreground: #FFFFFF;
-  --secondary: #E8F5F4;
-  --secondary-foreground: #111827;
-  --muted: #EEF2F6;
-  --muted-foreground: #64748B;
-  --accent: #12B5A8;
-  --accent-foreground: #FFFFFF;
+  --secondary: #E7F1F9;
+  --secondary-foreground: #0C4A6E;
+  --muted: #EEF3F8;
+  --muted-foreground: #475569;
+  --accent: #E0F2FE;
+  --accent-foreground: #075985;
   --destructive: #DC2626;
-  --border: #D9E2EC;
-  --input: #D9E2EC;
-  --ring: #0F9D94;
+  --border: #CBD8E6;
+  --input: #CBD8E6;
+  --ring: #0369A1;
+  --success: #16A34A;
+  --warning: #D97706;
   --radius: 10px;
+  --brand-a: #0EA5E9;
+  --brand-b: #22D3EE;
 
-  --sidebar: #F7F9FB;
-  --sidebar-foreground: #111827;
-  --sidebar-primary: #0F9D94;
+  --sidebar: #F1F5F9;
+  --sidebar-foreground: #0F172A;
+  --sidebar-primary: #0369A1;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8F5F4;
-  --sidebar-accent-foreground: #111827;
-  --sidebar-border: #D9E2EC;
-  --sidebar-ring: #0F9D94;
+  --sidebar-accent: #E0F2FE;
+  --sidebar-accent-foreground: #075985;
+  --sidebar-border: #CBD8E6;
+  --sidebar-ring: #0369A1;
 }
 
 .dark {
-  --background: #111827;
-  --foreground: #F8FAFC;
-  --card: #1A2333;
-  --card-foreground: #F8FAFC;
-  --popover: #1A2333;
-  --popover-foreground: #F8FAFC;
-  --primary: #19B6AC;
-  --primary-foreground: #081513;
-  --secondary: #203B39;
-  --secondary-foreground: #F8FAFC;
-  --muted: #253041;
+  --background: #0B1220;
+  --foreground: #F1F5F9;
+  --card: #0F1A2E;
+  --card-foreground: #F1F5F9;
+  --popover: #0F1A2E;
+  --popover-foreground: #F1F5F9;
+  --primary: #0EA5E9;
+  --primary-foreground: #04283B;
+  --secondary: #16273D;
+  --secondary-foreground: #E2E8F0;
+  --muted: #16273D;
   --muted-foreground: #94A3B8;
-  --accent: #25C4B7;
-  --accent-foreground: #081513;
+  --accent: #0C3A57;
+  --accent-foreground: #BAE6FD;
   --destructive: #EF4444;
-  --border: #314155;
-  --input: #314155;
-  --ring: #19B6AC;
+  --border: #23344B;
+  --input: #23344B;
+  --ring: #38BDF8;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --brand-a: #0EA5E9;
+  --brand-b: #22D3EE;
 
-  --sidebar: #111827;
-  --sidebar-foreground: #F8FAFC;
-  --sidebar-primary: #19B6AC;
-  --sidebar-primary-foreground: #081513;
-  --sidebar-accent: #203B39;
-  --sidebar-accent-foreground: #F8FAFC;
-  --sidebar-border: #314155;
-  --sidebar-ring: #19B6AC;
+  --sidebar: #0B1220;
+  --sidebar-foreground: #F1F5F9;
+  --sidebar-primary: #0EA5E9;
+  --sidebar-primary-foreground: #04283B;
+  --sidebar-accent: #0C3A57;
+  --sidebar-accent-foreground: #BAE6FD;
+  --sidebar-border: #23344B;
+  --sidebar-ring: #38BDF8;
 }
 ```
 
 Hex is fine for v1. OKLCH can come later if we want perceptual tweaks.
 
+### Brand gradient utilities (in `globals.css @layer utilities`)
+
+All derive from `--brand-a` / `--primary` / `--warning`, so they follow the palette:
+
+| Utility | Use |
+|---------|-----|
+| `bg-hero-grid` | Faint blueprint grid for marketing hero (no aurora) |
+| `bg-brand-panel` | Rich branded dark panel for the auth split-screen |
+| `btn-brand-gradient` | Gradient fill layered over a solid button |
+| `bg-brand-wash` | Soft top wash for empty / status sections |
+| `brand-tile` | Branded icon tile for positive empty states |
+
 ## Implementation checklist
 
-- [ ] Replace `:root` / `.dark` tokens in `app/globals.css`
-- [ ] Align sidebar tokens with shell
-- [ ] Swap Geist → Manrope + Plus Jakarta Sans in `app/layout.tsx`
-- [ ] Wire `--font-heading` / `--font-sans` in `@theme`
-- [ ] Update Sidebar active state (teal bar) to match spec
-- [ ] Marketing header + hero (Phase 1 UI)
-- [ ] Workspace empty state (Phase 1 UI)
+- [x] Replace `:root` / `.dark` tokens in `app/globals.css` (Ocean Blue v1.1)
+- [x] Align sidebar tokens with shell
+- [x] Swap Geist → Manrope + Plus Jakarta Sans in `app/layout.tsx`
+- [x] Wire `--font-heading` / `--font-sans` in `@theme`
+- [x] Update Sidebar active state (primary bar) to match spec
+- [x] Marketing header + hero (Phase 1 UI)
+- [x] Workspace empty state (Phase 1 UI)
 
 ## Mentor notes
 

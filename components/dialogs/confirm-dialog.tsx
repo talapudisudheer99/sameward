@@ -117,7 +117,7 @@ export default function ConfirmDialog({
           </div>
         </DialogHeader>
 
-        <DialogFooter className="gap-2 sm:justify-end">
+        <DialogFooter className="gap-2">
           <CancelButton
             text={cancelLabel}
             className="h-9"

@@ -1,31 +1,28 @@
-import { createHash, randomBytes } from "node:crypto" // Node's built-in crypto — no package to install
+import { randomBytes } from "node:crypto" // Node's built-in crypto — no package to install
 
-import { cookies } from "next/headers" // read/write cookies inside Route Handlers
+import { cookies, headers } from "next/headers" // read/write cookies inside Route Handlers
 
 import { connectDB } from "@/lib/db/mongoose"
-import { Session } from "@/lib/models/session"
-import { User } from "@/lib/models/user"
+import { MAX_SESSIONS_PER_USER, Session } from "@/lib/models/session"
 
 import {
   SESSION_COOKIE_NAME,
   getSessionMaxAgeSeconds,
   sessionCookieOptions,
 } from "./cookies"
+import { hashToken, resolveUserFromSessionToken } from "./session-user"
 
-/**
- * Turn the raw token into a fixed-length fingerprint.
- * Same input always gives the same output, but you cannot go backwards.
- * The browser holds the raw token; the DB only holds this hash.
- */
-export function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex")
-}
+// Re-export so existing `@/lib/auth/session` imports keep working.
+export { hashToken, resolveUserFromSessionToken }
+export type { SessionUser } from "./session-user"
 
 /**
  * Called after a successful signup or login.
  * 1. invent a random token
  * 2. save its hash + owner + expiry in Mongo
  * 3. send the raw token to the browser as an httpOnly cookie
+ *
+ * Enforces MAX_SESSIONS_PER_USER by expiring the oldest session(s) first.
  *
  * rememberMe:
  *   true  → 30 days
@@ -54,10 +51,29 @@ export async function createSession(
   // Date.now() is milliseconds, our max age is seconds, hence * 1000.
   const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000)
 
+  const h = await headers()
+  const userAgent = (h.get("user-agent") ?? "").slice(0, 512)
+  const forwarded = h.get("x-forwarded-for")
+  const ip = (
+    forwarded?.split(",")[0]?.trim() ||
+    h.get("x-real-ip") ||
+    ""
+  ).slice(0, 64)
+
+  // Cap concurrent devices: drop oldest so this login can proceed.
+  const existing = await Session.find({ userId }).sort({ createdAt: 1 })
+  const overflow = existing.length - (MAX_SESSIONS_PER_USER - 1)
+  if (overflow > 0) {
+    const victimIds = existing.slice(0, overflow).map((s) => s._id)
+    await Session.deleteMany({ _id: { $in: victimIds } })
+  }
+
   await Session.create({
     tokenHash: hashToken(token),
     userId,
     expiresAt,
+    userAgent,
+    ip,
   })
 
   // `cookies()` is async in Next 16 — it must be awaited.
@@ -72,34 +88,20 @@ export async function createSession(
 /**
  * "Who is making this request?" — used by /api/auth/me and protected routes.
  * Returns null when there is no valid session.
+ * Cookie read is Next-only; identity lookup is shared with realtime via session-user.
  */
 export async function getCurrentUser() {
-  await connectDB()
-
   const cookieStore = await cookies()
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value // undefined when no cookie
   if (!token) return null
 
-  // Look up by hash, because the hash is what we stored.
-  const session = await Session.findOne({ tokenHash: hashToken(token) })
-  if (!session) return null // cookie is fake, or session was deleted by logout
+  return resolveUserFromSessionToken(token)
+}
 
-  // Mongo's TTL cleaner runs about once a minute, so also check the date ourselves.
-  if (session.expiresAt.getTime() < Date.now()) {
-    await Session.deleteOne({ _id: session._id })
-    return null
-  }
-
-  const user = await User.findById(session.userId)
-  if (!user) return null // user deleted but session left behind
-
-  // Return only safe fields — never the passwordHash.
-  return {
-    id: String(user._id),
-    fullName: user.fullName,
-    email: user.email,
-    emailVerified: user.emailVerified === true,
-  }
+/** Raw session cookie value for this request (or null). */
+export async function getRawSessionToken(): Promise<string | null> {
+  const cookieStore = await cookies()
+  return cookieStore.get(SESSION_COOKIE_NAME)?.value ?? null
 }
 
 /**

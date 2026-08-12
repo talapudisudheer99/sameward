@@ -12,8 +12,13 @@ docs/
   README.md          ← you are here (hub)
   MENTORSHIP.md      ← how we work
   auth/              ← ✅ completed auth (single source of truth)
+  workspaces/        ← ✅ Phase 3 workspaces
+  channels/          ← ✅ channels + realtime chat
+  ai/                ← ✅ Phase 7 AI knowledge assistant
+  profiles/          ← ✅ Profile v1
+  settings/          ← ✅ Settings v1 (account + app)
   architecture/      ← product vision, stack, data flow
-  design/            ← design system tokens
+  design/            ← design system tokens (+ marketing image prompts)
   guides/            ← reusable tech notes (e.g. Mongoose)
   phases/            ← roadmap stubs (what to build next)
   features/          ← feature → phase/doc index
@@ -24,6 +29,10 @@ docs/
 |--------|---------|
 | **`auth/`** | Completed auth — flows, routes, FE, hardening, prod, debug |
 | **`workspaces/`** | Phase 3 module — vision, stories, flows, tasks |
+| **`channels/`** | Channels + realtime + unread + 1:1 DMs + @mentions |
+| **`ai/`** | Phase 7 Path A — AI knowledge assistant |
+| **`profiles/`** | Profile v1 — edit self + teammate card |
+| **`settings/`** | Settings v1 — appearance, account, password, sessions |
 | **`architecture/`** | Vision, stack, **folder structure**, data flow |
 | **`phases/`** | Learning roadmap stubs |
 | **`guides/`** | Tech primers (Mongoose, …) |
@@ -39,11 +48,17 @@ docs/
 |------|------|
 | “How does auth work?” | [auth/README.md](./auth/README.md) |
 | “Workspaces & members?” | [workspaces/README.md](./workspaces/README.md) |
+| “Channels & live chat?” | [channels/README.md](./channels/README.md) |
+| “AI assistant?” | [ai/README.md](./ai/README.md) |
+| “Member profiles?” | [profiles/README.md](./profiles/README.md) |
+| “Account settings?” | [settings/README.md](./settings/README.md) |
+| “Next feature to build?” | [Phase 8](./phases/08-quality-deployment/README.md) |
 | “Where do files go?” | [architecture/folder-structure.md](./architecture/folder-structure.md) |
 | “Where are we on the roadmap?” | [tracking/progress.md](./tracking/progress.md) |
+| “Landing image prompts?” | [design/marketing-image-prompts.md](./design/marketing-image-prompts.md) |
 | “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | “Why this stack?” | [architecture/stack.md](./architecture/stack.md) |
-| “Next feature to build?” | [workspaces/TASKS.md](./workspaces/TASKS.md) |
+| “Where do we deploy?” | [architecture/deploy.md](./architecture/deploy.md) — **Railway** Option B (Next + Socket.IO, separate folders) |
 | Mentorship rules | [MENTORSHIP.md](./MENTORSHIP.md) |
 
 ---
@@ -56,11 +71,11 @@ docs/
 | [1 Product shell](./phases/01-product-shell/README.md) | Landing + app shell | ✅ |
 | [2 Authentication](./phases/02-authentication/README.md) | Sessions, OAuth, hardening | ✅ → [auth/](./auth/README.md) |
 | [3 Workspaces](./phases/03-workspaces-members/README.md) | Multi-tenant CRUD | ✅ v1 → [workspaces/](./workspaces/README.md) |
-| [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | ⬜ |
-| [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels, docs, boards | ⬜ |
-| [6 Realtime](./phases/06-realtime/README.md) | Socket.IO | ⬜ |
-| [7 AI](./phases/07-ai-integrations/README.md) | External AI APIs | ⬜ |
-| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests, Vercel | ⬜ |
+| [4 State](./phases/04-state-data-layer/README.md) | Redux + RTK Query | 🟡 Partial (used in workspaces) |
+| [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels first; docs/boards later | ✅ → [channels/](./channels/README.md) |
+| [6 Realtime](./phases/06-realtime/README.md) | Chat sockets folded into channels | ✅ → [channels/SOCKETS.md](./channels/SOCKETS.md) |
+| [7 AI](./phases/07-ai-integrations/README.md) | Path A knowledge assistant | ✅ E2E → [ai/](./ai/README.md) |
+| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests + Railway Option B | ⬜ **next** |
 
 ---
 
@@ -77,4 +92,4 @@ docs/
 
 - Template: [`.env.example`](../.env.example)  
 - Auth production checklist: [auth/PRODUCTION.md](./auth/PRODUCTION.md)  
-- Full ship pipeline: Phase 8  
+- Full ship pipeline: [Phase 8](./phases/08-quality-deployment/README.md) · [deploy.md](./architecture/deploy.md) (Railway Option B) 

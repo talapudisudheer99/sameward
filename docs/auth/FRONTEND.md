@@ -12,7 +12,7 @@
 Shared layout: `app/(auth)/layout.tsx` (marketing auth chrome).
 
 Protected app: `app/(app)/layout.tsx` + `app/(app)/workspace/...`  
-Uses `requireUser()` and optional `VerifyEmailBanner`.
+Uses `requireUser()`, optional `VerifyEmailBanner`, and `SessionGuard` (rechecks `/api/auth/me` on tab/window focus).
 
 ---
 
@@ -27,9 +27,10 @@ Uses `requireUser()` and optional `VerifyEmailBanner`.
 | `LogoutButton` | `components/layout/logout-button.tsx` | `POST /logout` |
 | `LogoutAllDevicesButton` | `components/layout/logout-all-devices-button.tsx` | `POST /logout-all` |
 | `VerifyEmailBanner` | `components/layout/verify-email-banner.tsx` | Soft gate + resend |
+| `SessionGuard` | `components/providers/session-guard.tsx` | Focus/visibility → revalidate session → `/login` if dead |
 | `Sidebar` | `components/layout/sidebar.tsx` | Hosts both logout actions |
 
-HTTP client: `lib/api/axios.ts` (`api.post(...)`). Axios throws on 4xx/5xx — forms catch with `isAxiosError`.
+HTTP client: `lib/api/axios.ts` (`api.post(...)`). Axios throws on 4xx/5xx — forms catch with `isAxiosError`. App-route 401s redirect via `redirectIfSessionLost`.
 
 ---
 

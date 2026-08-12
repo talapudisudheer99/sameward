@@ -60,6 +60,7 @@ export async function GET(
       id: workspace._id.toString(),
       name: workspace.name,
       slug: workspace.slug,
+      description: workspace.description ?? "",
       role: membership.role,
     })
   } catch (error) {
@@ -139,7 +140,7 @@ export async function DELETE(
 
 /**
  * PATCH /api/workspaces/[workspaceId]
- * Owner/admin rename — updates name + unique slug (excludes self).
+ * Owner/admin — update name (+ slug) and/or optional description.
  */
 export async function PATCH(
   request: Request,
@@ -191,7 +192,14 @@ export async function PATCH(
       )
     }
 
-    const parsedData = workSpaceSchema.safeParse(body)
+    const raw =
+      typeof body === "object" && body !== null
+        ? (body as Record<string, unknown>)
+        : {}
+    const parsedData = workSpaceSchema.safeParse({
+      ...raw,
+      description: raw.description ?? "",
+    })
     if (!parsedData.success) {
       return NextResponse.json(
         { message: "Validation failed" },
@@ -199,13 +207,17 @@ export async function PATCH(
       )
     }
 
-    const { name } = parsedData.data
+    const { name, description } = parsedData.data
     // Exclude this workspace so renaming “Acme” → “Acme” (or similar) doesn’t become acme-2
     const slug = await slugifyUnique(name, workspaceId)
 
     const updatedWorkspace = await Workspace.findByIdAndUpdate(
       workspaceId,
-      { name, slug },
+      {
+        name,
+        slug,
+        description: (description ?? "").trim(),
+      },
       { new: true }
     )
 
@@ -228,6 +240,7 @@ export async function PATCH(
         id: updatedWorkspace._id.toString(),
         name: updatedWorkspace.name,
         slug: updatedWorkspace.slug,
+        description: updatedWorkspace.description ?? "",
         role: callerMembership.role,
       },
       { status: 200 }

@@ -23,15 +23,9 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#0B1220] p-10 text-slate-50 lg:flex xl:p-14">
-        <Link
-          href="/"
-          className="relative z-10 flex w-fit items-center gap-2.5"
-        >
-          <TeamHubLogo className="size-8" />
-          <span className="font-heading text-sm font-semibold tracking-tight">
-            TeamHub AI
-          </span>
+      <aside className="bg-brand-panel relative hidden flex-col justify-between overflow-hidden p-10 text-slate-50 lg:flex xl:p-14">
+        <Link href="/" className="relative z-10 flex w-fit items-center">
+          <TeamHubLogo variant="horizontal" size={32} tone="onDark" />
         </Link>
 
         <div className="relative z-10 max-w-md">
@@ -82,20 +76,17 @@ export function AuthShell({
 
       <div className="flex flex-col bg-background">
         <div className="flex items-center px-5 py-4 lg:hidden">
-          <Link href="/" className="flex items-center gap-2">
-            <TeamHubLogo className="size-7" />
-            <span className="font-heading text-sm font-semibold">
-              TeamHub AI
-            </span>
+          <Link href="/" className="flex items-center">
+            <TeamHubLogo variant="horizontal" size={28} />
           </Link>
         </div>
 
         <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10">
           <div className="w-full max-w-[400px] animate-in duration-500 fade-in slide-in-from-bottom-2">
-            <h1 className="font-heading text-3xl font-bold tracking-tight">
+            <h1 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
               {title}
             </h1>
-            <p className="mt-2 text-muted-foreground">{description}</p>
+            <p className="mt-2 text-sm text-muted-foreground sm:text-base">{description}</p>
             <div className="mt-8">{children}</div>
             <div className="mt-8 text-center text-sm text-muted-foreground">
               {footer}
