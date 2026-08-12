@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 
 import type { AiKind } from "@/lib/ai/constants"
 import { getAiProvider } from "@/lib/ai/openai-provider"
-import { AiProviderError } from "@/lib/ai/provider"
+import { isAiProviderError } from "@/lib/ai/provider"
 import { checkAiRateLimit } from "@/lib/ai/rate-limit"
 import type { MessageContextResult } from "@/lib/ai/message-context"
 import { AiRun } from "@/lib/models/ai/ai-run"
@@ -141,7 +141,7 @@ export async function completeWithContext(opts: {
     }
     return NextResponse.json(body)
   } catch (err) {
-    if (err instanceof AiProviderError) {
+    if (isAiProviderError(err)) {
       return NextResponse.json({ message: err.message }, { status: err.status })
     }
     console.error("[ai/complete]", err)

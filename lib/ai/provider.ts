@@ -22,12 +22,25 @@ export type AiProvider = {
   complete(input: AiCompleteInput): Promise<AiCompleteResult>
 }
 
-export class AiProviderError extends Error {
-  constructor(
-    message: string,
-    readonly status: 503 | 502 = 503
-  ) {
-    super(message)
-    this.name = "AiProviderError"
-  }
+/** Simple AI failure shape — status for the route handler to return. */
+export type AiProviderError = {
+  name: "AiProviderError"
+  message: string
+  status: 502 | 503
+}
+
+export function aiProviderError(
+  message: string,
+  status: 502 | 503 = 503
+): AiProviderError {
+  return { name: "AiProviderError", message, status }
+}
+
+export function isAiProviderError(err: unknown): err is AiProviderError {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "name" in err &&
+    (err as { name?: string }).name === "AiProviderError"
+  )
 }
