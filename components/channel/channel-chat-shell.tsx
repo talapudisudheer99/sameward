@@ -48,6 +48,8 @@ export type ChannelChatShellProps = {
   /** History query — list shows spinner / error without blocking the shell */
   messagesLoading?: boolean
   messagesError?: boolean
+  /** Refetch message history after a load error */
+  onRetryMessages?: () => void
   channelMembers: ChannelMemberRow[]
   /** For invite dialog — workspace members not already in channel */
   inviteCandidates: WorkspaceMemberOption[]
@@ -100,6 +102,7 @@ export default function ChannelChatShell({
   messages,
   messagesLoading = false,
   messagesError = false,
+  onRetryMessages,
   channelMembers,
   inviteCandidates,
   currentUserId,
@@ -247,6 +250,7 @@ export default function ChannelChatShell({
               currentUserId={currentUserId}
               isLoading={messagesLoading}
               isError={messagesError}
+              onRetryLoad={onRetryMessages}
               mentionNameById={Object.fromEntries(
                 mentionCandidates.map((m) => [m.userId, m.fullName])
               )}

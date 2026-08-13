@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import {
   MessageCircle,
   Pencil,
@@ -14,6 +14,20 @@ import ChatAttachments from "@/components/channel/chat-attachments"
 import EmojiPicker from "@/components/channel/emoji-picker"
 import Loader from "@/components/sharable/loader"
 import { Button } from "@/components/ui/button"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { useAutosizeTextarea } from "@/hooks/use-autosize-textarea"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/lib/types/channel/channel-types"
@@ -27,6 +41,8 @@ type ChatMessageListProps = {
   isLoading?: boolean
   /** History request failed */
   isError?: boolean
+  /** Retry history fetch after isError */
+  onRetryLoad?: () => void
   className?: string
   /** Path A — open explain dialog for this message */
   onExplainMessage?: (target: {
@@ -119,6 +135,75 @@ function renderBodyWithMentions(
   })
 }
 
+type MessageActionsMenuProps = {
+  children: ReactNode
+  className?: string
+  canExplain: boolean
+  canReact: boolean
+  canEdit: boolean
+  canDelete: boolean
+  onExplain?: () => void
+  onReact?: () => void
+  onEdit?: () => void
+  onDelete?: () => void
+}
+
+/** Right-click / long-press actions for a message bubble. */
+function MessageActionsMenu({
+  children,
+  className,
+  canExplain,
+  canReact,
+  canEdit,
+  canDelete,
+  onExplain,
+  onReact,
+  onEdit,
+  onDelete,
+}: MessageActionsMenuProps) {
+  const hasActions = canExplain || canReact || canEdit || canDelete
+  if (!hasActions) {
+    return <div className={className}>{children}</div>
+  }
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className={cn("w-fit max-w-full outline-none", className)}>
+        {children}
+      </ContextMenuTrigger>
+      <ContextMenuContent className="min-w-44">
+        {canExplain ? (
+          <ContextMenuItem onClick={onExplain}>
+            <Sparkles className="size-4 text-primary" strokeWidth={2.25} />
+            Explain with AI
+          </ContextMenuItem>
+        ) : null}
+        {canReact ? (
+          <ContextMenuItem onClick={onReact}>
+            <SmilePlus className="size-4" />
+            Add reaction
+          </ContextMenuItem>
+        ) : null}
+        {canEdit ? (
+          <ContextMenuItem onClick={onEdit}>
+            <Pencil className="size-4" />
+            Edit
+          </ContextMenuItem>
+        ) : null}
+        {canDelete ? (
+          <>
+            {(canExplain || canReact || canEdit) && <ContextMenuSeparator />}
+            <ContextMenuItem variant="destructive" onClick={onDelete}>
+              <Trash2 className="size-4" />
+              Delete
+            </ContextMenuItem>
+          </>
+        ) : null}
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}
+
 /**
  * Ch-D transcript — presentational.
  * Parent passes messages from RTK GET; socket appends later.
@@ -129,6 +214,7 @@ export default function ChatMessageList({
   mentionNameById,
   isLoading = false,
   isError = false,
+  onRetryLoad,
   className,
   onExplainMessage,
   onOpenProfile,
@@ -145,22 +231,10 @@ export default function ChatMessageList({
   const [editSaving, setEditSaving] = useState(false)
   const [editEmojiOpen, setEditEmojiOpen] = useState(false)
   const [reactPickerFor, setReactPickerFor] = useState<string | null>(null)
-  const reactPickerRef = useRef<HTMLDivElement>(null)
   const editTextareaRef = useRef<HTMLTextAreaElement>(null)
   const editEmojiWrapRef = useRef<HTMLDivElement>(null)
 
   useAutosizeTextarea(editTextareaRef, editDraft, 160)
-
-  useEffect(() => {
-    if (!reactPickerFor) return
-    function onDoc(e: MouseEvent) {
-      if (!reactPickerRef.current?.contains(e.target as Node)) {
-        setReactPickerFor(null)
-      }
-    }
-    document.addEventListener("mousedown", onDoc)
-    return () => document.removeEventListener("mousedown", onDoc)
-  }, [reactPickerFor])
 
   useEffect(() => {
     if (!editEmojiOpen) return
@@ -223,11 +297,20 @@ export default function ChatMessageList({
     return (
       <div
         className={cn(
-          "flex min-h-0 flex-1 items-center justify-center px-4 text-center text-sm text-muted-foreground",
+          "flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-4 text-center",
           className
         )}
       >
-        Couldn’t load messages. Try refreshing.
+        <p className="text-sm text-muted-foreground">
+          Couldn’t load messages.
+        </p>
+        {onRetryLoad ? (
+          <Button type="button" size="sm" variant="outline" onClick={onRetryLoad}>
+            Try again
+          </Button>
+        ) : (
+          <p className="text-xs text-muted-foreground">Refresh the page to retry.</p>
+        )}
       </div>
     )
   }
@@ -294,7 +377,7 @@ export default function ChatMessageList({
     <div
       ref={scrollerRef}
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-3 sm:px-4 sm:py-4",
+        "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-2 py-3 sm:px-4 sm:py-4",
         className
       )}
       data-explore-tutorial="transcript"
@@ -319,7 +402,6 @@ export default function ChatMessageList({
         const canReact =
           !deleted && !msg.pending && Boolean(onToggleReaction)
         const reactions = msg.reactions ?? []
-        const showReactPicker = reactPickerFor === msg.id
         const prev = messages[i - 1]
         // Group consecutive messages by the same author within ~5 minutes
         const grouped =
@@ -488,125 +570,71 @@ export default function ChatMessageList({
               ) : (
                 <>
                   {msg.body ? (
-                    <div
-                      className={cn(
-                        "group/msg relative w-fit max-w-full rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed",
-                        mine
-                          ? "rounded-br-md bg-primary text-primary-foreground"
-                          : "rounded-bl-md bg-muted text-foreground"
-                      )}
-                    >
-                      <p className="[overflow-wrap:anywhere] break-words whitespace-pre-wrap">
-                        {renderBodyWithMentions(
-                          msg.body,
-                          msg.mentionedUserIds,
-                          mentionNameById,
-                          mine
-                        )}
-                      </p>
-                      <div
-                        className={cn(
-                          "absolute bottom-full z-20 mb-1.5 flex gap-0.5 rounded-lg border border-border bg-card p-0.5 opacity-0 shadow-md transition-opacity group-hover/msg:opacity-100 group-focus-within/msg:opacity-100",
-                          (pinExplain || showReactPicker) && "opacity-100",
-                          // Own (right) bubbles: pin to right so the bar grows left, not off-screen
-                          // Peer (left) bubbles: pin to left so the bar grows right
-                          mine ? "right-0" : "left-0"
-                        )}
+                    <div className="relative w-fit max-w-full">
+                      <MessageActionsMenu
+                        canExplain={Boolean(onExplainMessage && !msg.pending)}
+                        canReact={canReact}
+                        canEdit={canEdit}
+                        canDelete={canDelete}
+                        onExplain={() =>
+                          onExplainMessage?.({
+                            id: msg.id,
+                            body: msg.body,
+                            authorName: msg.authorName,
+                            attachmentNames: msg.attachments.map((a) => a.name),
+                          })
+                        }
+                        onReact={() => setReactPickerFor(msg.id)}
+                        onEdit={() => {
+                          setEditingId(msg.id)
+                          setEditDraft(msg.body)
+                        }}
+                        onDelete={() => onRequestDeleteMessage?.(msg.id)}
                       >
-                        {onExplainMessage && !msg.pending ? (
-                          <Button
-                            type="button"
-                            size="icon-xs"
-                            variant="secondary"
-                            title="Explain with AI"
-                            className={cn(
-                              "brand-tile size-7 text-primary shadow-none ring-1 ring-primary/30 transition hover:brightness-95",
-                              pinExplain && "ring-2 ring-primary"
+                        <div
+                          className={cn(
+                            "rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed select-none md:select-text [-webkit-touch-callout:none]",
+                            mine
+                              ? "rounded-br-md bg-primary text-primary-foreground"
+                              : "rounded-bl-md bg-muted text-foreground"
+                          )}
+                        >
+                          <p className="[overflow-wrap:anywhere] break-words whitespace-pre-wrap">
+                            {renderBodyWithMentions(
+                              msg.body,
+                              msg.mentionedUserIds,
+                              mentionNameById,
+                              mine
                             )}
-                            aria-label="Explain message with AI"
-                            data-explore-tutorial={
-                              pinExplain ? "explain-button" : undefined
-                            }
-                            onClick={() =>
-                              onExplainMessage({
-                                id: msg.id,
-                                body: msg.body,
-                                authorName: msg.authorName,
-                                attachmentNames: msg.attachments.map(
-                                  (a) => a.name
-                                ),
-                              })
-                            }
-                          >
-                            <Sparkles className="size-3.5" strokeWidth={2.25} />
-                          </Button>
-                        ) : null}
-                        {canReact ? (
-                          <div ref={showReactPicker ? reactPickerRef : undefined} className="relative">
-                            <Button
-                              type="button"
-                              size="icon-xs"
-                              variant="secondary"
-                              className="size-7 shadow-none"
-                              aria-label="Add reaction"
-                              aria-expanded={showReactPicker}
-                              onClick={() =>
-                                setReactPickerFor(
-                                  showReactPicker ? null : msg.id
-                                )
-                              }
-                            >
-                              <SmilePlus className="size-3.5" />
-                            </Button>
-                            {showReactPicker ? (
-                              <div
-                                className={cn(
-                                  "absolute z-40 mb-1",
-                                  mine
-                                    ? "bottom-full right-0"
-                                    : "bottom-full left-0"
-                                )}
-                              >
-                                <EmojiPicker
-                                  label="React to message"
-                                  onSelect={(emoji) => {
-                                    setReactPickerFor(null)
-                                    void onToggleReaction?.(msg.id, emoji)
-                                  }}
-                                />
-                              </div>
-                            ) : null}
-                          </div>
-                        ) : null}
-                        {canEdit ? (
-                          <Button
-                            type="button"
-                            size="icon-xs"
-                            variant="secondary"
-                            className="size-7 shadow-none"
-                            aria-label="Edit message"
-                            onClick={() => {
-                              setReactPickerFor(null)
-                              setEditingId(msg.id)
-                              setEditDraft(msg.body)
-                            }}
-                          >
-                            <Pencil className="size-3.5" />
-                          </Button>
-                        ) : null}
-                        {canDelete ? (
-                          <Button
-                            type="button"
-                            size="icon-xs"
-                            variant="secondary"
-                            className="size-7 shadow-none text-destructive hover:text-destructive"
-                            aria-label="Delete message"
-                            onClick={() => onRequestDeleteMessage?.(msg.id)}
-                          >
-                            <Trash2 className="size-3.5" />
-                          </Button>
-                        ) : null}
-                      </div>
+                          </p>
+                        </div>
+                      </MessageActionsMenu>
+                      {pinExplain && onExplainMessage && !msg.pending ? (
+                        <Button
+                          type="button"
+                          size="icon-xs"
+                          variant="secondary"
+                          title="Explain with AI"
+                          className={cn(
+                            "absolute top-full mt-1.5 brand-tile size-7 text-primary shadow-md ring-2 ring-primary",
+                            mine ? "right-0" : "left-0"
+                          )}
+                          aria-label="Explain message with AI"
+                          data-explore-tutorial="explain-button"
+                          onClick={() =>
+                            onExplainMessage({
+                              id: msg.id,
+                              body: msg.body,
+                              authorName: msg.authorName,
+                              attachmentNames: msg.attachments.map(
+                                (a) => a.name
+                              ),
+                            })
+                          }
+                        >
+                          <Sparkles className="size-3.5" strokeWidth={2.25} />
+                        </Button>
+                      ) : null}
                     </div>
                   ) : null}
                   {(msg.pending || msg.failed) && (
@@ -618,14 +646,38 @@ export default function ChatMessageList({
                           : "text-muted-foreground"
                       )}
                     >
-                      {msg.failed ? "Failed" : "Sending…"}
+                      {msg.failed ? "Not sent" : "Sending…"}
                     </span>
                   )}
                   {hasAttachments ? (
-                    <ChatAttachments
-                      attachments={msg.attachments}
-                      mine={mine}
-                    />
+                    msg.body ? (
+                      <ChatAttachments
+                        attachments={msg.attachments}
+                        mine={mine}
+                      />
+                    ) : (
+                      <MessageActionsMenu
+                        canExplain={Boolean(onExplainMessage && !msg.pending)}
+                        canReact={canReact}
+                        canEdit={false}
+                        canDelete={canDelete}
+                        onExplain={() =>
+                          onExplainMessage?.({
+                            id: msg.id,
+                            body: msg.body,
+                            authorName: msg.authorName,
+                            attachmentNames: msg.attachments.map((a) => a.name),
+                          })
+                        }
+                        onReact={() => setReactPickerFor(msg.id)}
+                        onDelete={() => onRequestDeleteMessage?.(msg.id)}
+                      >
+                        <ChatAttachments
+                          attachments={msg.attachments}
+                          mine={mine}
+                        />
+                      </MessageActionsMenu>
+                    )
                   ) : null}
                   {reactions.length > 0 ? (
                     <div
@@ -665,76 +717,6 @@ export default function ChatMessageList({
                       })}
                     </div>
                   ) : null}
-                  {!msg.body && (onExplainMessage || canReact || canDelete) && !msg.pending ? (
-                    <div className="relative flex flex-wrap items-center gap-1">
-                      {canReact ? (
-                        <div
-                          ref={showReactPicker ? reactPickerRef : undefined}
-                          className="relative"
-                        >
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 gap-1 px-2 text-xs text-muted-foreground"
-                            aria-label="Add reaction"
-                            aria-expanded={showReactPicker}
-                            onClick={() =>
-                              setReactPickerFor(
-                                showReactPicker ? null : msg.id
-                              )
-                            }
-                          >
-                            <SmilePlus className="size-3" />
-                            React
-                          </Button>
-                          {showReactPicker ? (
-                            <div className="absolute bottom-full left-0 z-40 mb-1">
-                              <EmojiPicker
-                                label="React to message"
-                                onSelect={(emoji) => {
-                                  setReactPickerFor(null)
-                                  void onToggleReaction?.(msg.id, emoji)
-                                }}
-                              />
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
-                      {onExplainMessage ? (
-                        <Button
-                          type="button"
-                          size="sm"
-                          className="btn-brand-gradient h-7 gap-1.5 border-transparent px-2.5 text-xs text-white shadow-sm hover:brightness-110"
-                          onClick={() =>
-                            onExplainMessage({
-                              id: msg.id,
-                              body: msg.body,
-                              authorName: msg.authorName,
-                              attachmentNames: msg.attachments.map(
-                                (a) => a.name
-                              ),
-                            })
-                          }
-                        >
-                          <Sparkles className="size-3.5" strokeWidth={2.25} />
-                          Explain
-                        </Button>
-                      ) : null}
-                      {canDelete ? (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 gap-1 px-2 text-xs text-destructive"
-                          onClick={() => onRequestDeleteMessage?.(msg.id)}
-                        >
-                          <Trash2 className="size-3" />
-                          Delete
-                        </Button>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </>
               )}
             </div>
@@ -742,6 +724,32 @@ export default function ChatMessageList({
         )
       })}
       <div ref={bottomRef} aria-hidden />
+
+      <Dialog
+        open={reactPickerFor != null}
+        onOpenChange={(open) => {
+          if (!open) setReactPickerFor(null)
+        }}
+      >
+        <DialogContent
+          showCloseButton
+          className="w-auto max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 shadow-none ring-0 sm:max-w-none"
+          overlayClassName="bg-black/25"
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>Add reaction</DialogTitle>
+            <DialogDescription>Choose an emoji for this message.</DialogDescription>
+          </DialogHeader>
+          <EmojiPicker
+            label="React to message"
+            onSelect={(emoji) => {
+              const id = reactPickerFor
+              setReactPickerFor(null)
+              if (id) void onToggleReaction?.(id, emoji)
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

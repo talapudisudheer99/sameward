@@ -7,7 +7,7 @@ import { LayoutTemplate } from "lucide-react"
 import CreateWorkSpaceDialog from "@/components/dialogs/workspace/create-work-space-dialog"
 import Loader from "@/components/sharable/loader"
 import WorkspaceList from "@/components/workspace/workspace-list"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useGetWorkspacesQuery } from "@/store/api/workspace/workspaces-api"
 
@@ -16,11 +16,35 @@ export default function WorkspacePage() {
 
   // RTK Query fires GET /api/workspaces on mount, caches, and auto-refetches
   // after createWorkspace invalidates the LIST tag.
-  const { data, isLoading } = useGetWorkspacesQuery()
+  const { data, isLoading, isError, refetch, isFetching } =
+    useGetWorkspacesQuery()
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (isLoading) {
     return <Loader fullPage />
+  }
+
+  if (isError) {
+    return (
+      <section className="bg-brand-wash flex min-h-[70vh] flex-col items-center justify-center px-4">
+        <div className="flex w-full max-w-md flex-col items-center text-center">
+          <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
+            Couldn’t load workspaces
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Check your connection, then try again.
+          </p>
+          <Button
+            type="button"
+            className="mt-6"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            {isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </div>
+      </section>
+    )
   }
 
   const workspaces = data?.workspaces ?? []

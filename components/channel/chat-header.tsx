@@ -6,6 +6,7 @@ import {
   Hash,
   Lock,
   MessageSquare,
+  MoreHorizontal,
   Pencil,
   Sparkles,
   Trash2,
@@ -15,6 +16,11 @@ import {
 
 import OverflowText from "@/components/sharable/overflow-text"
 import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import type { ChannelListItem } from "@/lib/types/channel/channel-types"
 
 type ChatHeaderProps = {
@@ -55,6 +61,9 @@ export default function ChatHeader({
     : channel.visibility === "private"
       ? Lock
       : Hash
+
+  const showMobileManage =
+    !isDm && canManage && Boolean(onRename || (onDelete && !channel.isDefault))
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
@@ -135,6 +144,51 @@ export default function ChatHeader({
             <Users className="size-4" />
           </Button>
         ) : null}
+
+        {showMobileManage ? (
+          <Popover>
+            <PopoverTrigger
+              render={
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="sm:hidden"
+                  aria-label="Channel actions"
+                />
+              }
+            >
+              <MoreHorizontal className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent
+              side="bottom"
+              align="end"
+              className="w-44 rounded-xl border border-border bg-card p-1 shadow-md"
+            >
+              {onRename ? (
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-muted"
+                  onClick={onRename}
+                >
+                  <Pencil className="size-3.5" />
+                  Rename
+                </button>
+              ) : null}
+              {onDelete && !channel.isDefault ? (
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-destructive hover:bg-muted"
+                  onClick={onDelete}
+                >
+                  <Trash2 className="size-3.5" />
+                  Delete
+                </button>
+              ) : null}
+            </PopoverContent>
+          </Popover>
+        ) : null}
+
         {!isDm && canManage && onRename ? (
           <Button
             type="button"

@@ -108,6 +108,7 @@ export default function ChatComposer({
   const [caret, setCaret] = useState(0)
   const [mentionIndex, setMentionIndex] = useState(0)
   const [mentionQueryKey, setMentionQueryKey] = useState("")
+  const [mentionSuppressed, setMentionSuppressed] = useState(false)
   const [emojiOpen, setEmojiOpen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -143,10 +144,11 @@ export default function ChatComposer({
   if (nextMentionQueryKey !== mentionQueryKey) {
     setMentionQueryKey(nextMentionQueryKey)
     setMentionIndex(0)
+    setMentionSuppressed(false)
   }
 
   const mentionMatches = useMemo<MentionOption[]>(() => {
-    if (!mentionQuery) return []
+    if (mentionSuppressed || !mentionQuery) return []
     const q = mentionQuery.query.toLowerCase().trim()
     const members = mentionCandidates
       .filter(
@@ -186,7 +188,7 @@ export default function ChatComposer({
       : []
 
     return [...allOption, ...members]
-  }, [mentionCandidates, mentionQuery])
+  }, [mentionCandidates, mentionQuery, mentionSuppressed])
 
   function clearPending() {
     for (const p of pending) {
@@ -321,7 +323,7 @@ export default function ChatComposer({
       }
       if (e.key === "Escape") {
         e.preventDefault()
-        setCaret(caret) // keep; clearing query by moving isn't needed
+        setMentionSuppressed(true)
         return
       }
     }
@@ -444,7 +446,8 @@ export default function ChatComposer({
           }}
           onKeyDown={onKeyDown}
           disabled={disabled || isSending}
-          placeholder={`Message ${channelName.startsWith("#") ? channelName : channelName}`}
+          aria-label={`Message ${channelName}`}
+          placeholder={`Message ${channelName}`}
           rows={1}
           maxLength={4000}
           className="max-h-40 min-h-[4.5rem] w-full resize-none overflow-hidden bg-transparent px-3 pt-3 pb-2 text-sm leading-relaxed outline-none placeholder:text-muted-foreground disabled:opacity-50"

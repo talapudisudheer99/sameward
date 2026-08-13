@@ -34,6 +34,14 @@ import type { ChannelAiRunner } from "@/lib/explore/ai-runners"
 
 type TabId = "summarize" | "catch-up" | "ask" | "draft" | "notes"
 
+type CatchUpOption = "last-visit" | "yesterday" | "7-days"
+
+const CATCH_UP_LABEL: Record<CatchUpOption, string> = {
+  "last-visit": "Since last visit",
+  yesterday: "Since yesterday",
+  "7-days": "Last 7 days",
+}
+
 type ChannelAiPanelProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -100,6 +108,12 @@ export default function ChannelAiPanel({
   const [question, setQuestion] = useState("")
   const [tone, setTone] = useState<AiTone>("concise")
   const [runnerBusy, setRunnerBusy] = useState(false)
+  const [catchUpOption, setCatchUpOption] = useState<CatchUpOption | null>(
+    null
+  )
+  const [pendingCatchUp, setPendingCatchUp] = useState<CatchUpOption | null>(
+    null
+  )
 
   const [summarize, { isLoading: summarizing }] = useAiSummarizeMutation()
   const [catchUp, { isLoading: catchingUp }] = useAiCatchUpMutation()
@@ -114,21 +128,25 @@ export default function ChannelAiPanel({
     setTab(next)
     setResult("")
     setMetaLine(null)
+    if (next !== "catch-up") {
+      setCatchUpOption(null)
+      setPendingCatchUp(null)
+    }
   }
 
   function applyResult(
     text: string,
     messageCount: number,
     truncated: boolean,
-    forTab: TabId
+    forTab: TabId,
+    rangeLabel?: string
   ) {
     setResultTab(forTab)
     setResult(text)
-    setMetaLine(
-      truncated
-        ? `${messageCount} messages · truncated`
-        : `${messageCount} messages`
-    )
+    const countPart = truncated
+      ? `${messageCount} messages · truncated`
+      : `${messageCount} messages`
+    setMetaLine(rangeLabel ? `${rangeLabel} · ${countPart}` : countPart)
   }
 
   async function runSummarize() {
@@ -158,7 +176,10 @@ export default function ChannelAiPanel({
     }
   }
 
-  async function runCatchUp(since: string, label: string) {
+  async function runCatchUp(option: CatchUpOption, since: string) {
+    const label = CATCH_UP_LABEL[option]
+    setCatchUpOption(option)
+    setPendingCatchUp(option)
     try {
       if (runner) {
         setRunnerBusy(true)
@@ -167,9 +188,9 @@ export default function ChannelAiPanel({
           data.text,
           data.meta.messageCount,
           data.meta.truncated,
-          "catch-up"
+          "catch-up",
+          label
         )
-        toast.success(`Catch-up: ${label}`)
         return
       }
       const data = await catchUp({ workspaceId, channelId, since }).unwrap()
@@ -177,12 +198,13 @@ export default function ChannelAiPanel({
         data.text,
         data.meta.messageCount,
         data.meta.truncated,
-        "catch-up"
+        "catch-up",
+        label
       )
-      toast.success(`Catch-up: ${label}`)
     } catch (err) {
       toast.error(aiErrorMessage(err))
     } finally {
+      setPendingCatchUp(null)
       setRunnerBusy(false)
     }
   }
@@ -355,50 +377,58 @@ export default function ChannelAiPanel({
               <p className="text-sm leading-relaxed text-muted-foreground">
                 What changed since a point in time.
               </p>
-              <div className="flex flex-wrap gap-2">
-                {lastVisitSince ? (
-                  <Button
-                    type="button"
-                    disabled={busy}
-                    className="btn-brand-gradient gap-1.5"
-                    onClick={() =>
-                      void runCatchUp(lastVisitSince, "since last visit")
-                    }
-                  >
-                    {catchingUp ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Clock3 className="size-4" />
-                    )}
-                    Since last visit
-                  </Button>
-                ) : null}
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={busy}
-                  className="gap-1.5"
-                  onClick={() =>
-                    void runCatchUp(sinceYesterday(), "since yesterday")
-                  }
-                >
-                  {catchingUp && !lastVisitSince ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Clock3 className="size-4" />
-                  )}
-                  Since yesterday
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={busy}
-                  onClick={() =>
-                    void runCatchUp(sinceDaysAgo(7), "last 7 days")
-                  }
-                >
-                  Last 7 days
-                </Button>
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Catch-up range"
+              >
+                {(
+                  [
+                    lastVisitSince
+                      ? {
+                          id: "last-visit" as const,
+                          since: lastVisitSince,
+                        }
+                      : null,
+                    {
+                      id: "yesterday" as const,
+                      since: sinceYesterday(),
+                    },
+                    {
+                      id: "7-days" as const,
+                      since: sinceDaysAgo(7),
+                    },
+                  ] as const
+                )
+                  .filter(
+                    (opt): opt is { id: CatchUpOption; since: string } =>
+                      opt !== null
+                  )
+                  .map(({ id, since }) => {
+                    const selected = catchUpOption === id
+                    const loading = pendingCatchUp === id
+                    return (
+                      <Button
+                        key={id}
+                        type="button"
+                        variant={selected ? "default" : "outline"}
+                        disabled={busy}
+                        aria-pressed={selected}
+                        className={cn(
+                          "gap-1.5",
+                          selected && "btn-brand-gradient"
+                        )}
+                        onClick={() => void runCatchUp(id, since)}
+                      >
+                        {loading ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Clock3 className="size-4" />
+                        )}
+                        {CATCH_UP_LABEL[id]}
+                      </Button>
+                    )
+                  })}
               </div>
             </div>
           ) : null}
@@ -411,6 +441,7 @@ export default function ChannelAiPanel({
                 disabled={busy}
                 rows={4}
                 maxLength={2000}
+                aria-label="Ask about this channel"
                 placeholder="Ask about this channel…"
                 className={cn(
                   "w-full resize-none rounded-xl border border-border bg-transparent px-3.5 py-3 text-[15px] leading-relaxed outline-none",
@@ -500,7 +531,7 @@ export default function ChannelAiPanel({
 
           {result ? (
             <div
-              key={result.slice(0, 24)}
+              key={`${resultTab}-${catchUpOption ?? ""}-${metaLine ?? ""}`}
               className="animate-in space-y-2 border-t border-border/60 pt-4 duration-200 fade-in-0"
             >
               <div className="flex items-center justify-between gap-2">

@@ -80,7 +80,6 @@ export default function ResetPasswordPage() {
       }
 
       setError("root.serverError", { type: "server", message })
-      toast.error(message)
     }
   }
 

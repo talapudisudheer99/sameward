@@ -76,7 +76,6 @@ function LoginForm() {
       }
 
       setError("root.serverError", { type: "server", message })
-      toast.error(message)
     }
   }
 

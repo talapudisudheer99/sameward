@@ -35,7 +35,8 @@ export type AcceptInviteViewState =
       kind: "wrong_user"
       invite: InvitePreview
       currentEmail: string
-      switchAccountHref: string
+      onSwitchAccount: () => void
+      isSwitching?: boolean
     }
   | {
       kind: "ready"
@@ -194,12 +195,16 @@ export default function AcceptInviteCard({ state }: AcceptInviteCardProps) {
         description={`This invite is for ${invite.email}, but you’re signed in as ${state.currentEmail}. Sign out and sign in with the invited email.`}
         actions={
           <div className="flex flex-col items-center gap-3 sm:flex-row">
-            <Link
-              href={state.switchAccountHref}
-              className={cn(buttonVariants({ size: "lg" }), "h-10 px-5")}
+            <Button
+              size="lg"
+              className="h-10 px-5"
+              disabled={state.isSwitching}
+              onClick={state.onSwitchAccount}
             >
-              Sign in as {invite.email}
-            </Link>
+              {state.isSwitching
+                ? "Switching…"
+                : `Sign in as ${invite.email}`}
+            </Button>
             <Link
               href="/workspace"
               className={cn(

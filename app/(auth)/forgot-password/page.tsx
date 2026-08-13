@@ -49,7 +49,6 @@ export default function ForgotPasswordPage() {
           type: "server",
           message,
         })
-        toast.error(message)
         return
       }
 
@@ -60,7 +59,6 @@ export default function ForgotPasswordPage() {
         type: "network",
         message,
       })
-      toast.error(message)
     }
   }
 
