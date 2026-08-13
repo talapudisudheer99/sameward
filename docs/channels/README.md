@@ -1,7 +1,7 @@
 # Channels & realtime chat — module reference
 
-**Status:** ✅ **Shipped + E2E verified** (Phase 5+6 · Aug 9, 2026) · unread · 1:1 DMs · @mentions (Aug 11)  
-**Customer goal:** Inside a workspace, the team has a **place to talk live** — public/private channels, 1:1 DMs, unread catch-up, @mentions, text + limited files, typing, and basic presence.
+**Status:** ✅ **Shipped** (Phase 5+6) · unread · DMs · mentions · edit/delete · reactions · **link previews** · DnD · See more  
+**Customer goal:** Inside a workspace, the team has a **place to talk live** — channels, 1:1 DMs, unread catch-up, @mentions, text + limited files, typing, presence, and link cards.
 
 **PO locks (Jul 31, 2026)**
 1. **Realtime:** separate **Socket.IO** service (not only REST; not sockets-only CRUD)
@@ -44,11 +44,13 @@ This folder is the **single source of truth** for the channels module (same idea
 | Mentions | `mentionedUserIds` · composer `@` autocomplete · transcript highlight |
 | Messages | Persist via REST · live fan-out via Socket.IO · edit / soft-delete |
 | Reactions | Allowlisted emoji toggle · chips under messages · live via `message:update` |
-| Files | Images + PDF · size/count/type limits (see VISION) · light lightbox |
+| Files | Images + PDF · size/count/type limits · light lightbox · **channel drag-and-drop** |
+| Link previews | OG cards on send (up to 2) · composer live preview · card above text in transcript |
+| Long messages | Collapse after ~500 characters with **See more** |
 | Live | Typing indicators · basic online presence |
 | Mobile | Full-screen channel picker via header **←** (`?list=1`) |
 | Safety | Workspace membership always · private/DM → channel membership · non-access → **404** |
-| AI | Path A panel + explain — see [`docs/ai/`](../ai/README.md) |
+| AI | Path A panel + explain + link reading — see [`docs/ai/`](../ai/README.md) |
 
 ## What v1 does **not** cover (deferred)
 

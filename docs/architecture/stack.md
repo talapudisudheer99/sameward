@@ -6,7 +6,7 @@
 |------------|------|---------------|----------------------|
 | **React 19** | UI library | Industry standard, component model, hooks | Vanilla DOM is too low-level for SaaS UI |
 | **TypeScript** | Type safety | Contracts between UI ↔ API ↔ DB | Plain JS scales poorly in teams |
-| **Next.js App Router** | Framework | Routing, RSC, layouts, Route Handlers, middleware | CRA is deprecated; Vite SPA alone lacks full-stack patterns we need to learn |
+| **Next.js App Router** | Framework | Routing, RSC, layouts, Route Handlers, `proxy.ts` edge gate | CRA is deprecated; Vite SPA alone lacks full-stack patterns we need to learn |
 | **Tailwind CSS** | Styling | Utility-first, fast iteration, design tokens | Heavy CSS modules alone slower for learning velocity |
 | **shadcn/ui** | Accessible primitives | Own the code (not a black-box npm UI kit) | MUI/Chakra hide too much; reinventing a11y is costly |
 
@@ -29,7 +29,7 @@
 |------------|------|-----|
 | **Next.js Route Handlers** (`app/api/**`) | REST API | Same deploy unit as frontend; teaches full-stack Next |
 | **MongoDB** | Database | Flexible documents for nested collaboration data; common in Node stacks |
-| **Validation layer** (e.g. Zod — when we add it) | Request safety | Never trust client input |
+| **Zod** | Request / form validation | Never trust client input — used on auth, workspaces, channels, AI, uploads |
 
 ### MongoDB vs the original Supabase/Postgres idea
 
@@ -70,14 +70,20 @@ Spec: [`docs/channels/SOCKETS.md`](../channels/SOCKETS.md).
 | **MongoDB Atlas** | Database |
 | **AWS S3** | Message file storage |
 
-**Topology + folder boundaries:** [deploy.md](./deploy.md) (Option B).  
-Vercel is **not** required for v1 production; optional later for previews only.
+**Topology + folder boundaries:** [deploy.md](./deploy.md) (Option B — Railway for Next + Socket.IO).  
+We do **not** use Vercel for the production TeamHub app (WebSockets need an always-on server).
 
-## Third-party (only when earned)
+## Third-party (what we actually use)
 
-Examples: OpenAI/Gemini, Cloudinary, Resend, Stripe test mode, GitHub OAuth.
+| Service | Role |
+|---------|------|
+| **OpenAI** | Channel AI (Path A) |
+| **Resend** | Auth emails |
+| **Google OAuth** | Sign in with Google |
+| **AWS S3** | Chat attachments |
+| **MongoDB Atlas** | Database |
 
-Always ask: *What problem does buying this solve that we shouldn’t build?*
+Always ask before adding more: *What problem does buying this solve that we shouldn’t build?*
 
 ---
 

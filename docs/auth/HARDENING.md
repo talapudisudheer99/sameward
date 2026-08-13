@@ -20,7 +20,7 @@ Phase **2B**. All items done. Full mentoring log was retired; this is the lastin
 - Google = real OAuth; password optional (Approach 3).
 - Forgot-password can set first password for Google-only users.
 - Audit = Mongo + console in non-production (Option C).
-- Real Vercel deploy deferred to Phase 8.
+- Railway production deploy is Phase 8 (see [deploy.md](../architecture/deploy.md)).
 
 ---
 

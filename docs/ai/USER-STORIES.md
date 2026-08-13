@@ -20,9 +20,9 @@ Format: **As a… I want… So that…**
 **So that** I grasp the thread without reading every line.
 
 **Acceptance**
-- [ ] Entry from channel AI panel
-- [ ] Uses last N messages (capped); empty channel → clear empty state
-- [ ] Non-access → **404**
+- [x] Entry from channel AI panel
+- [x] Uses last N messages (capped); empty channel → clear empty state
+- [x] Non-access → **404**
 
 ---
 
@@ -33,9 +33,9 @@ Format: **As a… I want… So that…**
 **So that** I only review what I missed.
 
 **Acceptance**
-- [ ] `since` required (ISO); presets set it client-side
-- [ ] Only messages with `createdAt >= since`
-- [ ] Truncation note when window exceeds caps
+- [x] `since` required (ISO); presets set it client-side
+- [x] Only messages with `createdAt >= since`
+- [x] Truncation note when window exceeds caps
 
 ---
 
@@ -46,8 +46,8 @@ Format: **As a… I want… So that…**
 **So that** I get grounded answers (or “not in the provided messages”).
 
 **Acceptance**
-- [ ] Question required; answer cites only provided context
-- [ ] Private isolation identical to chat
+- [x] Question required; answer cites only provided context
+- [x] Private isolation identical to chat
 
 ---
 
@@ -58,9 +58,9 @@ Format: **As a… I want… So that…**
 **So that** cryptic lines make sense from nearby talk.
 
 **Acceptance**
-- [ ] Action on a message in the transcript
-- [ ] Loads target + ±K neighbors in same channel
-- [ ] Wrong channel / missing → **404**
+- [x] Action on a message in the transcript
+- [x] Loads target + ±K neighbors in same channel
+- [x] Wrong channel / missing → **404**
 
 ---
 
@@ -71,8 +71,8 @@ Format: **As a… I want… So that…**
 **So that** I can edit and Send myself.
 
 **Acceptance**
-- [ ] Draft inserted into composer — **never** auto-POSTed
-- [ ] Optional tone hint
+- [x] Draft inserted into composer — **never** auto-POSTed
+- [x] Optional tone hint
 
 ---
 

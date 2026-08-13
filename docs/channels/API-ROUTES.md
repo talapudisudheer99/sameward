@@ -23,8 +23,10 @@ Proxy is **not** enough — enforce membership in handlers.
 | DELETE | `.../channels/:channelId/messages/:messageId` | author \| owner \| admin | Soft delete → tombstone | ✅ |
 | POST | `.../channels/:channelId/messages/:messageId/reactions` | allowed | Toggle allowlisted emoji reaction | ✅ |
 | POST | `.../channels/:channelId/uploads` | allowed | Batch presign PUT for attachments | ✅ (S3 presigned) |
+| POST | `.../channels/:channelId/link-preview` | allowed | Composer live OG unfurl (no message write) | ✅ |
 
-Live delivery is **not** REST — see [SOCKETS.md](./SOCKETS.md).
+Live delivery is **not** REST — see [SOCKETS.md](./SOCKETS.md).  
+Link cards on **send** are resolved inside message POST/PATCH — see [LINK-PREVIEWS.md](./LINK-PREVIEWS.md).
 
 ---
 

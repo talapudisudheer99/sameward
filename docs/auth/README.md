@@ -13,7 +13,7 @@ If you need to debug, extend, or explain auth in an interview — start here.
 | [FRONTEND.md](./FRONTEND.md) | Pages, components, forms |
 | [LIB-AND-MODELS.md](./LIB-AND-MODELS.md) | `lib/auth/*`, Mongoose models, Zod schemas |
 | [HARDENING.md](./HARDENING.md) | F1–F7 what we built and why |
-| [PRODUCTION.md](./PRODUCTION.md) | Env vars & deploy checklist (before Phase 8) |
+| [PRODUCTION.md](./PRODUCTION.md) | Env vars & go-live checklist (before Railway deploy in Phase 8) |
 | [DEBUGGING.md](./DEBUGGING.md) | Common failures and how to trace them |
 
 **Related (not auth-specific):**

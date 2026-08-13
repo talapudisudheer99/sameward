@@ -1,19 +1,19 @@
-# Phase 6 — Realtime (Socket.IO) — folded into Channels
+# Phase 6 — Realtime (Socket.IO) — part of Channels
 
-**Status:** 📦 **Merged into Channels v1** for chat (Jul 31, 2026)  
+**Status:** ✅ **Shipped** for chat (folded into Channels)  
 **Prev:** [← Phase 5](../05-collaboration-core/README.md) · **Next:** [Phase 7 — AI →](../07-ai-integrations/README.md)
 
-Realtime messaging, typing, and presence for **channels** are specified and will be built under:
+Live messaging, typing, and presence for **channels** are built under:
 
 **[`docs/channels/`](../../channels/README.md)** — especially [SOCKETS.md](../../channels/SOCKETS.md)
 
-This phase stub remains so the learning roadmap numbering stays clear. Do **not** start a second parallel “Phase 6 only” build.
+This phase page stays so the learning roadmap numbering stays clear. Do **not** start a second parallel “Phase 6 only” build.
 
-### Still “Phase 6-later” (after channels v1)
+### Still later (not built)
 
-- Redis adapter for multi-instance Socket.IO
-- Notification center / push
-- Realtime for docs/boards presence (if needed)
+- Redis adapter for multi-instance Socket.IO  
+- Notification center / push  
+- Realtime for docs/boards (docs/boards not built yet)  
 
 ---
 

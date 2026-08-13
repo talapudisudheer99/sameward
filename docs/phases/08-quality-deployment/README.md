@@ -1,85 +1,129 @@
-# Phase 8 — Quality, Performance & Deployment
+# Phase 8 — Quality, performance & deployment
 
-**Status:** ⬜ **Not started** — **next on the roadmap** (Path A + chat E2E closed Aug 11)  
-**Prev:** [← Phase 7](../07-ai-integrations/README.md) · **Next:** Profile v1 (PO locks in [progress](../../tracking/progress.md)) · Path B AI later
+**Status:** ⬜ **Not started** — next on the roadmap after Path A chat/AI  
+**Prev:** [← Phase 7](../07-ai-integrations/README.md) · **Deploy lock:** [docs/architecture/deploy.md](../../architecture/deploy.md)
 
 ---
 
-## 1. Business requirement
+## 1. What this phase is for
 
-Production software must be **testable**, **fast enough**, and **shippable**. GitHub is the collaboration hub; Vercel ships Next.js.
+Before TeamHub feels “real,” we need three things:
+
+1. **Tests** — important flows don’t break quietly  
+2. **Performance** — pages stay snappy as features grow  
+3. **Deploy** — push to GitHub → app runs live on **Railway**
+
+We already chose **Railway** for production (not Vercel). Socket.IO needs a server that stays online; Railway fits that. Details: [deploy.md](../../architecture/deploy.md).
+
+---
 
 ## 2. What you will build
 
-- Jest + React Testing Library for critical flows
-- Performance passes: lazy routes, image hygiene, memo where justified
-- GitHub repo hygiene + Vercel deploy with env vars
-- Basic CI mindset (lint/typecheck/test on PR — stretch)
-
-## 3. Architecture
-
-```
-Feature code
-  → Unit/integration tests
-  → git push GitHub
-  → Railway: Next.js service (UI + REST)
-  → Railway: Socket.IO service (server/realtime)
-  → Env: MONGODB_URI, APP_URL, REALTIME URLs/secrets, Google/Resend/S3
-     (see docs/auth/PRODUCTION.md + docs/architecture/deploy.md)
-  → Production URL
-```
-
-**PO deploy lock (Option B):** [docs/architecture/deploy.md](../../architecture/deploy.md) — one platform, **two processes/folders**.
-
-## 4. Why these technologies
-
-| Tool | Why |
-|------|-----|
-| Jest + RTL | Test user behavior, not implementation trivia |
-| Vercel | First-class Next hosting |
-| GitHub | Industry default for code + PR review |
-
-## 5. Concepts covered
-
-- [ ] Unit vs integration tests
-- [ ] Mocking fetch / RTK Query
-- [ ] Code splitting / dynamic import
-- [ ] Debounce / virtualization (as needed)
-- [ ] Env configuration per environment
-- [ ] Deployment rollback mindset
-
-## 6. Folder structure (target)
-
-```
-__tests__/ or **/*.test.tsx beside features
-.github/workflows/ci.yml   # optional stretch
-```
-
-## 7. Backend (Next + MongoDB)
-
-- Production MongoDB Atlas (or similar)
-- Connection pooling considerations
-- Never commit `.env` secrets
-
-## 8. Micro-tasks
-
-Mentor assigns near the end — but we can **create the GitHub remote earlier** for backup (see progress tracker).
-
-## 9. Testing & production notes
-
-- `typecheck` + `lint` + tests green before merge
-- Monitor bundle size regressions mentally as features grow
-
-## 10. Interview questions (preview)
-
-1. What do you test with RTL vs what you don’t?
-2. Explain your deploy pipeline from PR to production.
-3. How do you handle secrets in Vercel?
-
-## 11. Definition of done
-
-App deployed from GitHub → Vercel; core flows covered by tests; you can narrate architecture in an interview end-to-end.
+- Tests for critical user flows (Jest + React Testing Library)
+- Light performance work (lazy routes, sensible images, memo only when needed)
+- GitHub as the source of truth for code
+- **Railway:** two services from one repo  
+  - **web** — Next.js (UI + REST `app/api`)  
+  - **realtime** — Socket.IO (`server/realtime`)
+- Env vars set in Railway (Mongo, auth, email, S3, realtime URLs/secrets)
+- Optional: CI that runs lint / typecheck / tests on each PR
 
 ---
 
-[Docs hub](../../README.md)
+## 3. How deploy works
+
+```text
+You push code to GitHub
+        │
+        ▼
+Railway builds & runs two services
+        │
+        ├─ web (Next.js)     → https://your-app…
+        │     UI pages + REST APIs
+        │
+        └─ realtime (Socket.IO) → wss://your-realtime…
+              live messages, typing, presence
+
+Both talk to MongoDB Atlas.
+Uploads use AWS S3. Email uses Resend. Login can use Google.
+Secrets live in Railway’s env settings — never in git.
+```
+
+Full picture and folder rules: [deploy.md](../../architecture/deploy.md)  
+Auth env checklist: [auth/PRODUCTION.md](../../auth/PRODUCTION.md)
+
+---
+
+## 4. Why these tools
+
+| Tool | Why we use it |
+|------|----------------|
+| Jest + RTL | Test what the user sees and does |
+| GitHub | Code history, PRs, team review |
+| **Railway** | Always-on host for Next **and** Socket.IO (our locked choice) |
+
+We are **not** deploying the production TeamHub app on Vercel. Vercel’s serverless model is a poor fit for long-lived WebSockets. Railway keeps both processes alive on one platform.
+
+---
+
+## 5. Concepts to learn
+
+- [ ] Unit vs integration tests (what to mock, what not to)
+- [ ] Mocking fetch / RTK Query in tests
+- [ ] Code splitting / `dynamic` import when a page is heavy
+- [ ] Env vars per environment (local vs Railway prod)
+- [ ] How you’d roll back a bad deploy (redeploy previous commit)
+
+---
+
+## 6. Suggested folders
+
+```text
+__tests__/  or  **/*.test.tsx next to features
+.github/workflows/ci.yml   # optional — lint, typecheck, test on PR
+```
+
+---
+
+## 7. Backend notes (Mongo + Railway)
+
+- Use a production MongoDB Atlas cluster (or equivalent)
+- Connection pooling is handled by our `connectDB` cache — don’t open a new connection per request blindly
+- Never commit `.env` files; copy names from `.env.example` into Railway
+
+---
+
+## 8. Micro-tasks
+
+Mentor assigns near the end of the project. You can connect the GitHub remote earlier for backup (see [progress](../../tracking/progress.md)).
+
+---
+
+## 9. Before you call it “shipped”
+
+- [ ] `npm run typecheck` and `npm run lint` pass  
+- [ ] Critical tests pass  
+- [ ] Railway **web** and **realtime** both healthy  
+- [ ] Smoke: signup/login, open a channel, send a message, see it live on a second browser  
+- [ ] Smoke: verify/reset email links use the production `APP_URL`
+
+---
+
+## 10. Interview questions (preview)
+
+1. What do you test with RTL, and what do you leave alone?  
+2. Walk through deploy: PR → GitHub → Railway (web + realtime).  
+3. Where do secrets live, and why not in the repo?  
+4. Why Railway instead of serverless for Socket.IO?
+
+---
+
+## 11. Definition of done
+
+- App is live from **GitHub → Railway** (Next web + Socket.IO realtime)  
+- Core flows have tests  
+- You can explain the architecture end-to-end in an interview  
+
+---
+
+[Docs hub](../../README.md) · [Deploy topology](../../architecture/deploy.md)

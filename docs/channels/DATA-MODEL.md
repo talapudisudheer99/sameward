@@ -1,6 +1,6 @@
 # Data model — Channels & messages
 
-## Collections (planned)
+## Collections (shipped)
 
 ### `channels`
 

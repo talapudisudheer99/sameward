@@ -1,7 +1,9 @@
 # Phase 4 — State & Data Layer (Redux Toolkit + RTK Query)
 
-**Status:** ⬜ Not started  
+**Status:** ✅ Done — RTK Query is used across the app  
 **Prev:** [← Phase 3](../03-workspaces-members/README.md) · **Next:** [Phase 5 — Collaboration →](../05-collaboration-core/README.md)
+
+> Store + API slices are live for workspaces, channels, AI, profiles, settings, and uploads. Phase 8 will add more tests around this layer.
 
 ---
 

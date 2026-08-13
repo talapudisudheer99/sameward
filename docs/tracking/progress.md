@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 8 — Quality & deploy, or **AI V1.5** next |
-| **Current feature** | AI Path A V1 ✅ · **V1 link-context ✅** · V1.5 locked |
-| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI |
-| **Last updated** | 2026-08-13 |
+| **Current phase** | Phase 8 — Quality & deploy (**next**) |
+| **Current feature** | Product V1 chat + AI Path A ✅ (incl. link-context + OG previews) |
+| **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI · Railway (deploy lock) |
+| **Last updated** | 2026-08-14 |
 
 ## Phase status
 
@@ -20,12 +20,13 @@
 | 2 | Authentication (core) | ✅ Done | Email/password, Google, forgot/reset, sessions, proxy |
 | 2B | Auth hardening | ✅ Done | F1–F7 — [docs/auth](../auth/README.md) |
 | 3 | Workspaces & members | ✅ **v1 shipped + E2E verified** | [`docs/workspaces/`](../workspaces/README.md) |
-| 4 | State & data layer | 🟡 Partial | RTK used across workspaces/channels/AI; deepen in Phase 8 tests |
-| 5 | Collaboration core | ✅ **Chat v1 shipped + E2E verified** | Channels + REST + realtime + S3; unread + 1:1 DMs + @mentions; edit/delete + reactions. [`docs/channels/`](../channels/README.md) |
-| 6 | Realtime | ✅ **Text chat realtime done** | Socket auth, live append, typing, presence (T13–T18); Redis multi-instance later |
-| 7 | AI & integrations | ✅ **Path A V1 + link-context** · 🎯 **V1.5 locked** | US-AI10 shipped Aug 13 · V1.5 = large Catch up + Ask+sources + cache · [`docs/ai/`](../ai/README.md) |
-| 8 | Quality & deployment | ⬜ Deferred | After Profile v1 — [phase README](../phases/08-quality-deployment/README.md) |
-| — | **Profile v1** | ✅ **E2E verified** | [`docs/profiles/`](../profiles/README.md) |
+| 4 | State & data layer | ✅ **In use** | RTK Query for workspaces, channels, AI, profiles, settings, uploads |
+| 5 | Collaboration core | ✅ **Chat v1 shipped** | Channels + REST + realtime + S3 · unread · DMs · mentions · edit/delete · reactions · link previews · DnD · See more · [`docs/channels/`](../channels/README.md) |
+| 6 | Realtime | ✅ **Chat realtime done** | Socket auth, live messages, typing, presence; Redis multi-instance later |
+| 7 | AI & integrations | ✅ **Path A + link-context** | Six capabilities + AI-time link reading · V1.5 planned later · [`docs/ai/`](../ai/README.md) |
+| 8 | Quality & deployment | ⬜ **Next** | Tests + live Railway ship — [phase README](../phases/08-quality-deployment/README.md) |
+| — | **Profile v1** | ✅ **Shipped** | [`docs/profiles/`](../profiles/README.md) |
+| — | **Settings v1** | ✅ **Shipped** | Theme · password · sessions (max 2) · [`docs/settings/`](../settings/README.md) |
 
 ## Channels v1 — PO locks (Jul 31)
 
@@ -38,7 +39,7 @@
 
 ## Profiles — PO locks (Aug 11)
 
-Thin **Profile v1** after Phase 8 (not LinkedIn):
+Thin **Profile v1** (shipped) — not LinkedIn:
 
 1. Fields: display name · avatar · title/role · short bio · optional 1–2 links + timezone  
 2. Surfaces: edit own profile · teammate card from channel members / message click  
@@ -93,8 +94,9 @@ Thin **Profile v1** after Phase 8 (not LinkedIn):
 | 2026-08-12 | AI understanding architecture | Plain-English catch-up / large-history direction · `docs/ai/CONVERSATION-UNDERSTANDING.md` |
 | 2026-08-12 | AI V1.5 locked | Large Catch up + contextual Ask+sources + cache · V3 folded into V1.5 · V2 later |
 | 2026-08-13 | Chat polish + push | Context-menu message actions · support contact · branded emails · pushed `5086690` |
-| 2026-08-13 | AI V1 link-context docs | US-AI10 · `docs/ai/LINK-CONTEXT.md` · E2E S14 · code deferred |
-| 2026-08-13 | AI V1 link-context shipped | SSRF-safe AI-time URL excerpts · verify script · meta in panel/Explain |
+| 2026-08-13 | AI V1 link-context docs | US-AI10 · `docs/ai/LINK-CONTEXT.md` · E2E S14 |
+| 2026-08-13 | AI V1 link-context + OG previews | SSRF-safe AI excerpts · chat/composer OG cards · DnD · See more · pushed `33f8e39` |
+| 2026-08-14 | Docs: Railway + truth sync | Phase 8 / deploy docs = Railway; hub & progress match shipped product |
 
 ## GitHub
 

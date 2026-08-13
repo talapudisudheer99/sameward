@@ -1,7 +1,9 @@
 # Phase 0 — Foundation
 
-**Status:** 🔄 In progress  
+**Status:** ✅ Done  
 **Prev:** — · **Next:** [Phase 1 — Product shell →](../01-product-shell/README.md)
+
+> Learning notes below stay useful. The foundation work is finished.
 
 ---
 

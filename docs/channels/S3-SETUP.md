@@ -3,7 +3,7 @@
 Same idea as Google Cloud Console for OAuth: you create the account resources once, put secrets in `.env.local`, never commit them.
 
 **PO lock:** AWS S3 for TeamHub channel attachments (v1).  
-We only **install/wire** this in the **files slice** — you can set up the account now and paste values when ready.
+Account setup below; **upload code is shipped** (presign → PUT → message attachments).
 
 ## Setup status
 
@@ -14,8 +14,9 @@ We only **install/wire** this in the **files slice** — you can set up the acco
 | CORS `localhost:3000` | ✅ |
 | IAM user `teamhub-ai-dev` | ✅ |
 | `.env.local` (`AWS_REGION`, `AWS_S3_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) | ✅ (secrets stay local) |
+| Presign API + composer upload + transcript display | ✅ Shipped |
 
-SDK install + presigned upload code = **files slice** (not yet).
+SDK + presigned upload live in `lib/storage/s3.ts` and channel upload routes.
 
 ---
 

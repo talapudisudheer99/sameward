@@ -1,7 +1,7 @@
 # AI Knowledge Assistant — module reference
 
-**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · ✅ **V1 link-context (US-AI10) shipped** (Aug 13) · 🎯 **V1.5** next (large-history Catch up + contextual Ask + cache)  
-**Customer goal:** Inside a channel you can already access, **understand** talk — including after a long absence — without the AI ever writing to the workspace for you.
+**Status:** ✅ **Path A shipped** (six capabilities + E2E) · ✅ **Link-context shipped** (AI reads public URLs) · ⬜ **V1.5 later** (large Catch up / Ask sources / cache)  
+**Customer goal:** Inside a channel you can already access, **understand** the talk — without the AI ever writing to the workspace for you.
 
 **PO locks (foundation · Aug 10)**
 1. **Path A only** — read-only knowledge assistant (no agents / tools that mutate data)
