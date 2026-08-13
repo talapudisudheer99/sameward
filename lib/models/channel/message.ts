@@ -121,6 +121,28 @@ const messageSchema = new Schema(
         message: "At most 20 reaction types per message",
       },
     },
+    /**
+     * Open Graph / link unfurl cards — filled on send/edit (SSRF-safe fetch).
+     * Empty when body has no public http(s) URLs or fetch failed.
+     */
+    linkPreviews: {
+      type: [
+        {
+          url: { type: String, required: true },
+          finalUrl: { type: String, required: true },
+          title: { type: String, required: true, maxlength: 200 },
+          description: { type: String, default: null, maxlength: 280 },
+          imageUrl: { type: String, default: null },
+          siteName: { type: String, default: null, maxlength: 120 },
+          faviconUrl: { type: String, default: null },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: (v: unknown[]) => Array.isArray(v) && v.length <= 2,
+        message: "At most 2 link previews per message",
+      },
+    },
   },
   { timestamps: true }
 )

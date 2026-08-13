@@ -43,16 +43,16 @@ With Path A:
 | 5 | AI responses never auto-persist as channel messages or docs |
 | 6 | AI stays **per channel** — no workspace-wide mega-summary (V1–V2) |
 
-### V1 link-context locks (Aug 13, 2026) — docs locked · code next
+### V1 link-context locks (Aug 13, 2026) — ✅ shipped
 
 | # | Decision |
 |---|----------|
 | 1 | Shared `http(s)` URLs in the AI window are fetched **at AI time** into short text excerpts |
-| 2 | No message-send crawler; no OG preview cards in the transcript for this slice |
-| 3 | Caps + soft-fail; SSRF guards (see [LINK-CONTEXT.md](./LINK-CONTEXT.md)) |
+| 2 | No message-send AI crawler; OG preview cards are channels-owned ([LINK-PREVIEWS](../channels/LINK-PREVIEWS.md)) |
+| 3 | Caps + soft-fail; SSRF + DNS pin (see [LINK-CONTEXT.md](./LINK-CONTEXT.md)) |
 | 4 | Still Path A read-only; never auto-post |
 
-### V1.5 locks (Aug 12, 2026) — after link-context code
+### V1.5 locks (Aug 12, 2026) — next
 
 | # | Decision |
 |---|----------|
@@ -89,21 +89,21 @@ Link reading: [LINK-CONTEXT.md](./LINK-CONTEXT.md).
 - Large-history chunk → merge Catch up
 - Cached Catch-up / Summarize results
 - Docs/boards persistence module
-- Rich link preview cards in chat UI
+- Richer link preview UX (see channels [LINK-PREVIEWS](../channels/LINK-PREVIEWS.md) for shipped cards)
 
-### V1 link-context (docs locked · code next)
+### V1 link-context (shipped)
 
 **In scope**
 - Detect URLs in the authorized AI window
 - Fetch public page text → capped excerpts in the prompt
-- Soft-fail + SSRF-safe networking
-- Optional meta (links fetched / failed)
+- Soft-fail + SSRF-safe networking (DNS pin)
+- Meta (`linksFetched` / `linksFailed` / `linksAttempted`)
 
 **Still out**
 - Preview cards / unfurl UI
 - Auth-walled pages, PDF parse, background indexing
 
-### V1.5 (next after link-context)
+### V1.5 (next)
 
 **In scope**
 - Large-history Catch up (chunk → merge when needed)

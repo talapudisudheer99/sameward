@@ -88,9 +88,9 @@ Format: **As a… I want… So that…**
 
 ---
 
-## V1 link-context (docs locked · code next)
+## V1 link-context (shipped)
 
-See [LINK-CONTEXT.md](./LINK-CONTEXT.md). **Not started in code.**
+See [USER-STORIES.md](./USER-STORIES.md) US-AI10.
 
 ### US-AI10 — Read shared links for AI context
 
@@ -99,21 +99,21 @@ See [LINK-CONTEXT.md](./LINK-CONTEXT.md). **Not started in code.**
 **So that** answers reflect what we linked — not only the raw URL string.
 
 **Acceptance**
-- [ ] URLs extracted from the **authorized** AI message window only
-- [ ] Fetch runs **on AI request** (not on every chat send)
-- [ ] Cap URLs + excerpt size; timeouts; soft-fail → AI still runs on chat text
-- [ ] SSRF-safe fetch (no private IPs / metadata / weird schemes)
-- [ ] Optional response meta: links fetched / failed (no requirement for OG preview cards)
-- [ ] Private-channel isolation unchanged (**404** for outsiders)
-- [ ] AI still never auto-posts
+- [x] URLs extracted from the **authorized** AI message window only
+- [x] Fetch runs **on AI request** (not on every chat send)
+- [x] Cap URLs + excerpt size; timeouts; soft-fail → AI still runs on chat text
+- [x] SSRF-safe fetch (no private IPs / metadata / weird schemes)
+- [x] Response meta: links fetched / failed (OG cards are channels — see LINK-PREVIEWS)
+- [x] Private-channel isolation unchanged (**404** for outsiders)
+- [x] AI still never auto-posts
 
 **Out of this story**
-- Slack-style link preview cards in the transcript (later UX)
+- Chat OG unfurl polish beyond what channels already ship ([LINK-PREVIEWS](../channels/LINK-PREVIEWS.md))
 - Login-walled / paywalled content, PDFs, screenshots OCR
 
 ---
 
-## V1.5 stories (planned — after V1 link-context code)
+## V1.5 stories (planned — next after link-context)
 
 See [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md).
 

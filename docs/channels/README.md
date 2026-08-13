@@ -19,6 +19,7 @@ This folder is the **single source of truth** for the channels module (same idea
 | [USER-STORIES.md](./USER-STORIES.md) | PO stories + acceptance |
 | [E2E-FLOWS.md](./E2E-FLOWS.md) | Product + technical flows |
 | [DATA-MODEL.md](./DATA-MODEL.md) | Collections + visibility |
+| [LINK-PREVIEWS.md](./LINK-PREVIEWS.md) | OG unfurl cards on send |
 | [API-ROUTES.md](./API-ROUTES.md) | REST (history, channels, uploads) |
 | [SOCKETS.md](./SOCKETS.md) | Separate Socket.IO service, events, edge cases |
 | [FRONTEND.md](./FRONTEND.md) | Screens + composer + live list + responsive |

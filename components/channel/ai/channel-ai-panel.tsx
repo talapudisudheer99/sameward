@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { aiErrorMessage } from "@/lib/ai/ai-error-message"
+import { formatAiLinkMeta } from "@/lib/ai/format-link-meta"
 import type { AiTone } from "@/lib/types/ai/ai-types"
 import { cn } from "@/lib/utils"
 import {
@@ -139,14 +140,24 @@ export default function ChannelAiPanel({
     messageCount: number,
     truncated: boolean,
     forTab: TabId,
-    rangeLabel?: string
+    rangeLabel?: string,
+    linkMeta?: {
+      linksFetched?: number
+      linksFailed?: number
+      linksAttempted?: number
+    }
   ) {
     setResultTab(forTab)
     setResult(text)
     const countPart = truncated
       ? `${messageCount} messages · truncated`
       : `${messageCount} messages`
-    setMetaLine(rangeLabel ? `${rangeLabel} · ${countPart}` : countPart)
+    const linkPart = formatAiLinkMeta(linkMeta ?? {})
+    setMetaLine(
+      rangeLabel
+        ? `${rangeLabel} · ${countPart}${linkPart ? ` · ${linkPart}` : ""}`
+        : `${countPart}${linkPart ? ` · ${linkPart}` : ""}`
+    )
   }
 
   async function runSummarize() {
@@ -158,7 +169,9 @@ export default function ChannelAiPanel({
           data.text,
           data.meta.messageCount,
           data.meta.truncated,
-          "summarize"
+          "summarize",
+          undefined,
+          data.meta
         )
         return
       }
@@ -167,7 +180,9 @@ export default function ChannelAiPanel({
         data.text,
         data.meta.messageCount,
         data.meta.truncated,
-        "summarize"
+        "summarize",
+        undefined,
+        data.meta
       )
     } catch (err) {
       toast.error(aiErrorMessage(err))
@@ -189,7 +204,8 @@ export default function ChannelAiPanel({
           data.meta.messageCount,
           data.meta.truncated,
           "catch-up",
-          label
+          label,
+          data.meta
         )
         return
       }
@@ -199,7 +215,8 @@ export default function ChannelAiPanel({
         data.meta.messageCount,
         data.meta.truncated,
         "catch-up",
-        label
+        label,
+        data.meta
       )
     } catch (err) {
       toast.error(aiErrorMessage(err))
@@ -219,11 +236,25 @@ export default function ChannelAiPanel({
       if (runner) {
         setRunnerBusy(true)
         const data = await runner.ask(q)
-        applyResult(data.text, data.meta.messageCount, data.meta.truncated, "ask")
+        applyResult(
+          data.text,
+          data.meta.messageCount,
+          data.meta.truncated,
+          "ask",
+          undefined,
+          data.meta
+        )
         return
       }
       const data = await ask({ workspaceId, channelId, question: q }).unwrap()
-      applyResult(data.text, data.meta.messageCount, data.meta.truncated, "ask")
+      applyResult(
+        data.text,
+        data.meta.messageCount,
+        data.meta.truncated,
+        "ask",
+        undefined,
+        data.meta
+      )
     } catch (err) {
       toast.error(aiErrorMessage(err))
     } finally {
@@ -267,7 +298,9 @@ export default function ChannelAiPanel({
           data.text,
           data.meta.messageCount,
           data.meta.truncated,
-          "notes"
+          "notes",
+          undefined,
+          data.meta
         )
         return
       }
@@ -276,7 +309,9 @@ export default function ChannelAiPanel({
         data.text,
         data.meta.messageCount,
         data.meta.truncated,
-        "notes"
+        "notes",
+        undefined,
+        data.meta
       )
     } catch (err) {
       toast.error(aiErrorMessage(err))
@@ -354,7 +389,7 @@ export default function ChannelAiPanel({
             <div className="space-y-3">
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Distill recent discussion into topics, decisions, and open
-                questions.
+                questions. May read up to 5 public links shared in the thread.
               </p>
               <Button
                 type="button"
@@ -375,7 +410,8 @@ export default function ChannelAiPanel({
           {tab === "catch-up" ? (
             <div className="space-y-3">
               <p className="text-sm leading-relaxed text-muted-foreground">
-                What changed since a point in time.
+                What changed since a point in time. May read public links from
+                that window for better context.
               </p>
               <div
                 className="flex flex-wrap gap-2"
@@ -435,6 +471,10 @@ export default function ChannelAiPanel({
 
           {tab === "ask" ? (
             <div className="space-y-3">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Answers from this channel’s recent messages — and public pages
+                teammates linked.
+              </p>
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}

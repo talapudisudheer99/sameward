@@ -6,6 +6,10 @@ import { requireChannelAccess } from "@/lib/channels/access"
 import { toMessageJson } from "@/lib/channels/message-json"
 import { notifyRealtime } from "@/lib/channels/notify-realtime"
 import { channelRoomName } from "@/lib/channels/channel-room"
+import {
+  resolveLinkPreviewsWithBudget,
+} from "@/lib/channels/og-preview"
+import { finalizeLinkPreviewsInBackground } from "@/lib/channels/finalize-link-previews"
 import { Message } from "@/lib/models/channel/message"
 import {
   Membership,
@@ -81,6 +85,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     msg.body = parsed.data.body
     msg.editedAt = new Date()
+
+    const { previews, pending } = await resolveLinkPreviewsWithBudget(
+      parsed.data.body
+    )
+    msg.set("linkPreviews", previews)
     await msg.save()
 
     const json = await toMessageJson(msg, user.fullName)
@@ -90,6 +99,16 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       event: "message:update",
       payload: json,
     })
+
+    if (pending) {
+      finalizeLinkPreviewsInBackground({
+        messageId: msg._id,
+        channelId,
+        authorDisplayName: user.fullName,
+        pending,
+        logLabel: "edit",
+      })
+    }
 
     return NextResponse.json(json, { status: 200 })
   } catch (error) {
@@ -155,6 +174,7 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     msg.body = ""
     msg.set("attachments", [])
     msg.set("mentionedUserIds", [])
+    msg.set("linkPreviews", [])
     await msg.save()
 
     const json = await toMessageJson(msg, name)

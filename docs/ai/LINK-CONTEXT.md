@@ -1,8 +1,8 @@
 # Link context for AI (V1) — product + flow
 
-**Status:** 📋 **Docs locked** (Aug 13, 2026) · ⬜ **Code not started** — implement when PO says go  
-**Module SoT:** this note + [USER-STORIES.md](./USER-STORIES.md) (US-AI10) · [E2E-FLOWS.md](./E2E-FLOWS.md) · [TASKS.md](./TASKS.md)  
-**Scope:** **V1 only** — AI-time link reading. Rich Slack-style link *preview cards* in the transcript are **out of V1** (nice UX later).
+**Status:** ✅ **Shipped** (Aug 13, 2026) · story **US-AI10** · verify: `npm run verify:link-context`  
+**Module SoT:** this note + [USER-STORIES.md](./USER-STORIES.md) · [E2E-FLOWS.md](./E2E-FLOWS.md) · [TASKS.md](./TASKS.md)  
+**Scope:** **AI-time** link reading into prompts. Chat **OG preview cards** are a separate channels feature → [LINK-PREVIEWS.md](../channels/LINK-PREVIEWS.md).
 
 ---
 
@@ -10,112 +10,115 @@
 
 Teams paste URLs while they talk: Stack Overflow answers, GitHub issues, docs, design specs.
 
-Today TeamHub stores and shows the **raw URL string**. Channel AI (Explain / Catch up / Ask / …) only sees that string — not the page. If the chat is “see this SO answer” + a link, the model has almost no useful context.
+Without this slice, TeamHub stored and showed the **raw URL string**. Channel AI only saw that string — not the page. If the chat is “see this SO answer” + a link, the model had almost no useful context.
 
-**Emotion:** *“The AI read what we linked,”* not *“pretty cards under every URL.”*
+**Emotion:** *“The AI read what we linked.”* Pretty unfurl cards are nice UX (channels) but are not what makes Ask/Explain smarter.
 
 ---
 
-## 2. What we will ship in V1
+## 2. What we shipped (AI V1)
 
-| In V1 | Out of V1 |
-|-------|-----------|
-| Detect `http`/`https` URLs in message bodies used for an AI run | Fancy unfurl / OG preview cards in the chat UI |
-| On **AI request only**, fetch public page text (HTML → plain text) | Background crawl of every message on send |
+| In scope | Out of this module |
+|----------|--------------------|
+| Detect `http`/`https` URLs in message bodies used for an AI run | Chat OG / unfurl UI (see channels [LINK-PREVIEWS](../channels/LINK-PREVIEWS.md)) |
+| On **AI request only**, fetch public page text (HTML → plain text) | Background crawl of every message solely for AI |
 | Cap URLs per run + chars per page; inject short excerpts into the prompt | OCR / PDF / login-walled content |
 | Fail soft: if fetch fails, AI still runs on message text alone + note | SSRF to private IPs / cloud metadata |
 | Same Path A rules: read-only, per channel, never auto-post | Storing full page HTML in Mongo forever |
+| Meta: `linksFetched` / `linksFailed` / `linksAttempted` on AI responses | — |
 
 ---
 
-## 3. Clear flow (end-to-end)
+## 3. Clear flow (as built)
 
 ```text
-1. Member uses Explain / Catch up / Summarize / Ask / Draft / Notes as today
+1. Member uses Explain / Catch up / Summarize / Ask / Draft / Notes
 2. Server builds authorized message window (requireChannelAccess → message-context)
-3. Extract unique http(s) URLs from those message bodies (cap e.g. 3–5 per run)
-4. For each URL (parallel, short timeout):
-     a. SSRF guard (https only preferred; block private/link-local/metadata hosts)
-     b. GET with User-Agent + size/time limits
-     c. Strip HTML → plain text; keep title if easy; truncate to char budget
-5. Append a “Linked pages” block to the prompt context (url + title + excerpt)
-6. Existing AiProvider completes; response + meta (e.g. linksFetched / linksFailed)
-7. UI unchanged except optional meta line (“Used N linked pages”) — no preview cards
+3. completeWithContext → buildLinkContext:
+     extract unique http(s) URLs (cap 5; Explain prefers target message URLs)
+4. For each URL (parallel, 5s timeout):
+     a. SSRF guard (http/https only; DNS resolve → block private/link-local/metadata)
+     b. undici fetch pinned to validated IP (defeats DNS rebinding TOCTOU)
+     c. Manual redirects, re-validate each hop (max 3)
+     d. HTML→text (strip head/script/style); truncate excerpt
+5. Append “Linked pages” block to the user prompt
+6. AiProvider completes; response meta includes link counts
+7. Panel / Explain dialog may show “N linked pages”
 ```
 
-**When it runs:** only inside AI Route Handlers / `run-ai` path — **not** on every chat send.
-
-**Why AI-time only:** cheaper, no crawl farm, easier SSRF control, matches Path A “help me understand this conversation now.”
-
----
-
-## 4. Prompt shape (illustrative)
-
-```text
-…existing transcript…
-
---- Linked pages (fetched for this request; may be incomplete) ---
-[1] https://stackoverflow.com/questions/…
-Title: …
-Excerpt:
-…
-
-[2] https://…
-(fetch failed — use chat text only for this link)
----
-```
-
-Model instructions stay Path A: ground answers in **provided** transcript + linked excerpts; admit gaps; never invent page content that wasn’t fetched.
+**When it runs:** only inside `completeWithContext` (`lib/ai/run-ai.ts`) — **not** on every chat send.  
+(Message send may still resolve **OG cards** for the transcript — that path is channels-owned.)
 
 ---
 
-## 5. Security (non-negotiable)
-
-See also [SECURITY.md](./SECURITY.md).
-
-1. **SSRF:** allow only public http(s); block localhost, RFC1918, link-local, cloud metadata (`169.254.169.254`), weird schemes (`file:`, `ftp:`).
-2. **Timeouts + max bytes** on response body before parse.
-3. **No cookies / no auth forwarding** from TeamHub session to third-party sites.
-4. Treat fetched text as **untrusted** in the prompt (same as message bodies).
-5. Rate limit already exists on AI routes — link fetches ride inside those calls (don’t add unbounded parallel crawls).
-
----
-
-## 6. Suggested code shape (when implementing)
+## 4. Code map
 
 ```text
 lib/ai/
-  extract-urls.ts      # find unique URLs in windowed bodies
-  fetch-link-text.ts   # SSRF-safe fetch + HTML→text + caps
-  link-context.ts      # orchestrate: extract → fetch → format block
+  extract-urls.ts      # ✅ unique http(s) from bodies (also used by OG)
+  fetch-link-text.ts   # ✅ SSRF-safe fetch + HTML→text (+ fetchPublicHtml for OG)
+  link-context.ts      # ✅ orchestrate + format block
+  run-ai.ts            # ✅ wires after context, before provider
+  constants.ts         # ✅ AI_MAX_LINK_URLS, timeouts, byte caps
 
-Wire into message-context / run-ai after transcript is built, before provider.
+lib/links/
+  html-entities.ts     # ✅ shared decode for AI text + OG meta
+
+scripts/verify-link-context.ts  # manual SSRF + example.com smoke
 ```
-
-No new public REST route required for V1 — existing `…/ai/*` endpoints gain richer context.
 
 ---
 
-## 7. Product decisions (locked for V1)
+## 5. Security (as implemented)
+
+1. **SSRF:** scheme allowlist; reject URL credentials; block localhost hostnames; classify resolved IPs (RFC1918, loopback, link-local incl. `169.254.169.254`, CGNAT, multicast, ULA, …).
+2. **DNS pinning:** resolve → validate → undici `Agent` `connect.lookup` returns only that address (supports Node `{ all: true }` lookup shape).
+3. **Redirects:** `redirect: "manual"`; each `Location` re-parsed and re-validated.
+4. **Timeouts + max bytes** before parse; no TeamHub cookies forwarded.
+5. Fetched text treated as **untrusted** in prompts (system + block copy).
+
+---
+
+## 6. Research notes (post-implementation)
+
+Sources consulted while building:
+
+- [OWASP — SSRF Prevention in Node.js](https://owasp.org/www-community/pages/controls/SSRF_Prevention_in_Nodejs)
+- Industry write-ups on **DNS rebinding / TOCTOU** (validate-then-fetch without pinning is insufficient)
+- undici `Agent` connect lookup behavior on Node 24
+
+**Findings we hit in this repo**
+
+| Finding | What we did |
+|---------|-------------|
+| Hostname string checks alone are not enough | Always resolve DNS and classify the IP |
+| Pinning must support `lookup(..., { all: true })` | Without it, Node dual-stack path passes `undefined` IP → `ERR_INVALID_IP_ADDRESS` |
+| Prefer IPv4 when both public | Fewer dual-stack surprises; still allow IPv6-only hosts |
+| Soft-fail is product-correct | Bad/blocked URLs must not 500 the AI route |
+| AI-time fetch > send-time crawl for AI | Cheaper, clearer authz boundary, matches Path A |
+
+**Verify locally**
+
+```bash
+npm run verify:link-context
+```
+
+Expect: private IPs **BLOCK**; `https://example.com/` **OK** with title + excerpt; localhost / metadata **fail** soft.
+
+Manual product E2E: seed a public docs/SO URL in chat → Explain / Ask → meta shows linked pages; answer uses page substance (S14 in [E2E-FLOWS.md](./E2E-FLOWS.md)).
+
+---
+
+## 7. Product decisions (locked for AI V1)
 
 | # | Decision |
 |---|----------|
-| 1 | **AI-time fetch only** — not on message send |
-| 2 | **No UI preview cards** in V1 |
-| 3 | Cap URLs + excerpt size; prefer recent / target-message URLs for Explain |
+| 1 | **AI-time fetch only** for prompt context — not a send-time AI crawl |
+| 2 | **UI preview cards** live under channels ([LINK-PREVIEWS](../channels/LINK-PREVIEWS.md)); AI still uses page text at request time |
+| 3 | Cap URLs + excerpt size; prefer target-message URLs for Explain |
 | 4 | Soft failure — AI still works without links |
 | 5 | Same authz as chat; links from inaccessible channels never appear |
 | 6 | V1.5 (large history / Ask sources / cache) stays a **separate** track |
-
----
-
-## 8. Demo story (for later E2E)
-
-1. Two members discuss a React hydration bug.
-2. One pastes a Stack Overflow (or docs) URL + short comment.
-3. Other uses **Explain** on that message (or **Ask**: “What fix did the link suggest?”).
-4. Answer reflects the linked page’s relevant point — not only the raw URL.
-5. Disconnect network to the URL host → AI still answers from chat; meta notes fetch failed.
 
 ---
 

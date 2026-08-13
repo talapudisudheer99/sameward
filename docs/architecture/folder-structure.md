@@ -170,6 +170,7 @@ lib/
 │   ├── auth/ · workspace/ · channel/ · ai/ · profile/
 ├── auth/ · workspaces/ · channels/ · ai/ · profiles/  # domain helpers
 ├── storage/                   # S3 presign + browser upload helper
+├── links/                     # Shared URL/HTML helpers (entities; used by AI + OG)
 ├── api/
 │   └── axios.ts               # Browser HTTP client
 ├── types/                     # Shared TS types (non-Zod) when needed
@@ -177,6 +178,12 @@ lib/
 ```
 
 **Also (RTK):** `store/api/{auth,workspace,channel,upload,ai,profile}-api.ts` + `base-api.ts`.
+
+**Channel link previews (related files)**
+- `lib/types/channel/link-preview.ts` — `LinkPreview` shape (client-safe)
+- `lib/channels/og-preview.ts` · `finalize-link-previews.ts` · `message-bubble.ts`
+- `hooks/channels/use-composer-link-preview.ts`
+- `components/channel/link-preview-card.tsx` · `message-body-text.tsx` · `channel-file-drop-zone.tsx`
 
 **Rules**
 - **Models** = persistence shape. **Schemas** = request/form validation. Both can exist for one domain.

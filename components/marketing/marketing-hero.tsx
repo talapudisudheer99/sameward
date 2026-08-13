@@ -41,8 +41,9 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
 
           <Reveal onMount y={10} delay={0.12} className="mt-3 sm:mt-4">
             <p className="mx-auto max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-              Channels and Channel AI in a calm workspace — catch up without
-              the noise, and keep every send yours.
+              Channels, link-aware Channel AI, and a calm workspace — catch up
+              on the talk <span className="font-medium text-foreground/80">and</span>{" "}
+              the pages your team shared.
             </p>
           </Reveal>
 
@@ -112,7 +113,8 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
           >
             <ProductUiMock density="band" />
             <figcaption className="sr-only">
-              TeamHub workspaces, channels, chat, profiles, and Channel AI
+              TeamHub workspaces, channels, link previews, profiles, and
+              Channel AI with link-aware context
             </figcaption>
           </figure>
         </Reveal>

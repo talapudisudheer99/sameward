@@ -1,7 +1,7 @@
 # End-to-end flows — AI Knowledge Assistant
 
-**Status:** ✅ Core Path A E2E verified (manual, Aug 10–11, 2026) · 📋 Link-context flow H / S14 documented (Aug 13) · ⬜ US-AI10 not coded yet  
-**PO locks:** Path A · OpenAI · read-only · windowed context · (+ link excerpts when US-AI10 ships)  
+**Status:** ✅ Core Path A E2E verified (manual, Aug 10–11, 2026) · ✅ Link-context US-AI10 shipped (Aug 13) · verify script + S14 product check  
+**PO locks:** Path A · OpenAI · read-only · windowed context · link excerpts on AI runs  
 **Prerequisite:** `OPENAI_API_KEY` in `.env.local` + restart Next. Realtime optional for AI routes but needed for normal live chat.
 
 ---
@@ -67,17 +67,17 @@
 3. Missing OPENAI_API_KEY → 503 user-safe message
 ```
 
-### H) Link context (V1 — planned · docs locked)
+### H) Link context (V1 · shipped)
 
-**Status:** ⬜ Not implemented yet — see [LINK-CONTEXT.md](./LINK-CONTEXT.md) · US-AI10
+**Status:** ✅ Implemented — see [LINK-CONTEXT.md](./LINK-CONTEXT.md) · US-AI10
 
 ```text
 1. Channel has messages that include public https URLs (e.g. Stack Overflow)
 2. Member runs Explain on a message that cites the link (or Ask / Catch up over the window)
 3. Server: build message window → extract URLs → SSRF-safe fetch → HTML→text excerpts
 4. Prompt = transcript + “Linked pages” block → provider → answer uses page substance
-5. If fetch fails / blocked → AI still answers from chat; meta may note failure
-6. No preview cards required in the transcript for this slice
+5. If fetch fails / blocked → AI still answers from chat; meta notes failure counts
+6. Transcript may show OG cards (channels feature); AI answer still cites page substance via link-context
 ```
 
 ---

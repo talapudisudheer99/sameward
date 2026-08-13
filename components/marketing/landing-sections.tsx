@@ -5,6 +5,7 @@ import {
   Building2,
   Code2,
   FileText,
+  Link2,
   MessageCircleQuestion,
   PenLine,
   Rocket,
@@ -41,6 +42,11 @@ const channelAiCapabilities = [
     body: "Questions grounded in this channel’s recent messages — not the open web.",
   },
   {
+    Icon: Link2,
+    title: "Link context",
+    body: "When teammates paste docs or GitHub links, AI can read public page text — not just the URL string.",
+  },
+  {
     Icon: PenLine,
     title: "Draft",
     body: "A reply you can edit in the composer. Nothing posts until you send.",
@@ -57,8 +63,8 @@ const solutions = [
   {
     Icon: Code2,
     title: "Engineering pods",
-    body: "Private channels for hiring or incidents, AI catch-up after a day offline, drafts you still own.",
-    cue: "Private · Catch up · Draft",
+    body: "Private channels for hiring or incidents, AI that understands shared links, drafts you still own.",
+    cue: "Private · Links · Draft",
   },
   {
     Icon: Building2,
@@ -84,7 +90,7 @@ const resourceSteps = [
   {
     step: "03",
     title: "Talk, share, catch up",
-    body: "Chat live, attach files, open Channel AI when you need a summary — then keep building.",
+    body: "Chat live, unfurl shared links, attach files, open Channel AI when you need a summary — then keep building.",
     indent: "sm:pl-20 lg:pl-32",
   },
 ] as const
@@ -93,7 +99,7 @@ function ChannelAiSection() {
   const { duration, at } = useBeatClock()
   const intro = 0.03
   const capsStart = 0.18
-  const capGap = 0.13
+  const capGap = 0.11
   const demoParent = capsStart + channelAiCapabilities.length * capGap + 0.05
 
   return (
@@ -118,7 +124,7 @@ function ChannelAiSection() {
             y={8}
             className="mt-3 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl"
           >
-            Catch up without drowning in scrollback
+            Catch up on the chat — and the links inside it
           </Beat>
           <Beat
             delay={at(intro, 2)}
@@ -127,7 +133,8 @@ function ChannelAiSection() {
             className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
             Open Channel AI inside any channel you can already access. It reads
-            recent talk so you can understand faster —{" "}
+            recent talk and public pages your team shared so answers stay
+            grounded —{" "}
             <span className="font-medium text-foreground/85">
               read-only, and you always hit Send
             </span>
@@ -202,7 +209,7 @@ function ChannelAiSection() {
                       You asked
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                      When is the backend deploy, and is the agenda ready?
+                      What does the deploy checklist say about rollback?
                     </p>
                   </div>
                 </Beat>
@@ -210,11 +217,15 @@ function ChannelAiSection() {
                 <Beat delay={at(demoParent, 3)} duration={duration}>
                   <div className="border-l-2 border-primary/40 pl-3.5">
                     <p className="text-[11px] font-semibold tracking-wide text-primary uppercase">
-                      From recent talk
+                      From recent talk + linked page
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                      Deploy is still Friday afternoon. Sam shared the sync
-                      agenda for 10am — no blockers called out yet.
+                      Aisha shared the runbook link. It says freeze traffic,
+                      revert the last release tag, then verify health checks
+                      before reopen.
+                    </p>
+                    <p className="mt-2 text-[11px] font-medium text-primary/80">
+                      1 linked page read for context
                     </p>
                   </div>
                 </Beat>
@@ -228,8 +239,8 @@ function ChannelAiSection() {
                       </p>
                     </div>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      Thanks — I’ll join the 10am sync. Confirming I’m clear for
-                      Friday deploy unless anything changes.
+                      Thanks — I’ll follow the runbook rollback steps if Friday
+                      deploy needs a revert.
                     </p>
                     <p className="mt-3 text-[11px] font-medium text-primary">
                       Insert → edit → you hit Send

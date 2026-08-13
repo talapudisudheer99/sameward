@@ -12,6 +12,8 @@ import {
 
 import ChatAttachments from "@/components/channel/chat-attachments"
 import EmojiPicker from "@/components/channel/emoji-picker"
+import LinkPreviewCard from "@/components/channel/link-preview-card"
+import MessageBodyText from "@/components/channel/message-body-text"
 import Loader from "@/components/sharable/loader"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,6 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAutosizeTextarea } from "@/hooks/use-autosize-textarea"
+import { isExpandedBubble } from "@/lib/channels/message-bubble"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/lib/types/channel/channel-types"
 
@@ -88,53 +91,6 @@ function MessageTime({ iso }: { iso: string }) {
   )
 }
 
-/** Highlight @Full Name tokens for mentioned users. */
-function renderBodyWithMentions(
-  body: string,
-  mentionedUserIds: string[] | undefined,
-  mentionNameById: Record<string, string> | undefined,
-  mine: boolean
-) {
-  const names = (mentionedUserIds ?? [])
-    .map((id) => mentionNameById?.[id])
-    .filter((n): n is string => Boolean(n))
-    .sort((a, b) => b.length - a.length)
-
-  const escaped = names.map((n) =>
-    n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  )
-  const namePattern = escaped.length > 0 ? `(?:${escaped.join("|")})` : null
-  const re = new RegExp(
-    `(@all\\b${namePattern ? `|@${namePattern}` : ""})`,
-    "gi"
-  )
-  const parts = body.split(re)
-
-  if (parts.length === 1) return body
-
-  return parts.map((part, i) => {
-    const isAll = part.toLowerCase() === "@all"
-    const isNamedMention =
-      part.startsWith("@") && names.some((n) => part === `@${n}`)
-    if (isAll || isNamedMention) {
-      return (
-        <span
-          key={`${part}-${i}`}
-          className={cn(
-            "font-semibold",
-            mine
-              ? "text-primary-foreground underline decoration-primary-foreground/55 underline-offset-2"
-              : "rounded-md bg-primary/12 px-1 py-0.5 text-primary"
-          )}
-        >
-          {part}
-        </span>
-      )
-    }
-    return <span key={`t-${i}`}>{part}</span>
-  })
-}
-
 type MessageActionsMenuProps = {
   children: ReactNode
   className?: string
@@ -168,7 +124,7 @@ function MessageActionsMenu({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className={cn("w-fit max-w-full outline-none", className)}>
+      <ContextMenuTrigger className={cn("max-w-full outline-none", className)}>
         {children}
       </ContextMenuTrigger>
       <ContextMenuContent className="min-w-44">
@@ -377,7 +333,7 @@ export default function ChatMessageList({
     <div
       ref={scrollerRef}
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-2 py-3 sm:px-4 sm:py-4",
+        "flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-2 py-3 pb-5 sm:px-4 sm:py-4 sm:pb-6",
         className
       )}
       data-explore-tutorial="transcript"
@@ -412,16 +368,34 @@ export default function ChatMessageList({
             new Date(prev?.createdAt ?? 0).getTime() <
             5 * 60 * 1000
         const hasAttachments = !deleted && msg.attachments.length > 0
+        const previews = msg.linkPreviews ?? []
+        const bodyTrim = msg.body.trim()
+        const expanded = isExpandedBubble(msg.body, previews.length > 0)
+        /** Link-only messages: show the pretty card without repeating the raw URL bubble */
+        const linkOnlyBody =
+          previews.length > 0 &&
+          Boolean(bodyTrim) &&
+          previews.some(
+            (p) =>
+              bodyTrim === p.url ||
+              bodyTrim === p.finalUrl ||
+              bodyTrim.replace(/\/$/, "") === p.url.replace(/\/$/, "") ||
+              bodyTrim.replace(/\/$/, "") === p.finalUrl.replace(/\/$/, "")
+          ) &&
+          !bodyTrim.includes("\n") &&
+          bodyTrim.split(/\s+/).length <= 2
 
         return (
           <article
             key={msg.id}
             className={cn(
-              "flex gap-2",
+              "flex gap-2.5",
               isEditing
-                ? "w-full max-w-[min(94%,36rem)] sm:max-w-[min(92%,40rem)]"
-                : "max-w-[min(92%,20rem)] sm:max-w-[min(85%,32rem)]",
-              grouped ? "mt-0.5" : "mt-3",
+                ? "w-full max-w-[min(100%,36rem)]"
+                : expanded
+                  ? "w-full max-w-[min(100%,28rem)] sm:max-w-[min(85%,32rem)] lg:max-w-[min(72%,34rem)]"
+                  : "max-w-[min(100%,22rem)] sm:max-w-[min(80%,28rem)] lg:max-w-[min(68%,30rem)]",
+              grouped ? "mt-1.5" : "mt-4",
               mine ? "ml-auto flex-row-reverse" : "mr-auto",
               msg.pending && "opacity-70"
             )}
@@ -452,8 +426,8 @@ export default function ChatMessageList({
             )}
             <div
               className={cn(
-                "flex min-w-0 flex-col gap-1",
-                isEditing
+                "flex min-w-0 flex-col gap-1.5",
+                isEditing || expanded
                   ? "w-full items-stretch"
                   : mine
                     ? "items-end"
@@ -569,9 +543,18 @@ export default function ChatMessageList({
                 </div>
               ) : (
                 <>
-                  {msg.body ? (
-                    <div className="relative w-fit max-w-full">
+                  {(msg.body || previews.length > 0) && !deleted ? (
+                    <div
+                      className={cn(
+                        "relative max-w-full",
+                        expanded ? "w-full" : "w-fit"
+                      )}
+                    >
                       <MessageActionsMenu
+                        className={cn(
+                          "max-w-full outline-none",
+                          expanded ? "block w-full" : "w-fit"
+                        )}
                         canExplain={Boolean(onExplainMessage && !msg.pending)}
                         canReact={canReact}
                         canEdit={canEdit}
@@ -591,24 +574,71 @@ export default function ChatMessageList({
                         }}
                         onDelete={() => onRequestDeleteMessage?.(msg.id)}
                       >
+                        {/* One visual unit: OG card on top, text below */}
                         <div
                           className={cn(
-                            "rounded-2xl px-3 py-1.5 text-left text-sm leading-relaxed select-none md:select-text [-webkit-touch-callout:none]",
-                            mine
-                              ? "rounded-br-md bg-primary text-primary-foreground"
-                              : "rounded-bl-md bg-muted text-foreground"
+                            "max-w-full overflow-hidden",
+                            expanded
+                              ? "w-full"
+                              : "w-fit max-w-[min(100%,22rem)] sm:max-w-[min(80vw,28rem)] lg:max-w-[min(68vw,30rem)]",
+                            previews.length > 0
+                              ? cn(
+                                  "rounded-2xl shadow-md ring-1",
+                                  mine
+                                    ? "rounded-br-md ring-primary/25"
+                                    : "rounded-bl-md ring-border/80"
+                                )
+                              : null
                           )}
                         >
-                          <p className="[overflow-wrap:anywhere] break-words whitespace-pre-wrap">
-                            {renderBodyWithMentions(
-                              msg.body,
-                              msg.mentionedUserIds,
-                              mentionNameById,
-                              mine
-                            )}
-                          </p>
+                          {previews.length > 0
+                            ? previews.map((preview, idx) => (
+                                <div
+                                  key={`${msg.id}-${preview.url}`}
+                                  className={cn(
+                                    "bg-card",
+                                    idx > 0 ? "border-t border-border/60" : null
+                                  )}
+                                >
+                                  <LinkPreviewCard
+                                    preview={preview}
+                                    mine={mine}
+                                    attached
+                                  />
+                                </div>
+                              ))
+                            : null}
+
+                          {msg.body && !linkOnlyBody ? (
+                            <div
+                              className={cn(
+                                "px-3.5 py-2.5 text-left text-sm leading-relaxed select-none md:select-text [-webkit-touch-callout:none]",
+                                previews.length > 0
+                                  ? cn(
+                                      "rounded-none",
+                                      mine
+                                        ? "border-t border-primary/25 bg-primary text-primary-foreground"
+                                        : "border-t border-border/60 bg-muted text-foreground"
+                                    )
+                                  : cn(
+                                      "rounded-2xl",
+                                      mine
+                                        ? "rounded-br-md bg-primary text-primary-foreground"
+                                        : "rounded-bl-md bg-muted text-foreground"
+                                    )
+                              )}
+                            >
+                              <MessageBodyText
+                                body={msg.body}
+                                mentionedUserIds={msg.mentionedUserIds}
+                                mentionNameById={mentionNameById}
+                                mine={mine}
+                              />
+                            </div>
+                          ) : null}
                         </div>
                       </MessageActionsMenu>
+
                       {pinExplain && onExplainMessage && !msg.pending ? (
                         <Button
                           type="button"

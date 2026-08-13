@@ -1,4 +1,5 @@
 import { presignAttachmentGet } from "@/lib/storage/s3"
+import type { LinkPreview } from "@/lib/types/channel/link-preview"
 
 export type MessageReactionJson = {
   emoji: string
@@ -24,6 +25,7 @@ export type ChatMessageJson = {
   }[]
   mentionedUserIds: string[]
   reactions: MessageReactionJson[]
+  linkPreviews: LinkPreview[]
   createdAt: string
   editedAt: string | null
   deletedAt: string | null
@@ -46,6 +48,8 @@ type MessageLike = {
     emoji: string
     userIds?: { toString(): string }[]
   }[]
+  /** Mongoose DocumentArray or plain objects — normalized in mapLinkPreviews */
+  linkPreviews?: unknown
   createdAt: Date
   editedAt?: Date | null
   deletedAt?: Date | null
@@ -67,13 +71,38 @@ function mapReactions(
     .filter((r) => r.count > 0)
 }
 
+function mapLinkPreviews(previews: unknown): LinkPreview[] {
+  if (!Array.isArray(previews)) return []
+  return previews
+    .map((raw) => {
+      const p = raw as Record<string, unknown>
+      if (
+        typeof p.url !== "string" ||
+        typeof p.finalUrl !== "string" ||
+        typeof p.title !== "string"
+      ) {
+        return null
+      }
+      return {
+        url: p.url,
+        finalUrl: p.finalUrl,
+        title: p.title,
+        description: typeof p.description === "string" ? p.description : null,
+        imageUrl: typeof p.imageUrl === "string" ? p.imageUrl : null,
+        siteName: typeof p.siteName === "string" ? p.siteName : null,
+        faviconUrl: typeof p.faviconUrl === "string" ? p.faviconUrl : null,
+      } satisfies LinkPreview
+    })
+    .filter((p): p is LinkPreview => p != null)
+}
+
 export async function toMessageJson(
   doc: MessageLike,
   authorName: string
 ): Promise<ChatMessageJson> {
   const deletedAt = doc.deletedAt ?? null
 
-  // Soft-deleted rows never leak body/attachments/reactions
+  // Soft-deleted rows never leak body/attachments/reactions/previews
   if (deletedAt) {
     return {
       id: doc._id.toString(),
@@ -84,6 +113,7 @@ export async function toMessageJson(
       attachments: [],
       mentionedUserIds: [],
       reactions: [],
+      linkPreviews: [],
       createdAt: doc.createdAt.toISOString(),
       editedAt: doc.editedAt ? doc.editedAt.toISOString() : null,
       deletedAt: deletedAt.toISOString(),
@@ -109,6 +139,7 @@ export async function toMessageJson(
     attachments,
     mentionedUserIds: (doc.mentionedUserIds ?? []).map((id) => id.toString()),
     reactions: mapReactions(doc.reactions),
+    linkPreviews: mapLinkPreviews(doc.linkPreviews),
     createdAt: doc.createdAt.toISOString(),
     editedAt: doc.editedAt ? doc.editedAt.toISOString() : null,
     deletedAt: null,

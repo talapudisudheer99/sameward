@@ -1,7 +1,9 @@
 "use client"
 
 import {
+  forwardRef,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -10,20 +12,22 @@ import {
 import { FileText, Paperclip, Send, Smile, X } from "lucide-react"
 
 import EmojiPicker from "@/components/channel/emoji-picker"
+import LinkPreviewCard from "@/components/channel/link-preview-card"
 import { Button } from "@/components/ui/button"
+import { useComposerLinkPreview } from "@/hooks/channels/use-composer-link-preview"
 import { useAutosizeTextarea } from "@/hooks/use-autosize-textarea"
+import {
+  MAX_ATTACHMENTS_PER_MESSAGE,
+  pickAttachmentFiles,
+} from "@/lib/channels/attachment-limits"
+import { segmentComposerHighlights } from "@/lib/channels/composer-highlight"
 import type { WorkspaceMemberOption } from "@/lib/types/workspace/workspace-types"
 import { cn } from "@/lib/utils"
 
-const MAX_FILES = 3
-const MAX_BYTES = 10 * 1024 * 1024
-const ALLOWED = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "application/pdf",
-])
+export type ChatComposerHandle = {
+  /** Queue files from channel-wide drag-and-drop */
+  addFiles: (files: FileList | File[] | null | undefined) => void
+}
 
 export type ComposerPendingFile = {
   /** local preview key */
@@ -34,6 +38,8 @@ export type ComposerPendingFile = {
 
 type ChatComposerProps = {
   channelName: string
+  workspaceId?: string
+  channelId?: string
   disabled?: boolean
   /** People available for @mentions */
   mentionCandidates?: WorkspaceMemberOption[]
@@ -89,17 +95,24 @@ function findMentionQuery(text: string, caret: number): MentionQuery | null {
 
 /**
  * Ch-D composer — text + @mentions + local file chips.
+ * Channel shell can call `addFiles` via ref for WhatsApp-style drops.
  */
-export default function ChatComposer({
-  channelName,
-  disabled,
-  mentionCandidates = [],
-  onSend,
-  onTyping,
-  isSending = false,
-  draftNonce = 0,
-  draftText = "",
-}: ChatComposerProps) {
+const ChatComposer = forwardRef<ChatComposerHandle, ChatComposerProps>(
+  function ChatComposer(
+    {
+      channelName,
+      workspaceId,
+      channelId,
+      disabled,
+      mentionCandidates = [],
+      onSend,
+      onTyping,
+      isSending = false,
+      draftNonce = 0,
+      draftText = "",
+    },
+    ref
+  ) {
   const [body, setBody] = useState("")
   const [pending, setPending] = useState<ComposerPendingFile[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -112,10 +125,40 @@ export default function ChatComposer({
   const [emojiOpen, setEmojiOpen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const highlightRef = useRef<HTMLDivElement>(null)
   const emojiWrapRef = useRef<HTMLDivElement>(null)
+
+  const {
+    composerPreview,
+    showPreview,
+    dismissPreview,
+    clearPreviewState,
+  } = useComposerLinkPreview({
+    body,
+    workspaceId,
+    channelId,
+    disabled,
+  })
 
   // Start ~3 lines tall; grow with content up to ~6 lines, then scroll
   useAutosizeTextarea(textareaRef, body, 160)
+
+  const mentionNames = useMemo(
+    () => mentionCandidates.map((m) => m.fullName).filter(Boolean),
+    [mentionCandidates]
+  )
+
+  const highlightSegments = useMemo(
+    () => segmentComposerHighlights(body, mentionNames),
+    [body, mentionNames]
+  )
+
+  function syncHighlightScroll() {
+    const ta = textareaRef.current
+    const hi = highlightRef.current
+    if (!ta || !hi) return
+    hi.scrollTop = ta.scrollTop
+  }
 
   useEffect(() => {
     if (!emojiOpen) return
@@ -197,34 +240,35 @@ export default function ChatComposer({
     setPending([])
   }
 
-  function addFiles(list: FileList | null) {
-    if (!list?.length) return
-    setError(null)
-    const next = [...pending]
-    for (const file of Array.from(list)) {
-      if (next.length >= MAX_FILES) {
-        setError(`Max ${MAX_FILES} files`)
-        break
-      }
-      if (!ALLOWED.has(file.type)) {
-        setError("Only images (jpeg/png/webp/gif) and PDF")
-        continue
-      }
-      if (file.size > MAX_BYTES) {
-        setError("Each file must be 10MB or less")
-        continue
-      }
-      next.push({
-        key: `${file.name}-${file.size}-${Date.now()}`,
-        file,
-        previewUrl: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : undefined,
-      })
-    }
-    setPending(next)
+  function addFiles(list: FileList | File[] | null | undefined) {
+    if (!list) return
+    const incoming = Array.isArray(list) ? list : Array.from(list)
+    if (incoming.length === 0) return
+
+    setPending((prev) => {
+      const { accepted, error: pickError } = pickAttachmentFiles(
+        incoming,
+        prev.length
+      )
+      setError(pickError)
+      if (accepted.length === 0) return prev
+      const stamp = Date.now()
+      return [
+        ...prev,
+        ...accepted.map((file, i) => ({
+          key: `${file.name}-${file.size}-${stamp}-${i}`,
+          file,
+          previewUrl: file.type.startsWith("image/")
+            ? URL.createObjectURL(file)
+            : undefined,
+        })),
+      ]
+    })
     if (fileRef.current) fileRef.current.value = ""
+    requestAnimationFrame(() => textareaRef.current?.focus())
   }
+
+  useImperativeHandle(ref, () => ({ addFiles }))
 
   function removePending(key: string) {
     setPending((prev) => {
@@ -295,6 +339,7 @@ export default function ChatComposer({
       })
       setBody("")
       setMentionIds([])
+      clearPreviewState()
       clearPending()
     } catch {
       // Keep draft so the user can retry; toast lives in the page
@@ -370,11 +415,11 @@ export default function ChatComposer({
       ) : null}
 
       <p className="mb-1.5 text-[11px] text-muted-foreground">
-        Max {MAX_FILES} files · 10 MB · images &amp; PDF · type @ to mention
-        teammates or @all
+        Max {MAX_ATTACHMENTS_PER_MESSAGE} files · 10 MB · images &amp; PDF · type
+        @ to mention teammates or @all
       </p>
 
-      <div className="relative rounded-[var(--radius)] border border-border bg-background">
+      <div className="relative overflow-hidden rounded-[var(--radius)] border border-border bg-background">
         {mentionMatches.length > 0 && mentionQuery ? (
           <ul
             className="absolute bottom-full left-0 z-20 mb-2 max-h-56 w-full max-w-md overflow-y-auto rounded-xl border border-border/80 bg-card p-1.5 shadow-[0_10px_30px_-18px_rgba(2,6,23,0.35)]"
@@ -427,31 +472,95 @@ export default function ChatComposer({
           </ul>
         ) : null}
 
-        <textarea
-          ref={textareaRef}
-          value={body}
-          onChange={(e) => {
-            setBody(e.target.value)
-            setCaret(e.target.selectionStart)
-            onTyping?.()
-          }}
-          onSelect={(e) => {
-            setCaret(e.currentTarget.selectionStart)
-          }}
-          onKeyUp={(e) => {
-            setCaret(e.currentTarget.selectionStart)
-          }}
-          onClick={(e) => {
-            setCaret(e.currentTarget.selectionStart)
-          }}
-          onKeyDown={onKeyDown}
-          disabled={disabled || isSending}
-          aria-label={`Message ${channelName}`}
-          placeholder={`Message ${channelName}`}
-          rows={1}
-          maxLength={4000}
-          className="max-h-40 min-h-[4.5rem] w-full resize-none overflow-hidden bg-transparent px-3 pt-3 pb-2 text-sm leading-relaxed outline-none placeholder:text-muted-foreground disabled:opacity-50"
-        />
+        {/* Live link preview (WhatsApp-style) — above the text field */}
+        {showPreview ? (
+          <div className="flex items-stretch gap-0 border-b border-border/70 bg-muted/35">
+            <div className="min-w-0 flex-1 overflow-hidden">
+              {composerPreview ? (
+                <div className="max-h-36 overflow-hidden">
+                  <LinkPreviewCard preview={composerPreview} attached />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-2.5 text-xs text-muted-foreground">
+                  <span className="size-3 animate-pulse rounded-full bg-primary/40" />
+                  Loading link preview…
+                </div>
+              )}
+            </div>
+            <div className="flex shrink-0 items-start border-l border-border/50 px-1.5 pt-2">
+              <button
+                type="button"
+                className="flex size-5 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="Remove link preview"
+                onClick={dismissPreview}
+              >
+                <X className="size-3" strokeWidth={2.25} />
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="relative">
+          {/*
+            Highlight layer must match textarea metrics exactly (same font-weight,
+            no extra padding) or the caret looks offset.
+          */}
+          {body ? (
+            <div
+              ref={highlightRef}
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0 max-h-40 min-h-[4.5rem] overflow-hidden px-3 pt-3 pb-2 font-sans text-sm leading-relaxed break-words whitespace-pre-wrap text-foreground"
+            >
+              {highlightSegments.map((seg, i) => {
+                if (seg.kind === "url") {
+                  return (
+                    <span key={`h-${i}`} className="text-primary">
+                      {seg.text}
+                    </span>
+                  )
+                }
+                if (seg.kind === "mention") {
+                  return (
+                    <span key={`h-${i}`} className="text-primary">
+                      {seg.text}
+                    </span>
+                  )
+                }
+                return <span key={`h-${i}`}>{seg.text}</span>
+              })}
+            </div>
+          ) : null}
+          <textarea
+            ref={textareaRef}
+            value={body}
+            onChange={(e) => {
+              setBody(e.target.value)
+              setCaret(e.target.selectionStart)
+              onTyping?.()
+            }}
+            onSelect={(e) => {
+              setCaret(e.currentTarget.selectionStart)
+            }}
+            onKeyUp={(e) => {
+              setCaret(e.currentTarget.selectionStart)
+            }}
+            onClick={(e) => {
+              setCaret(e.currentTarget.selectionStart)
+            }}
+            onScroll={syncHighlightScroll}
+            onKeyDown={onKeyDown}
+            disabled={disabled || isSending}
+            aria-label={`Message ${channelName}`}
+            placeholder={`Message ${channelName}`}
+            rows={1}
+            maxLength={4000}
+            className={cn(
+              "relative z-10 max-h-40 min-h-[4.5rem] w-full resize-none overflow-hidden bg-transparent px-3 pt-3 pb-2 font-sans text-sm leading-relaxed outline-none placeholder:text-muted-foreground disabled:opacity-50",
+              body &&
+                "caret-foreground selection:bg-primary/25 text-transparent [-webkit-text-fill-color:transparent]"
+            )}
+          />
+        </div>
         <div className="flex items-center gap-1 border-t border-border px-2 py-1.5">
           <input
             ref={fileRef}
@@ -465,7 +574,11 @@ export default function ChatComposer({
             type="button"
             size="icon-sm"
             variant="ghost"
-            disabled={disabled || isSending || pending.length >= MAX_FILES}
+            disabled={
+              disabled ||
+              isSending ||
+              pending.length >= MAX_ATTACHMENTS_PER_MESSAGE
+            }
             onClick={() => fileRef.current?.click()}
             aria-label="Attach file"
           >
@@ -514,4 +627,7 @@ export default function ChatComposer({
       ) : null}
     </div>
   )
-}
+  }
+)
+
+export default ChatComposer
