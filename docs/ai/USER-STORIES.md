@@ -88,7 +88,32 @@ Format: **As a… I want… So that…**
 
 ---
 
-## V1.5 stories (planned — next to build)
+## V1 link-context (docs locked · code next)
+
+See [LINK-CONTEXT.md](./LINK-CONTEXT.md). **Not started in code.**
+
+### US-AI10 — Read shared links for AI context
+
+**As a** channel member discussing work with pasted URLs (docs, Stack Overflow, GitHub, …),  
+**I want** Channel AI (Explain / Catch up / Ask / Summarize / Draft / Notes) to use short excerpts from those public pages,  
+**So that** answers reflect what we linked — not only the raw URL string.
+
+**Acceptance**
+- [ ] URLs extracted from the **authorized** AI message window only
+- [ ] Fetch runs **on AI request** (not on every chat send)
+- [ ] Cap URLs + excerpt size; timeouts; soft-fail → AI still runs on chat text
+- [ ] SSRF-safe fetch (no private IPs / metadata / weird schemes)
+- [ ] Optional response meta: links fetched / failed (no requirement for OG preview cards)
+- [ ] Private-channel isolation unchanged (**404** for outsiders)
+- [ ] AI still never auto-posts
+
+**Out of this story**
+- Slack-style link preview cards in the transcript (later UX)
+- Login-walled / paywalled content, PDFs, screenshots OCR
+
+---
+
+## V1.5 stories (planned — after V1 link-context code)
 
 See [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md).
 

@@ -43,7 +43,16 @@ With Path A:
 | 5 | AI responses never auto-persist as channel messages or docs |
 | 6 | AI stays **per channel** — no workspace-wide mega-summary (V1–V2) |
 
-### V1.5 locks (Aug 12, 2026) — next to build
+### V1 link-context locks (Aug 13, 2026) — docs locked · code next
+
+| # | Decision |
+|---|----------|
+| 1 | Shared `http(s)` URLs in the AI window are fetched **at AI time** into short text excerpts |
+| 2 | No message-send crawler; no OG preview cards in the transcript for this slice |
+| 3 | Caps + soft-fail; SSRF guards (see [LINK-CONTEXT.md](./LINK-CONTEXT.md)) |
+| 4 | Still Path A read-only; never auto-post |
+
+### V1.5 locks (Aug 12, 2026) — after link-context code
 
 | # | Decision |
 |---|----------|
@@ -55,7 +64,8 @@ With Path A:
 | 6 | “Find the right moment” lives in **V1.5** (not a separate V3) |
 | 7 | **V2 later:** persistent conversation knowledge + stronger retrieval if usage proves need |
 
-Full plain-English write-up: [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md).
+Full plain-English write-up: [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md).  
+Link reading: [LINK-CONTEXT.md](./LINK-CONTEXT.md).
 
 ---
 
@@ -73,14 +83,27 @@ Full plain-English write-up: [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDE
 - Rate limit + optional `ai_runs` audit
 - Private-channel isolation (same 404 as chat)
 
-**Out of scope for V1**
+**Out of scope for V1 (core)**
 - Tool-calling agents that create channels, invite, post, delete
 - Vector search / embeddings
 - Large-history chunk → merge Catch up
 - Cached Catch-up / Summarize results
 - Docs/boards persistence module
+- Rich link preview cards in chat UI
 
-### V1.5 (next)
+### V1 link-context (docs locked · code next)
+
+**In scope**
+- Detect URLs in the authorized AI window
+- Fetch public page text → capped excerpts in the prompt
+- Soft-fail + SSRF-safe networking
+- Optional meta (links fetched / failed)
+
+**Still out**
+- Preview cards / unfurl UI
+- Auth-walled pages, PDF parse, background indexing
+
+### V1.5 (next after link-context)
 
 **In scope**
 - Large-history Catch up (chunk → merge when needed)

@@ -10,6 +10,7 @@
 | Prompt | Ground answers in provided messages; admit gaps |
 | Injection | Read-only Path A limits blast radius; still treat message bodies as untrusted data inside the prompt |
 | Errors | No raw provider stack traces to client |
+| Link fetch (V1 · planned) | SSRF guards; https preferred; block private/link-local/metadata hosts; timeout + max bytes; no session cookies forwarded; treat fetched HTML/text as untrusted — [LINK-CONTEXT.md](./LINK-CONTEXT.md) |
 
 **Interview line:** “Authorization happens before retrieval; the LLM is not a permission system.”
 

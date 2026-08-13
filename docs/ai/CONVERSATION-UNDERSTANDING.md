@@ -1,6 +1,6 @@
 # Conversation understanding — product architecture
 
-**Status:** **V1.5 direction locked for development** (Aug 12, 2026) · Path A **V1** already shipped  
+**Status:** **V1.5 direction locked** (Aug 12, 2026) · **V1 link-context docs locked** (Aug 13) · Path A **V1** already shipped  
 **Audience:** Product + engineering — plain language first.
 
 This note answers one question:
@@ -63,7 +63,8 @@ Anything the AI produces is **derived help**. It never replaces the real chat. S
 | Stage | Goal | Status |
 |-------|------|--------|
 | **V1** | Prove Channel AI with a limited message window | ✅ Shipped |
-| **V1.5** | Large-history Catch up + smarter Ask with sources + cache expensive results | 🎯 **Next to build** |
+| **V1 link-context** | When teammates paste public URLs, AI can use short page excerpts | 📋 Docs locked · ⬜ code next — [LINK-CONTEXT.md](./LINK-CONTEXT.md) |
+| **V1.5** | Large-history Catch up + smarter Ask with sources + cache expensive results | 🎯 After link-context code |
 | **V2** | Persistent conversation knowledge + stronger retrieval (when users prove they want it) | Later |
 
 There is **no separate V3**. “Find the right moment, then answer” belongs in **V1.5** in a limited form (no vector database yet).
@@ -75,6 +76,8 @@ There is **no separate V3**. “Find the right moment, then answer” belongs in
 User asks → we load an **authorized, limited** slice of messages → AI answers.
 
 Good for proving the idea. It does **not** fully solve “500 messages while I was away.”
+
+**Gap:** pasted links are only URL strings in that slice. Closing that gap is **V1 link-context** (AI-time fetch), not V1.5.
 
 ---
 

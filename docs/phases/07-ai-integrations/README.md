@@ -1,6 +1,6 @@
 # Phase 7 — AI & Third-Party Integrations
 
-**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · 🎯 **V1.5 next** — module SoT: [`docs/ai/`](../../ai/README.md)  
+**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · 📋 **V1 link-context docs locked** (Aug 13) · 🎯 **V1.5** after link-context code — module SoT: [`docs/ai/`](../../ai/README.md)  
 **Prev:** [← Phase 6](../06-realtime/README.md) · **Next:** [Phase 8 — Quality →](../08-quality-deployment/README.md)
 
 ---
@@ -13,7 +13,14 @@
 4. No agents/tools that mutate workspace data; no vector search in V1
 5. Optional third-party “buy” integrations (Stripe, etc.) deferred
 
-## V1.5 locks (Aug 12, 2026) — next to build
+## V1 link-context locks (Aug 13, 2026) — docs locked · code next
+
+1. AI-time fetch of public URLs found in the authorized message window
+2. Short text excerpts into the prompt; soft-fail; SSRF guards
+3. No OG preview cards in chat UI for this slice
+4. Story **US-AI10** — [`docs/ai/LINK-CONTEXT.md`](../../ai/LINK-CONTEXT.md)
+
+## V1.5 locks (Aug 12, 2026) — after link-context
 
 1. Large-history Catch up (chunk → merge when needed)
 2. Contextual Ask with **source messages** (DB find / simple scoring — no embeddings yet)
@@ -36,11 +43,13 @@ Client → POST /api/workspaces/.../channels/.../ai/*
       → { text, meta }  (never auto-writes messages)
 ```
 
+V1 link-context adds (planned): extract URLs → safe fetch → excerpts → then provider.  
 V1.5 adds: large-window chunking, smarter Ask context selection + sources, result cache.
 
 ## Definition of done
 
 V1: see [`docs/ai/TASKS.md`](../../ai/TASKS.md).  
+V1 link-context: US-AI10 when implemented.  
 V1.5: US-AI7…US-AI9 when implemented.
 
 See [docs/ai/TASKS.md](../../ai/TASKS.md) — all six capabilities E2E, private isolation, draft never auto-posts, docs match code.

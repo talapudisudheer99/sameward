@@ -10,6 +10,9 @@ lib/ai/
   rate-limit.ts          # ✅ per-user throttle
   run-ai.ts              # ✅ shared: access → context → provider → ai_runs
   ai-error-message.ts    # ✅ client RTK error helper
+  extract-urls.ts        # ⬜ V1 link-context (planned)
+  fetch-link-text.ts     # ⬜ SSRF-safe fetch + HTML→text
+  link-context.ts        # ⬜ orchestrate excerpts into prompt
 
 lib/schemas/ai/
   ai-request-schema.ts   # ✅
@@ -24,11 +27,14 @@ components/channel/ai/     # ✅ panel + explain dialog
 
 **Boundary:** Route Handlers call `lib/ai` only; browser never sees `OPENAI_API_KEY`.
 
+**Link-context:** planned wire-in after transcript build, before provider — [LINK-CONTEXT.md](./LINK-CONTEXT.md).
+
 ---
 
 ## Status
 
-✅ Shipped Aug 10, 2026 (Path A).
+✅ Path A V1 shipped Aug 10, 2026.  
+📋 V1 link-context docs locked Aug 13, 2026 (code not started).
 
 ---
 

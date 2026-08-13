@@ -1,6 +1,6 @@
 # AI Knowledge Assistant — module reference
 
-**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · 🎯 **V1.5 next** (large-history Catch up + contextual Ask + cache)  
+**Status:** ✅ **Path A V1 shipped + E2E verified** (Aug 10–11, 2026) · 📋 **V1 link-context docs locked** (Aug 13) · 🎯 **V1.5** (large-history Catch up + contextual Ask + cache) after link-context code  
 **Customer goal:** Inside a channel you can already access, **understand** talk — including after a long absence — without the AI ever writing to the workspace for you.
 
 **PO locks (foundation · Aug 10)**
@@ -10,6 +10,12 @@
 4. **Writes:** AI never posts/edits; user may insert a draft into the composer and Send
 5. **Notes:** returned as editable markdown in the UI — no Docs module yet
 6. **Per channel only** — no workspace-wide overview through V2
+
+**PO locks (V1 link-context · Aug 13)** — see [LINK-CONTEXT.md](./LINK-CONTEXT.md)  
+1. AI-time URL fetch only (Explain / Catch up / Ask / …) — not on message send  
+2. Public pages → short text excerpts in the prompt; soft-fail if fetch fails  
+3. SSRF guards + size/time caps; no UI OG preview cards in V1  
+4. Still Path A read-only; never auto-post
 
 **PO locks (V1.5 · Aug 12)** — see [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md)  
 1. Large-history Catch up: small → one pass; large → chunk → summarize → merge  
@@ -23,13 +29,14 @@ This folder is the **single source of truth** for the AI module (same idea as [`
 |-----|----------|
 | [VISION.md](./VISION.md) | Why + in/out of scope + PO locks |
 | [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md) | Leave scenario, V1 → V1.5 → V2 (plain English) |
+| [LINK-CONTEXT.md](./LINK-CONTEXT.md) | Shared links → AI excerpts (V1 flow, security, shape) |
 | [USER-STORIES.md](./USER-STORIES.md) | PO stories + acceptance |
 | [E2E-FLOWS.md](./E2E-FLOWS.md) | Flows + manual checklist |
 | [API-ROUTES.md](./API-ROUTES.md) | REST under `…/channels/:id/ai/…` |
 | [FRONTEND.md](./FRONTEND.md) | Panel, explain, draft insert |
 | [LIB-AND-MODELS.md](./LIB-AND-MODELS.md) | `lib/ai/*`, schemas, `ai_runs` |
-| [SECURITY.md](./SECURITY.md) | Keys, rate limit, injection |
-| [TASKS.md](./TASKS.md) | Slice checklist (V1 done · V1.5 planned) |
+| [SECURITY.md](./SECURITY.md) | Keys, rate limit, injection, SSRF |
+| [TASKS.md](./TASKS.md) | Slice checklist (V1 · link-context · V1.5) |
 
 ---
 
