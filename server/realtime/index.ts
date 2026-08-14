@@ -17,7 +17,7 @@ loadEnvLocal()
  * Health: GET http://localhost:4001/health
  * Emit:  POST /internal/emit (x-realtime-secret)
  */
-const port = Number(process.env.REALTIME_PORT) || 4001
+const port = Number(process.env.PORT) || Number(process.env.REALTIME_PORT) || 4001
 const appOrigin =
   process.env.NEXT_PUBLIC_APP_URL ??
   process.env.APP_URL ??
@@ -87,7 +87,7 @@ httpServer.listen(port, () => {
 httpServer.on("error", (err: NodeJS.ErrnoException) => {
   if (err.code === "EADDRINUSE") {
     console.error(
-      `[realtime] port ${port} already in use — stop the other process or change REALTIME_PORT`
+      `[realtime] port ${port} already in use — stop the other process or change PORT / REALTIME_PORT`
     )
     process.exit(1)
   }
