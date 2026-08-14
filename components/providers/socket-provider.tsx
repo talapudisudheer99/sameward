@@ -128,7 +128,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const instance = io(realtimeUrl(), {
       withCredentials: true,
-      transports: ["websocket", "pooling"],
+      transports: ["websocket", "polling"],
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
