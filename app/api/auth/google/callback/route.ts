@@ -20,10 +20,19 @@ type GoogleProfile = {
   name?: string
 }
 
+/**
+ * Behind a proxy (Railway), `request.url` is the container's own bind address
+ * (http://localhost:$PORT), so redirects built from it escape the public domain.
+ * APP_URL is the real origin; request.url stays the local fallback.
+ */
+function appOrigin(request: Request): string {
+  return (process.env.APP_URL ?? new URL(request.url).origin).replace(/\/$/, "")
+}
+
 function redirectToLogin(request: Request, message: string) {
   // Leading "/" = from site root → /login
   // Without it, "login" becomes /api/auth/google/login (404)
-  const url = new URL("/login", request.url)
+  const url = new URL("/login", appOrigin(request))
   url.searchParams.set("error", message)
   return NextResponse.redirect(url)
 }
@@ -187,7 +196,9 @@ export async function GET(request: Request) {
       ip,
     })
 
-    const response = NextResponse.redirect(new URL("/workspace", request.url))
+    const response = NextResponse.redirect(
+      new URL("/workspace", appOrigin(request))
+    )
 
     response.cookies.delete("google_oauth_state")
     return response
