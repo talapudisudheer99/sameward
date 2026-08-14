@@ -3,6 +3,9 @@
  * `lib/types/<module>/…`
  */
 import type { Attachment } from "@/lib/types/upload/upload-types"
+import type { LinkPreview } from "@/lib/types/channel/link-preview"
+
+export type { LinkPreview }
 
 export type ChannelVisibility = "public" | "private" | "dm"
 
@@ -60,6 +63,8 @@ export type ChatMessage = {
     count: number
     userIds: string[]
   }[]
+  /** Open Graph unfurl cards (0–2) */
+  linkPreviews?: LinkPreview[]
   createdAt: string // ISO
   editedAt?: string | null
   deletedAt?: string | null

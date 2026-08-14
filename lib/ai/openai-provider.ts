@@ -2,7 +2,8 @@ import OpenAI from "openai"
 
 import { resolveAiModel } from "@/lib/ai/constants"
 import {
-  AiProviderError,
+  aiProviderError,
+  isAiProviderError,
   type AiCompleteInput,
   type AiCompleteResult,
   type AiProvider,
@@ -15,7 +16,7 @@ let client: OpenAI | null = null
 function getClient(): OpenAI {
   const key = process.env.OPENAI_API_KEY?.trim()
   if (!key) {
-    throw new AiProviderError(
+    throw aiProviderError(
       "AI is not configured. Set OPENAI_API_KEY on the server."
     )
   }
@@ -44,7 +45,7 @@ export const openaiProvider: AiProvider = {
 
       const text = response.choices[0]?.message?.content?.trim() ?? ""
       if (!text) {
-        throw new AiProviderError("The AI returned an empty response.", 502)
+        throw aiProviderError("The AI returned an empty response.", 502)
       }
 
       return {
@@ -54,9 +55,9 @@ export const openaiProvider: AiProvider = {
         completionTokens: response.usage?.completion_tokens,
       }
     } catch (err) {
-      if (err instanceof AiProviderError) throw err
+      if (isAiProviderError(err)) throw err
       console.error("[ai/openai]", err)
-      throw new AiProviderError(
+      throw aiProviderError(
         "AI provider is temporarily unavailable. Try again shortly.",
         502
       )

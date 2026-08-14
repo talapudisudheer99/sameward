@@ -29,7 +29,7 @@ Full why + layout: [docs/architecture/deploy.md](../architecture/deploy.md).
 | Concern | Detail |
 |---------|--------|
 | Persistence | WebSockets need a long-lived Node process |
-| Deploy | **Railway** for Next + realtime (not Vercel serverless for sockets) |
+| Deploy | **Railway** for Next + realtime (always-on; not a serverless-only host) |
 | Migrate later | Two services / two folders → move realtime without rewriting REST |
 | Learning | Real Socket.IO rooms, auth, reconnect — not a black-box vendor |
 

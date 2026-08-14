@@ -1,6 +1,6 @@
 # Data model — Channels & messages
 
-## Collections (planned)
+## Collections (shipped)
 
 ### `channels`
 
@@ -56,6 +56,7 @@ Works for **public and private** channels (unlike `channel_memberships`). Openin
 | `clientMessageId` | string? | optional idempotency |
 | `mentionedUserIds` | ObjectId[] | @mentions (≤ 20); validated as workspace (+ channel for private/DM) members |
 | `reactions` | `{ emoji, userIds[] }[]` | allowlisted emoji; ≤ 20 types; toggle via POST …/reactions |
+| `linkPreviews` | `{ url, finalUrl, title, description?, imageUrl?, siteName?, faviconUrl? }[]` | OG unfurl cards (≤ 2); SSRF-safe fetch on send/edit |
 | `editedAt` | Date \| null | set when author edits body |
 | `deletedAt` | Date \| null | soft delete tombstone |
 | `deletedBy` | ObjectId \| null | who soft-deleted |

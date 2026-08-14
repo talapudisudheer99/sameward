@@ -1,47 +1,46 @@
-# Deploy topology — TeamHub (PO lock)
+# Deploy — how TeamHub goes live
 
-**Locked:** Aug 4, 2026 — **Option B**  
-**Owner choice:** One always-on platform (**Railway**) runs **Next.js (UI + REST)** and **Socket.IO**.  
-**Hard rule:** Code stays **separated by folder/process** so we can split hosts later without a rewrite.
+**Decision locked:** Aug 4, 2026 — **Option B**  
+**Host:** **Railway** runs both parts of the app.  
+**Rule:** Keep Next and Socket.IO in **separate folders and processes**, so we can move realtime to another host later without rewriting chat.
 
 ---
 
-## Decision (one diagram)
+## Simple picture
 
 ```text
 Browser
    │
-   ├─ HTTPS ──► Railway ──► Next.js (UI + app/api REST)
+   ├─ HTTPS ──► Railway ──► Next.js (pages + REST APIs in app/api)
    │                         │
-   │                         │ POST /internal/emit (secret)
-   │                         │   (localhost in dev; same private network in prod)
+   │                         │ internal notify (secret)
    │                         ▼
    └─ WSS  ──► Railway ──► Socket.IO (server/realtime)
-                              rooms · typing · presence · fan-out
+                              live messages · typing · presence
 
-MongoDB Atlas  ←── Next (+ realtime for authz checks)
-AWS S3         ←── Next only (uploads)
+MongoDB Atlas  ←── used by Next (and realtime when checking membership)
+AWS S3         ←── Next only (file uploads)
 Resend / Google OAuth  ←── Next only
 ```
 
-| Piece | Where it **runs** | Where it **lives in git** |
-|-------|-------------------|---------------------------|
-| UI + REST | Railway (Next process) | `app/`, `app/api/**` |
-| Socket.IO | Railway (realtime process) | `server/realtime/**` |
-| Shared rules / models | imported by both | `lib/**` |
-| Mongo / S3 / email | Atlas / AWS / vendors | env on Railway |
+| Piece | Where it runs | Where the code lives |
+|-------|---------------|----------------------|
+| Website + REST API | Railway service **web** | `app/`, `app/api/**` |
+| Live sockets | Railway service **realtime** | `server/realtime/**` |
+| Shared helpers / models | Imported by both | `lib/**` |
+| Database / files / email | Atlas / AWS / Resend | Env vars on Railway |
 
-**Not Vercel for production app** (Option A deferred). Preview-on-Vercel can return later as optional marketing/CD — not required for v1 chat.
+**Production host:** Railway only. We do not put TeamHub production on Vercel — serverless hosts sleep, and Socket.IO needs a process that stays awake.
 
 ---
 
-## Why Option B
+## Why Railway (Option B)
 
-| Reason | Detail |
-|--------|--------|
-| Sockets need always-on Node | Railway fits; Vercel serverless does not |
-| One bill / one mental model | Web + realtime on the same platform |
-| Still “proper” architecture | REST and sockets are **different processes + folders**, not one spaghetti server |
+| Reason | In plain English |
+|--------|------------------|
+| Sockets need a living server | Railway keeps the process awake; serverless hosts stop idle functions |
+| One place to manage | Web + realtime on the same platform (two services, one project) |
+| Still clean code | REST and sockets stay in **different folders/processes**, not one mixed file |
 
 ---
 
@@ -130,7 +129,7 @@ Protocol never changes: **POST message → Mongo → notifyRealtime → `message
 
 | Idea | Why |
 |------|-----|
-| Sockets inside Vercel / serverless routes | Connections die |
+| Sockets on a serverless host (e.g. Vercel route handlers) | Connections die when the function sleeps |
 | One mega `server.ts` with Next+io and no `server/realtime` boundary | Hard to migrate; fights App Router defaults |
 | Browser-only messages (no REST write) | Two sources of truth |
 

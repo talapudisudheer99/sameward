@@ -42,7 +42,9 @@ If the cookie is missing, fake, expired, or the session row was deleted → not 
 | Rate limits | In-memory fixed window on sensitive routes |
 | Audit | `AuthEvent` in Mongo + JSON log in non-production |
 
-**Not shipped (later):** RBAC roles, hard gate on invites, Redis rate limits, session device list UI, Vercel deploy (Phase 8).
+**Not shipped (later):** hard gate on invites, Redis rate limits, 2FA.  
+**Shipped separately:** workspace roles (owner/admin/member) · Settings device session list · Profile v1.  
+**Next for go-live:** Railway production deploy (Phase 8).
 
 ---
 

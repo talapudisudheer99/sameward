@@ -50,7 +50,7 @@ export const EXPLORE_TUTORIAL_STEPS: ExploreTutorialStep[] = [
   {
     id: "explain",
     title: "Explain one message",
-    body: "Confused by a single line? Hover a message and tap the sparkle — AI explains that message using nearby context.",
+    body: "Confused by a single line? Right-click a message (or long-press on mobile), then choose Explain — AI explains it with nearby context. Or tap the pinned sparkle.",
     target: '[data-explore-tutorial="explain-button"]',
     placement: "left",
   },

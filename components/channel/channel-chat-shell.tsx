@@ -1,16 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useParams } from "next/navigation"
 import { Hash } from "lucide-react"
 
 import ChannelEmptyTip from "@/components/channel/channel-empty-tip"
+import ChannelFileDropZone from "@/components/channel/channel-file-drop-zone"
 import ChannelMembersPanel from "@/components/channel/channel-members-panel"
 import ChannelSidebar from "@/components/channel/channel-sidebar"
 import ChannelAiPanel from "@/components/channel/ai/channel-ai-panel"
 import ExplainMessageDialog from "@/components/channel/ai/explain-message-dialog"
 import ProfileCardDialog from "@/components/profile/profile-card-dialog"
-import ChatComposer from "@/components/channel/chat-composer"
+import ChatComposer, {
+  type ChatComposerHandle,
+} from "@/components/channel/chat-composer"
 import ChatHeader from "@/components/channel/chat-header"
 import ChatMessageList from "@/components/channel/chat-message-list"
 import ReconnectBanner from "@/components/channel/reconnect-banner"
@@ -48,6 +51,8 @@ export type ChannelChatShellProps = {
   /** History query — list shows spinner / error without blocking the shell */
   messagesLoading?: boolean
   messagesError?: boolean
+  /** Refetch message history after a load error */
+  onRetryMessages?: () => void
   channelMembers: ChannelMemberRow[]
   /** For invite dialog — workspace members not already in channel */
   inviteCandidates: WorkspaceMemberOption[]
@@ -100,6 +105,7 @@ export default function ChannelChatShell({
   messages,
   messagesLoading = false,
   messagesError = false,
+  onRetryMessages,
   channelMembers,
   inviteCandidates,
   currentUserId,
@@ -172,6 +178,7 @@ export default function ChannelChatShell({
   const dmCandidates = workspaceMembers.filter(
     (m) => m.userId !== currentUserId
   )
+  const composerRef = useRef<ChatComposerHandle>(null)
 
   return (
     <div className="relative flex h-full min-h-0 flex-1 overflow-hidden border-border bg-background md:border-l">
@@ -207,7 +214,10 @@ export default function ChannelChatShell({
             </div>
           )
         ) : (
-          <>
+          <ChannelFileDropZone
+            disabled={demoMode || isSending}
+            onFiles={(files) => composerRef.current?.addFiles(files)}
+          >
             <ChatHeader
               channel={activeChannel}
               memberCount={isPrivate ? channelMembers.length : undefined}
@@ -247,6 +257,7 @@ export default function ChannelChatShell({
               currentUserId={currentUserId}
               isLoading={messagesLoading}
               isError={messagesError}
+              onRetryLoad={onRetryMessages}
               mentionNameById={Object.fromEntries(
                 mentionCandidates.map((m) => [m.userId, m.fullName])
               )}
@@ -272,7 +283,10 @@ export default function ChannelChatShell({
             />
             <TypingIndicator label={typingLabel} />
             <ChatComposer
+              ref={composerRef}
               channelName={activeChannel.name}
+              workspaceId={workspaceId}
+              channelId={activeChannel.id}
               mentionCandidates={mentionCandidates}
               onSend={onSendMessage}
               onTyping={onTyping}
@@ -281,7 +295,7 @@ export default function ChannelChatShell({
               draftNonce={draftNonce}
               draftText={draftText}
             />
-          </>
+          </ChannelFileDropZone>
         )}
       </div>
 

@@ -1,7 +1,7 @@
 # End-to-end flows — AI Knowledge Assistant
 
-**Status:** ✅ Implemented · E2E verified (manual, Aug 10–11, 2026)  
-**PO locks:** Path A · OpenAI · read-only · windowed context  
+**Status:** ✅ Core Path A E2E verified (manual, Aug 10–11, 2026) · ✅ Link-context US-AI10 shipped (Aug 13) · verify script + S14 product check  
+**PO locks:** Path A · OpenAI · read-only · windowed context · link excerpts on AI runs  
 **Prerequisite:** `OPENAI_API_KEY` in `.env.local` + restart Next. Realtime optional for AI routes but needed for normal live chat.
 
 ---
@@ -36,7 +36,7 @@
 ### D) Explain message
 
 ```text
-1. Hover/menu on message → Explain
+1. Right-click / long-press message → Explain with AI (explore tour may pin sparkle)
 2. POST …/ai/explain { messageId }
 3. Target + neighbors → explanation dialog
 ```
@@ -65,6 +65,19 @@
 1. Workspace member not in private channel → all AI routes 404
 2. Rate limit exceeded → 429
 3. Missing OPENAI_API_KEY → 503 user-safe message
+```
+
+### H) Link context (V1 · shipped)
+
+**Status:** ✅ Implemented — see [LINK-CONTEXT.md](./LINK-CONTEXT.md) · US-AI10
+
+```text
+1. Channel has messages that include public https URLs (e.g. Stack Overflow)
+2. Member runs Explain on a message that cites the link (or Ask / Catch up over the window)
+3. Server: build message window → extract URLs → SSRF-safe fetch → HTML→text excerpts
+4. Prompt = transcript + “Linked pages” block → provider → answer uses page substance
+5. If fetch fails / blocked → AI still answers from chat; meta notes failure counts
+6. Transcript may show OG cards (channels feature); AI answer still cites page substance via link-context
 ```
 
 ---
@@ -194,6 +207,18 @@ Paste as **two users** in order (A = Maya voice, B = Arjun voice). Topic: separa
 **Pass:** Eventually **429** with clear message.  
 **Fail:** Unlimited spend / silent failures.
 
+### S14 — Link context (V1 · when US-AI10 ships)
+
+**Setup:** Seed a short thread that pastes a **public** docs / SO URL and discusses one concrete claim from that page (do not rely on paywalled pages).
+
+**Steps:** Explain the message that cites the link (or Ask: “What does the linked page say we should do?”).  
+**Pass:** Answer reflects substance from the fetched page (or clearly cites the excerpt), not only the URL hostname.  
+**Fail:** Invents page content that was never fetched; or hangs forever on a bad URL.
+
+**Steps (failure path):** Use a URL that times out / 404 / blocked host.  
+**Pass:** AI still returns using chat text; user-safe behavior; no SSRF to internal addresses.  
+**Fail:** 5xx with stack traces; or server tries `http://127.0.0.1` / metadata IP.
+
 ---
 
 ## 15-minute smoke (minimum bar)
@@ -206,8 +231,10 @@ Paste as **two users** in order (A = Maya voice, B = Arjun voice). Topic: separa
 - [ ] S8 + S9 Draft insert + manual Send OK  
 - [ ] S5 Explain OK  
 - [ ] S10 Notes + copy OK  
+- [ ] S14 Link context OK *(after US-AI10)*  
 
-**Release bar:** all smoke items + S11 private 404.
+**Release bar:** all smoke items + S11 private 404.  
+**Link-context release bar:** S14 pass + SSRF checklist in [LINK-CONTEXT.md](./LINK-CONTEXT.md).
 
 ---
 
@@ -222,6 +249,8 @@ Paste as **two users** in order (A = Maya voice, B = Arjun voice). Topic: separa
 - [ ] Notes copyable; no AI-written channel messages  
 - [ ] Private outsider → 404  
 - [ ] Missing key → 503; spam → 429  
+- [ ] Linked public URL improves Explain/Ask (S14) — when US-AI10 ships  
+- [ ] Bad/private URL soft-fails; no SSRF  
 
 ---
 

@@ -1,7 +1,9 @@
 # Phase 1 — Product Shell
 
-**Status:** ⬜ Not started  
+**Status:** ✅ Done  
 **Prev:** [← Phase 0](../00-foundation/README.md) · **Next:** [Phase 2 — Authentication →](../02-authentication/README.md)
+
+> Landing and app shell are built. This page stays as the learning guide.
 
 ---
 

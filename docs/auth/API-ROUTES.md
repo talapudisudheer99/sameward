@@ -8,7 +8,11 @@ All under `app/api/auth/`. Base URL: `/api/auth/...`
 | POST | `/signin` | No | Email/password login + session |
 | POST | `/logout` | Cookie optional | Destroy current session |
 | POST | `/logout-all` | Yes (session) | Destroy all user sessions |
-| GET | `/me` | Cookie | Current user or 401 (prove-out / future clients) |
+| GET | `/me` | Cookie | Current user or 401 |
+| PATCH | `/me/avatar` | Yes | Upload / update avatar |
+| POST | `/change-password` | Yes | Change password · keeps this session · revokes others |
+| GET | `/sessions` | Yes | List active sessions (+ max) |
+| DELETE | `/sessions/:sessionId` | Yes | Revoke one session |
 | GET | `/google` | No | Start OAuth (redirect) |
 | GET | `/google/callback` | No | OAuth callback → session |
 | POST | `/forgot-password` | No | Send reset email (always OK message) |

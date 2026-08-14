@@ -1,6 +1,6 @@
 "use client"
 
-import { Hash, Lock, Paperclip, Send, Sparkles } from "lucide-react"
+import { Globe, Hash, Lock, Paperclip, Send, Sparkles } from "lucide-react"
 
 import { Beat, useMarketingMotion } from "@/components/marketing/motion"
 import { cn } from "@/lib/utils"
@@ -40,11 +40,11 @@ function useMockTimeline() {
     workspaceItem: (i: number) => at(0.31, i),
     chatHeader: at(0.48),
     message: (i: number) => at(0.54, i),
-    composer: at(0.7),
-    profileParent: at(0.78),
-    profileChild: (i: number) => at(0.83, i),
-    aiParent: at(1.02),
-    aiChild: (i: number) => at(1.07, i),
+    composer: at(0.72),
+    profileParent: at(0.8),
+    profileChild: (i: number) => at(0.85, i),
+    aiParent: at(1.04),
+    aiChild: (i: number) => at(1.09, i),
   }
 }
 
@@ -202,7 +202,11 @@ export function ProductUiMock({
                 <ChatLine
                   src={AVATARS.aisha}
                   name="Aisha Patel"
-                  body="Deploy window still Friday afternoon."
+                  body="Deploy runbook for Friday:"
+                  linkPreview={{
+                    host: "docs.northwind.dev",
+                    title: "Backend deploy & rollback checklist",
+                  }}
                   delay={t.message(1)}
                   duration={t.duration}
                 />
@@ -314,7 +318,7 @@ export function ProductUiMock({
               as="p"
               className="mt-1 text-[11px] text-muted-foreground"
             >
-              Read-only · you always hit Send
+              Reads chat + shared links
             </Beat>
             <Beat
               delay={t.aiChild(2)}
@@ -329,11 +333,11 @@ export function ProductUiMock({
                 Sync today at 10am
               </Beat>
               <Beat delay={t.aiChild(4)} duration={t.duration} as="li">
-                Friday backend deploy
+                Friday deploy · runbook linked
               </Beat>
               {band ? (
                 <Beat delay={t.aiChild(5)} duration={t.duration} as="li">
-                  Dashboard review shared
+                  1 linked page used for context
                 </Beat>
               ) : null}
             </ul>
@@ -407,6 +411,7 @@ function ChatLine({
   name,
   body,
   attachment,
+  linkPreview,
   delay,
   duration,
 }: {
@@ -414,6 +419,7 @@ function ChatLine({
   name: string
   body: string
   attachment?: boolean
+  linkPreview?: { host: string; title: string }
   delay: number
   duration: number
 }) {
@@ -427,11 +433,26 @@ function ChatLine({
         width={32}
         height={32}
       />
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold text-foreground">{name}</p>
         <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
           {body}
         </p>
+        {linkPreview ? (
+          <div className="mt-1.5 max-w-[16rem] overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm ring-1 ring-foreground/5">
+            <div className="flex items-center gap-2 border-b border-border/50 bg-muted/40 px-2.5 py-1.5">
+              <span className="flex size-5 items-center justify-center rounded-md bg-card ring-1 ring-border/70">
+                <Globe className="size-3 text-primary" strokeWidth={1.75} />
+              </span>
+              <span className="truncate text-[9px] font-medium tracking-wide text-muted-foreground uppercase">
+                {linkPreview.host}
+              </span>
+            </div>
+            <p className="px-2.5 py-2 font-heading text-[11px] leading-snug font-semibold tracking-tight text-foreground">
+              {linkPreview.title}
+            </p>
+          </div>
+        ) : null}
         {attachment ? (
           <div className="mt-1.5 inline-flex items-center gap-2 rounded-md border border-border/70 bg-background px-2 py-1">
             <span className="size-6 rounded bg-secondary" />

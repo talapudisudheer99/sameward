@@ -9,6 +9,7 @@
     "start": "next start",
     "realtime": "tsx server/realtime/index.ts",
     "realtime:smoke": "tsx server/realtime/smoke-client.ts",
+    "verify:link-context": "tsx scripts/verify-link-context.ts",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"

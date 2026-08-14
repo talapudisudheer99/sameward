@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { aiErrorMessage } from "@/lib/ai/ai-error-message"
+import { formatAiLinkMeta } from "@/lib/ai/format-link-meta"
 import { cn } from "@/lib/utils"
 import { useAiExplainMutation } from "@/store/api/ai/ai-api"
 import type { ExplainAiRunner } from "@/lib/explore/ai-runners"
@@ -46,6 +47,7 @@ export default function ExplainMessageDialog({
   runner,
 }: ExplainMessageDialogProps) {
   const [text, setText] = useState("")
+  const [linkMeta, setLinkMeta] = useState<string | null>(null)
   const [runnerBusy, setRunnerBusy] = useState(false)
   const [explain, { isLoading }] = useAiExplainMutation()
   const busy = runnerBusy || isLoading
@@ -66,6 +68,7 @@ export default function ExplainMessageDialog({
         setRunnerBusy(true)
         const data = await runner(target.id)
         setText(data.text)
+        setLinkMeta(null)
         return
       }
       const data = await explain({
@@ -74,6 +77,7 @@ export default function ExplainMessageDialog({
         messageId: target.id,
       }).unwrap()
       setText(data.text)
+      setLinkMeta(formatAiLinkMeta(data.meta))
     } catch (err) {
       toast.error(aiErrorMessage(err))
     } finally {
@@ -85,7 +89,10 @@ export default function ExplainMessageDialog({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next) setText("")
+        if (!next) {
+          setText("")
+          setLinkMeta(null)
+        }
         onOpenChange(next)
       }}
     >
@@ -101,7 +108,8 @@ export default function ExplainMessageDialog({
             Explain message
           </DialogTitle>
           <DialogDescription className="text-sm">
-            Nearby chat for context. Image/PDF bytes are not opened — filenames
+            Nearby chat for context. Public links in the thread may be fetched
+            as short text excerpts. Image/PDF bytes are not opened — filenames
             only.
           </DialogDescription>
         </DialogHeader>
@@ -142,9 +150,16 @@ export default function ExplainMessageDialog({
             </Button>
           ) : (
             <div className="animate-in space-y-1.5 border-t border-border/60 pt-3 duration-200 fade-in-0">
-              <span className="text-xs font-semibold tracking-tight">
-                Explanation
-              </span>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <span className="text-xs font-semibold tracking-tight">
+                  Explanation
+                </span>
+                {linkMeta ? (
+                  <span className="text-[11px] text-muted-foreground">
+                    {linkMeta}
+                  </span>
+                ) : null}
+              </div>
               <div className="max-h-64 overflow-y-auto text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
                 {text}
               </div>

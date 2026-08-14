@@ -38,5 +38,6 @@ export async function POST(
     system: systemPrompt(),
     userPrompt: explainUserPrompt(context.formatted, parsed.data.messageId),
     context,
+    preferLinkMessageIds: [parsed.data.messageId],
   })
 }

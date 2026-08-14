@@ -7,6 +7,10 @@ import { toMessageJson } from "@/lib/channels/message-json"
 import { notifyRealtime } from "@/lib/channels/notify-realtime"
 import { channelRoomName } from "@/lib/channels/channel-room"
 import { workspaceRoomName } from "@/lib/channels/workspace-room"
+import {
+  resolveLinkPreviewsWithBudget,
+} from "@/lib/channels/og-preview"
+import { finalizeLinkPreviewsInBackground } from "@/lib/channels/finalize-link-previews"
 import { ChannelVisibility } from "@/lib/models/channel/channel"
 import { ChannelMembership } from "@/lib/models/channel/channel-membership"
 import { Message } from "@/lib/models/channel/message"
@@ -219,6 +223,8 @@ export async function POST(
     }
 
     try {
+      const { previews, pending } = await resolveLinkPreviewsWithBudget(text)
+
       const message = await Message.create({
         workspaceId,
         channelId,
@@ -226,6 +232,7 @@ export async function POST(
         body: text,
         attachments,
         mentionedUserIds: validMentions,
+        linkPreviews: previews,
         ...(clientMessageId ? { clientMessageId } : {}),
       })
 
@@ -248,6 +255,17 @@ export async function POST(
           createdAt: json.createdAt,
         },
       })
+
+      // OG still resolving — finish in background and patch clients via message:update
+      if (pending) {
+        finalizeLinkPreviewsInBackground({
+          messageId: message._id,
+          channelId,
+          authorDisplayName: user.fullName,
+          pending,
+          logLabel: "create",
+        })
+      }
 
       return NextResponse.json(json, {
         status: 201,

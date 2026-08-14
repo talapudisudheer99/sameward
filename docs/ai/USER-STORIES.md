@@ -20,9 +20,9 @@ Format: **As a… I want… So that…**
 **So that** I grasp the thread without reading every line.
 
 **Acceptance**
-- [ ] Entry from channel AI panel
-- [ ] Uses last N messages (capped); empty channel → clear empty state
-- [ ] Non-access → **404**
+- [x] Entry from channel AI panel
+- [x] Uses last N messages (capped); empty channel → clear empty state
+- [x] Non-access → **404**
 
 ---
 
@@ -33,9 +33,9 @@ Format: **As a… I want… So that…**
 **So that** I only review what I missed.
 
 **Acceptance**
-- [ ] `since` required (ISO); presets set it client-side
-- [ ] Only messages with `createdAt >= since`
-- [ ] Truncation note when window exceeds caps
+- [x] `since` required (ISO); presets set it client-side
+- [x] Only messages with `createdAt >= since`
+- [x] Truncation note when window exceeds caps
 
 ---
 
@@ -46,8 +46,8 @@ Format: **As a… I want… So that…**
 **So that** I get grounded answers (or “not in the provided messages”).
 
 **Acceptance**
-- [ ] Question required; answer cites only provided context
-- [ ] Private isolation identical to chat
+- [x] Question required; answer cites only provided context
+- [x] Private isolation identical to chat
 
 ---
 
@@ -58,9 +58,9 @@ Format: **As a… I want… So that…**
 **So that** cryptic lines make sense from nearby talk.
 
 **Acceptance**
-- [ ] Action on a message in the transcript
-- [ ] Loads target + ±K neighbors in same channel
-- [ ] Wrong channel / missing → **404**
+- [x] Action on a message in the transcript
+- [x] Loads target + ±K neighbors in same channel
+- [x] Wrong channel / missing → **404**
 
 ---
 
@@ -71,8 +71,8 @@ Format: **As a… I want… So that…**
 **So that** I can edit and Send myself.
 
 **Acceptance**
-- [ ] Draft inserted into composer — **never** auto-POSTed
-- [ ] Optional tone hint
+- [x] Draft inserted into composer — **never** auto-POSTed
+- [x] Optional tone hint
 
 ---
 
@@ -88,7 +88,32 @@ Format: **As a… I want… So that…**
 
 ---
 
-## V1.5 stories (planned — next to build)
+## V1 link-context (shipped)
+
+See [USER-STORIES.md](./USER-STORIES.md) US-AI10.
+
+### US-AI10 — Read shared links for AI context
+
+**As a** channel member discussing work with pasted URLs (docs, Stack Overflow, GitHub, …),  
+**I want** Channel AI (Explain / Catch up / Ask / Summarize / Draft / Notes) to use short excerpts from those public pages,  
+**So that** answers reflect what we linked — not only the raw URL string.
+
+**Acceptance**
+- [x] URLs extracted from the **authorized** AI message window only
+- [x] Fetch runs **on AI request** (not on every chat send)
+- [x] Cap URLs + excerpt size; timeouts; soft-fail → AI still runs on chat text
+- [x] SSRF-safe fetch (no private IPs / metadata / weird schemes)
+- [x] Response meta: links fetched / failed (OG cards are channels — see LINK-PREVIEWS)
+- [x] Private-channel isolation unchanged (**404** for outsiders)
+- [x] AI still never auto-posts
+
+**Out of this story**
+- Chat OG unfurl polish beyond what channels already ship ([LINK-PREVIEWS](../channels/LINK-PREVIEWS.md))
+- Login-walled / paywalled content, PDFs, screenshots OCR
+
+---
+
+## V1.5 stories (planned — next after link-context)
 
 See [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md).
 

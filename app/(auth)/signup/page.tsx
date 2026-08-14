@@ -76,12 +76,10 @@ export default function SignUpPage() {
       if (!response.ok) {
         // A non-2xx response (400/409/500) is an expected API failure.
         const message = result.message ?? "Could not create your account"
-        // Form error stays next to the button; toast is the global feedback.
         setError("root.serverError", {
           type: "server",
           message,
         })
-        toast.error(message)
         return
       }
 
@@ -96,7 +94,6 @@ export default function SignUpPage() {
         type: "network",
         message,
       })
-      toast.error(message)
       return
     }
   }
@@ -158,23 +155,8 @@ export default function SignUpPage() {
           />
 
           <p className="text-xs leading-relaxed text-muted-foreground">
-            By creating an account you agree to our{" "}
-            <button
-              type="button"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => console.log("terms:coming-soon")}
-            >
-              Terms of Service
-            </button>{" "}
-            and{" "}
-            <button
-              type="button"
-              className="font-medium text-primary underline-offset-4 hover:underline"
-              onClick={() => console.log("privacy:coming-soon")}
-            >
-              Privacy Policy
-            </button>
-            {"."}
+            TeamHub is a learning product. Formal Terms of Service and Privacy
+            Policy pages will be published later.
           </p>
 
           {errors.root?.serverError?.message ? (

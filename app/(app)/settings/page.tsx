@@ -3,6 +3,7 @@ import { UserRound } from "lucide-react"
 
 import AccountSettings from "@/components/settings/account-settings"
 import AppearanceSettings from "@/components/settings/appearance-settings"
+import HelpContactSettings from "@/components/settings/help-contact-settings"
 import PasswordSettings from "@/components/settings/password-settings"
 import SessionSettings from "@/components/settings/session-settings"
 import {
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/card"
 
 /**
- * Settings v1 — account + app (appearance, email, password, sessions).
+ * Settings v1 — account + app (appearance, email, password, sessions, help).
  * Profile editing stays on /profile.
  */
 export default function SettingsPage() {
@@ -96,6 +97,18 @@ export default function SettingsPage() {
             <UserRound className="size-4" aria-hidden />
             Edit your profile
           </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-heading text-base">Help & contact</CardTitle>
+          <CardDescription>
+            Reach the TeamHub team for bugs, questions, or feedback.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <HelpContactSettings />
         </CardContent>
       </Card>
     </section>

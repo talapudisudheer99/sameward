@@ -53,15 +53,19 @@ export default function SessionSettings() {
   const [sessions, setSessions] = useState<SessionRow[]>([])
   const [maxSessions, setMaxSessions] = useState(2)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [revokingId, setRevokingId] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     try {
       setLoading(true)
+      setLoadError(false)
       const { data } = await api.get<SessionsResponse>("/api/auth/sessions")
       setSessions(data.sessions)
       setMaxSessions(data.maxSessions)
     } catch {
+      setLoadError(true)
+      setSessions([])
       toast.error("Could not load sessions")
     } finally {
       setLoading(false)
@@ -109,6 +113,20 @@ export default function SessionSettings() {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="size-4 animate-spin" aria-hidden />
           Loading sessions…
+        </div>
+      ) : loadError ? (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Couldn’t load your sessions.
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => void load()}
+          >
+            Try again
+          </Button>
         </div>
       ) : sessions.length === 0 ? (
         <p className="text-sm text-muted-foreground">No active sessions.</p>

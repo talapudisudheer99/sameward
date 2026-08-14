@@ -8,6 +8,7 @@ import AcceptInviteCard, {
   type AcceptInviteViewState,
 } from "@/components/invite/accept-invite-card"
 import Loader from "@/components/sharable/loader"
+import { api } from "@/lib/api/axios"
 import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import {
   useAcceptInviteMutation,
@@ -51,6 +52,7 @@ export default function AcceptInvitePage() {
 
   const [acceptInvite, { isLoading: isAccepting }] = useAcceptInviteMutation()
   const [acceptError, setAcceptError] = useState<string | undefined>()
+  const [isSwitching, setIsSwitching] = useState(false)
 
   const loginHref = useMemo(() => {
     const next = `/invite/${token}`
@@ -73,9 +75,21 @@ export default function AcceptInvitePage() {
         "Could not accept invite. Try again."
       )
       setAcceptError(message)
-      toast.error(message)
     }
   }, [token, isAccepting, acceptInvite, router])
+
+  const handleSwitchAccount = useCallback(async () => {
+    if (isSwitching) return
+    setIsSwitching(true)
+    try {
+      // End current session so login can become the invited user.
+      await api.post("/api/auth/logout")
+    } catch {
+      // Still send them to login — cookie may already be cleared.
+    }
+    router.replace(loginHref)
+    router.refresh()
+  }, [isSwitching, loginHref, router])
 
   const viewState: AcceptInviteViewState = useMemo(() => {
     if (!token) {
@@ -116,7 +130,10 @@ export default function AcceptInvitePage() {
         kind: "wrong_user",
         invite,
         currentEmail: user.email,
-        switchAccountHref: loginHref,
+        onSwitchAccount: () => {
+          void handleSwitchAccount()
+        },
+        isSwitching,
       }
     }
 
@@ -141,6 +158,8 @@ export default function AcceptInvitePage() {
     isAccepting,
     acceptError,
     handleAccept,
+    handleSwitchAccount,
+    isSwitching,
   ])
 
   if (viewState.kind === "loading") {

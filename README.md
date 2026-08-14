@@ -24,8 +24,8 @@ All product vision, phases, architecture, and progress tracking live in:
 - **State:** Redux Toolkit + RTK Query
 - **Backend:** Next.js Route Handlers
 - **Database:** MongoDB
-- **Realtime:** Socket.IO (later)
-- **Test / Deploy:** Jest, RTL, GitHub, Vercel
+- **Realtime:** Socket.IO (`server/realtime`)
+- **Test / Deploy:** Jest, RTL, GitHub, **Railway** (web + realtime)
 
 ## Scripts
 

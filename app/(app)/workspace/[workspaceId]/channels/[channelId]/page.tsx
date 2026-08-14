@@ -175,6 +175,7 @@ export default function ChannelChatPage() {
     data: messagesData,
     isLoading: isMessagesLoading,
     isError: isMessagesError,
+    refetch: refetchMessages,
   } = useGetMessagesQuery(
     { workspaceId, channelId, limit: MESSAGE_PAGE_LIMIT },
     { skip: !workspaceId || !channelId }
@@ -330,6 +331,9 @@ export default function ChannelChatPage() {
         messages={messagesData?.messages ?? []}
         messagesLoading={isMessagesLoading}
         messagesError={isMessagesError}
+        onRetryMessages={() => {
+          void refetchMessages()
+        }}
         channelMembers={channelMembers}
         inviteCandidates={inviteCandidates}
         currentUserId={currentUserId}
@@ -470,7 +474,7 @@ export default function ChannelChatPage() {
             // Clear typing so peers don't keep seeing you after send
             stopTyping()
           } catch {
-            toast.error("Could not send message")
+            toast.error("Could not send message. Your draft is still here — tap Send to try again.")
             throw new Error("send failed") // composer keeps draft + files
           }
         }}

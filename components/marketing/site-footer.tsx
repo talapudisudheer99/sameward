@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import { Reveal } from "@/components/marketing/motion"
 import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { getSupportEmail, getSupportMailtoHref } from "@/lib/support"
 
 type SiteFooterProps = {
   signedIn?: boolean
@@ -17,10 +18,12 @@ const exploreLinks = [
 ] as const
 
 /**
- * Marketing footer — brand + nav only; primary CTA lives in Resources.
+ * Marketing footer — brand + nav + support mailto.
  */
 export default function SiteFooter({ signedIn = false }: SiteFooterProps) {
   const year = new Date().getFullYear()
+  const supportEmail = getSupportEmail()
+  const supportHref = getSupportMailtoHref()
 
   return (
     <footer className="border-t border-border/60 bg-linear-to-b from-secondary/55 via-background to-background">
@@ -90,14 +93,26 @@ export default function SiteFooter({ signedIn = false }: SiteFooterProps) {
                   </li>
                 </>
               )}
+              <li>
+                <a
+                  href={supportHref}
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Support
+                </a>
+              </li>
             </ul>
           </div>
         </Reveal>
 
-        <div className="mt-12 border-t border-border/60 pt-6 sm:mt-14">
-          <p className="text-xs text-muted-foreground">
-            © {year} TeamHub AI
-          </p>
+        <div className="mt-12 flex flex-col gap-2 border-t border-border/60 pt-6 sm:mt-14 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted-foreground">© {year} TeamHub AI</p>
+          <a
+            href={supportHref}
+            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {supportEmail}
+          </a>
         </div>
       </div>
     </footer>

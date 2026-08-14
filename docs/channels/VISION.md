@@ -70,15 +70,18 @@ With channels:
 **Out of scope (later)**
 - Threads  
 - Group DMs  
-- Reaction counts / custom emoji  
+- Custom emoji packs  
 - Announcement channels  
 - Unlimited / arbitrary uploads  
 - Docs & boards  
 - Managed realtime vendors (Ably/Pusher) as primary — we own Socket.IO service  
 
-**In scope (added)**
-- **1:1 DMs** — `visibility: "dm"` channels + `GET/POST …/dms`; reuse messages, unread, Channel AI  
-- **@mentions** — `mentionedUserIds` on messages + composer autocomplete + transcript highlight  
+**In scope (added — also shipped)**
+- **1:1 DMs** — `visibility: "dm"` + `GET/POST …/dms`  
+- **@mentions** — composer `@` + transcript highlight  
+- **Edit / soft-delete** · **allowlisted reactions**  
+- **Link preview cards** + composer live unfurl — [LINK-PREVIEWS.md](./LINK-PREVIEWS.md)  
+- **Channel drag-and-drop** · long message **See more**  
 
 ---
 

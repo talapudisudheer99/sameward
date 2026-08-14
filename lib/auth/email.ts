@@ -1,4 +1,14 @@
+import { readFile } from "node:fs/promises"
+import path from "node:path"
+
 import { Resend } from "resend"
+
+import {
+  EMAIL_LOGO_CID,
+  passwordResetEmailHtml,
+  verificationEmailHtml,
+  workspaceInviteEmailHtml,
+} from "@/lib/auth/email-templates"
 
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY
@@ -6,6 +16,24 @@ function getResend() {
     throw new Error("Missing RESEND_API_KEY")
   }
   return new Resend(apiKey)
+}
+
+/** Inline logo so Gmail can show it without a public URL (localhost fails). */
+async function logoAttachment() {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "brand",
+    "teamhub-logo.png"
+  )
+  const content = await readFile(filePath)
+
+  return {
+    filename: "teamhub-logo.png",
+    content: content.toString("base64"),
+    contentId: EMAIL_LOGO_CID,
+    contentType: "image/png",
+  }
 }
 
 export async function sendPasswordResetEmail(options: {
@@ -18,16 +46,14 @@ export async function sendPasswordResetEmail(options: {
   }
 
   const resend = getResend()
+  const logo = await logoAttachment()
 
   const { error } = await resend.emails.send({
     from,
     to: options.to,
     subject: "Reset your TeamHub password",
-    html: `
-      <p>You asked to reset your TeamHub password.</p>
-      <p><a href="${options.resetUrl}">Click here to set a new password</a></p>
-      <p>This link expires in 30 minutes. If you did not ask for this, ignore this email.</p>
-    `,
+    html: passwordResetEmailHtml(options.resetUrl),
+    attachments: [logo],
   })
 
   if (error) {
@@ -46,16 +72,14 @@ export async function sendVerificationEmail(options: {
   }
 
   const resend = getResend()
+  const logo = await logoAttachment()
 
   const { error } = await resend.emails.send({
     from,
     to: options.to,
     subject: "Verify your TeamHub email address",
-    html: `
-      <p>Click the link below to verify your email address:</p>
-      <p><a href="${options.verifyUrl}">Verify email address</a></p>
-      <p>This link expires in 24 hours. If you did not create a TeamHub account, ignore this email.</p>
-    `,
+    html: verificationEmailHtml(options.verifyUrl),
+    attachments: [logo],
   })
 
   if (error) {
@@ -75,17 +99,18 @@ export async function sendWorkspaceInviteEmail(options: {
   }
 
   const resend = getResend()
+  const logo = await logoAttachment()
 
   const { error } = await resend.emails.send({
     from,
     to: options.to,
     subject: `You're invited to ${options.workspaceName ?? "a TeamHub workspace"}`,
-    html: `
-      <p><strong>${options.inviteFrom}</strong> invited you to join
-      <strong>${options.workspaceName ?? "a workspace"}</strong> on TeamHub.</p>
-      <p><a href="${options.inviteUrl}">Accept invitation</a></p>
-      <p>This link expires in 7 days. If you weren’t expecting this, you can ignore it.</p>
-    `,
+    html: workspaceInviteEmailHtml({
+      inviteUrl: options.inviteUrl,
+      inviteFrom: options.inviteFrom,
+      workspaceName: options.workspaceName,
+    }),
+    attachments: [logo],
   })
 
   if (error) {

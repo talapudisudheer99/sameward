@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 
 import type { AiKind } from "@/lib/ai/constants"
+import { buildLinkContext } from "@/lib/ai/link-context"
 import { getAiProvider } from "@/lib/ai/openai-provider"
-import { AiProviderError } from "@/lib/ai/provider"
+import { isAiProviderError } from "@/lib/ai/provider"
 import { checkAiRateLimit } from "@/lib/ai/rate-limit"
 import type { MessageContextResult } from "@/lib/ai/message-context"
 import { AiRun } from "@/lib/models/ai/ai-run"
@@ -16,6 +17,9 @@ export type AiResponseBody = {
     truncated: boolean
     since: string | null
     model: string
+    linksFetched: number
+    linksFailed: number
+    linksAttempted: number
   }
 }
 
@@ -79,6 +83,9 @@ export function emptyContextResponse(): NextResponse {
       truncated: false,
       since: null,
       model: "",
+      linksFetched: 0,
+      linksFailed: 0,
+      linksAttempted: 0,
     },
   } satisfies AiResponseBody)
 }
@@ -91,6 +98,8 @@ export async function completeWithContext(opts: {
   context: MessageContextResult
   since?: string | null
   maxTokens?: number
+  /** Prefer URLs from these messages first (e.g. Explain target) */
+  preferLinkMessageIds?: string[]
 }): Promise<NextResponse> {
   const {
     auth,
@@ -100,6 +109,7 @@ export async function completeWithContext(opts: {
     context,
     since = null,
     maxTokens,
+    preferLinkMessageIds,
   } = opts
 
   if (context.messageCount === 0) {
@@ -107,10 +117,18 @@ export async function completeWithContext(opts: {
   }
 
   try {
+    const linkCtx = await buildLinkContext({
+      messages: context.messages,
+      preferMessageIds: preferLinkMessageIds,
+    })
+    const enrichedUser = linkCtx.block
+      ? `${userPrompt}\n\n${linkCtx.block}`
+      : userPrompt
+
     const provider = getAiProvider()
     const result = await provider.complete({
       system,
-      user: userPrompt,
+      user: enrichedUser,
       maxTokens,
     })
 
@@ -137,11 +155,14 @@ export async function completeWithContext(opts: {
         truncated: context.truncated,
         since,
         model: result.model,
+        linksFetched: linkCtx.meta.linksFetched,
+        linksFailed: linkCtx.meta.linksFailed,
+        linksAttempted: linkCtx.meta.linksAttempted,
       },
     }
     return NextResponse.json(body)
   } catch (err) {
-    if (err instanceof AiProviderError) {
+    if (isAiProviderError(err)) {
       return NextResponse.json({ message: err.message }, { status: err.status })
     }
     console.error("[ai/complete]", err)

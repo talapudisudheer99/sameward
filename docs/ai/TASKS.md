@@ -43,6 +43,32 @@
 
 ---
 
+## V1 link-context — shared URLs → AI excerpts ✅
+
+Direction: [LINK-CONTEXT.md](./LINK-CONTEXT.md) · story **US-AI10**.
+
+### Slice 7b — Docs lock for link-context
+
+- [x] LINK-CONTEXT + Vision / README / stories / E2E / security / tasks (Aug 13)
+- [x] Implementation started after PO go-ahead
+
+### Slice 7c — Extract + fetch + wire (US-AI10)
+
+- [x] `extract-urls` from authorized window (cap unique URLs)
+- [x] SSRF-safe `fetch-link-text` (timeout, max bytes, HTML→text, DNS pin)
+- [x] Inject “Linked pages” block in `completeWithContext`
+- [x] Soft-fail; meta `linksFetched` / `linksFailed` / `linksAttempted`
+- [x] `scripts/verify-link-context.ts` smoke (SSRF + example.com)
+
+### Definition of done (V1 link-context)
+
+- [x] US-AI10 acceptance checked
+- [x] Verify script + SSRF failure path pass
+- [x] No preview-card UI required
+- [x] Docs match shipped behavior
+
+---
+
 ## V1.5 — Large history + contextual Ask + cache (next)
 
 Direction: [CONVERSATION-UNDERSTANDING.md](./CONVERSATION-UNDERSTANDING.md) · stories US-AI7…US-AI9.

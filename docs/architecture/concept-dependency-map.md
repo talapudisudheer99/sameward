@@ -17,7 +17,7 @@ Next.js Route Handlers (REST API boundary)
         ↓
 MongoDB (persistence, indexes, relationships-as-refs)
         ↓
-Auth (cookies, sessions, middleware, RBAC)
+Auth (cookies, sessions, `proxy.ts`, `requireUser` / `getCurrentUser`, workspace roles)
         ↓
 Redux Toolkit (client / UI global state)
         ↓
@@ -27,7 +27,7 @@ Socket.IO (realtime beside REST)
         ↓
 Testing (Jest + RTL)
         ↓
-Performance → GitHub → Vercel
+Performance → GitHub → Railway
 ```
 
 ## How to use this map
@@ -36,7 +36,7 @@ Performance → GitHub → Vercel
 |----------------------|-------------|
 | Why is my Redux store empty on refresh? | RSC vs Client + where Provider lives |
 | Why does RTK Query refetch forever? | Cache tags / invalidation / HTTP semantics |
-| Why can any user hit my API? | Auth cookies + middleware + route auth checks |
+| Why can any user hit my API? | Auth cookies + `proxy.ts` + route `getCurrentUser` checks |
 | Why don’t live messages appear? | HTTP vs WebSocket; rooms; who emits |
 | Why is Mongo returning weird shapes? | Schema design + TypeScript DTOs |
 

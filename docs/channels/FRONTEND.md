@@ -23,6 +23,7 @@
 | — | Start DM | `dialogs/channel/start-dm-dialog.tsx` | ✅ UI |
 | — | Unread badges | sidebar + DM list | ✅ UI |
 | — | @mentions | composer autocomplete + transcript | ✅ UI |
+| — | Link preview cards | `link-preview-card.tsx` + `linkPreviews` on message | ✅ → [LINK-PREVIEWS.md](./LINK-PREVIEWS.md) |
 
 **Shell:** `components/channel/channel-chat-shell.tsx` — all data via props + callbacks. No RTK inside.
 
@@ -48,9 +49,9 @@ Desktop `/channels` (no `?list=1`) still auto-opens default/`#general`.
 
 | Piece | Behavior (shipped) |
 |-------|---------------------|
-| Transcript | Grouped bubbles hug content; `min-w-0` + wrap; loading / error / empty; auto-scroll; `pending` / `failed` |
+| Transcript | Grouped bubbles; short messages hug content; **long / link-preview messages expand** (~28–34rem by breakpoint); wrap long tokens; **See more at ~500 chars** (`message-body-text.tsx`); breathing room between rows; loading / error / empty; auto-scroll; `pending` / `failed` |
 | Attachments | Image **1/2/3 grid** (stack on narrow); click → **light card lightbox** (prev/next, open, download); PDF/file cards with truncated names (`chat-attachments.tsx`) |
-| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` · disabled while uploading · AI draft insert via `draftNonce` |
+| Composer | Enter send · Shift+Enter newline · clear only on success · `isSending` · disabled while uploading · AI draft insert via `draftNonce` · **channel-wide drag-and-drop** (`ChannelFileDropZone` → composer chips) · live OG via `useComposerLinkPreview` |
 | Typing | `use-channel-typing` → `typingLabel` |
 | Presence | `user-workspace-presence` → `online` on `ChannelMemberRow` |
 | Reconnect | `reconnecting` prop → banner + gap fetch |

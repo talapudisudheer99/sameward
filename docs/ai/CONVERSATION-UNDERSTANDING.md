@@ -1,6 +1,6 @@
 # Conversation understanding — product architecture
 
-**Status:** **V1.5 direction locked for development** (Aug 12, 2026) · Path A **V1** already shipped  
+**Status:** **V1 link-context shipped** (Aug 13, 2026) · **V1.5 direction locked** (Aug 12) · Path A **V1** already shipped  
 **Audience:** Product + engineering — plain language first.
 
 This note answers one question:
@@ -63,6 +63,7 @@ Anything the AI produces is **derived help**. It never replaces the real chat. S
 | Stage | Goal | Status |
 |-------|------|--------|
 | **V1** | Prove Channel AI with a limited message window | ✅ Shipped |
+| **V1 link-context** | When teammates paste public URLs, AI can use short page excerpts | ✅ Shipped — [LINK-CONTEXT.md](./LINK-CONTEXT.md) |
 | **V1.5** | Large-history Catch up + smarter Ask with sources + cache expensive results | 🎯 **Next to build** |
 | **V2** | Persistent conversation knowledge + stronger retrieval (when users prove they want it) | Later |
 
@@ -75,6 +76,10 @@ There is **no separate V3**. “Find the right moment, then answer” belongs in
 User asks → we load an **authorized, limited** slice of messages → AI answers.
 
 Good for proving the idea. It does **not** fully solve “500 messages while I was away.”
+
+## 5b. V1 link-context — what we shipped
+
+When the authorized window contains public URLs, AI runs fetch short page excerpts (SSRF-safe) and append them to the prompt. Soft-fail if a link dies. Details: [LINK-CONTEXT.md](./LINK-CONTEXT.md).
 
 ---
 
