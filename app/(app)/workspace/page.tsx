@@ -83,7 +83,7 @@ export default function WorkspacePage() {
         </div>
 
         <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-          Welcome to TeamHub
+          Welcome to Sameward
         </h1>
 
         <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -101,7 +101,7 @@ export default function WorkspacePage() {
               "h-10 px-4"
             )}
           >
-            Explore TeamHub
+            Explore Sameward
           </Link>
         </div>
       </div>

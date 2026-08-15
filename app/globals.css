@@ -49,7 +49,7 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* TeamHub AI design system v1.0 — see docs/design/design-system.md */
+/* Sameward design system v1.0 — see docs/design/design-system.md */
 :root {
     --background: #F7FAFC;
     --foreground: #0F172A;
@@ -212,7 +212,7 @@
   }
 
   /*
-   * TeamHub toasts (Sonner) — Ocean Blue product chrome.
+   * Sameward toasts (Sonner) — Ocean Blue product chrome.
    * Prefer these over Sonner richColors (generic green/red).
    */
   .teamhub-toast {

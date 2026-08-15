@@ -14,7 +14,7 @@ import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { cn } from "@/lib/utils"
 
 /**
- * TeamHub-branded Sonner toaster — Ocean Blue surfaces, not default green/red richColors.
+ * Sameward-branded Sonner toaster — Ocean Blue surfaces, not default green/red richColors.
  */
 const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()

@@ -8,7 +8,7 @@
 
 ## Business goal
 
-A user opens TeamHub to **do work inside a workspace**.  
+A user opens Sameward to **do work inside a workspace**.  
 If they have **no workspace yet**, the product must not show a fake dashboard — it must push one clear action: **create the first workspace**.
 
 > Mission fit: “Everything has its place.” First place = a workspace.
@@ -21,10 +21,10 @@ If they have **no workspace yet**, the product must not show a fake dashboard �
 
 | Element | Purpose |
 |---------|---------|
-| Headline | “Welcome to TeamHub” |
+| Headline | “Welcome to Sameward” |
 | Supporting copy | Conversations easier to understand · stay on the same page · catch up |
 | Primary action | **Create Workspace** |
-| Secondary action | **Explore TeamHub** → `/explore` (read-only Acme Studio demo) |
+| Secondary action | **Explore Sameward** → `/explore` (read-only Acme Studio demo) |
 | Optional tip | A workspace is your team’s shared home |
 
 See also: [explore-demo.md](./explore-demo.md).

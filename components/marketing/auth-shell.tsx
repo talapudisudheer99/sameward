@@ -42,7 +42,7 @@ export function AuthShell({
               <span className="size-2 rounded-full bg-amber-400/80" />
               <span className="size-2 rounded-full bg-emerald-400/80" />
               <span className="ml-2 text-xs text-slate-400">
-                workspace.teamhub.ai
+                workspace.sameward.com
               </span>
             </div>
             <div className="grid grid-cols-[120px_1fr]">

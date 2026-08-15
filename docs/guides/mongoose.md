@@ -1,4 +1,4 @@
-# Mongoose guide (TeamHub)
+# Mongoose guide (Sameward)
 
 Quick mental model for this project. Auth models live under `lib/models/`.  
 Auth usage: [../auth/LIB-AND-MODELS.md](../auth/LIB-AND-MODELS.md).

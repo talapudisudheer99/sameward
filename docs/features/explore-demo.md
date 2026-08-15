@@ -1,13 +1,13 @@
-# Explore TeamHub (demo)
+# Explore Sameward (demo)
 
 **Status:** Shipped (static read-only demo)  
 **Route:** `/explore` (auth required — same proxy gate as `/workspace`)
 
 ## Purpose
 
-Let a new user **understand TeamHub’s value** before creating a workspace:
+Let a new user **understand Sameward’s value** before creating a workspace:
 
-> TeamHub helps teams understand their conversations and stay on the same page.
+> Sameward helps teams understand their conversations and stay on the same page.
 
 Not a feature checklist. Not a marketing slideshow inside the app.
 
@@ -16,7 +16,7 @@ Not a feature checklist. Not a marketing slideshow inside the app.
 Zero-workspace empty state on [`/workspace`](../../app/(app)/workspace/page.tsx):
 
 - Primary: **Create Workspace**
-- Secondary: **Explore TeamHub** → `/explore`
+- Secondary: **Explore Sameward** → `/explore`
 
 Optional — never required.
 

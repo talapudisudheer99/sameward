@@ -1,6 +1,6 @@
-# TeamHub AI — Documentation
+# Sameward — Documentation
 
-Learning docs for TeamHub AI.  
+Learning docs for Sameward.  
 **Auth is complete** — for login help, start at [`auth/`](./auth/README.md).
 
 These docs describe **what we have built**. Future ideas (docs/boards, AI V1.5, Redis multi-instance) are labeled clearly as **later** — not shipped.
@@ -54,7 +54,7 @@ docs/
 | “Where do we deploy?” | [architecture/deploy.md](./architecture/deploy.md) — **Railway** (Next + Socket.IO) |
 | “What’s next?” | [Phase 8](./phases/08-quality-deployment/README.md) — tests + live Railway deploy |
 | “Where are we?” | [tracking/progress.md](./tracking/progress.md) |
-| “What is TeamHub?” | [architecture/product-vision.md](./architecture/product-vision.md) |
+| “What is Sameward?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | Mentorship rules | [MENTORSHIP.md](./MENTORSHIP.md) |
 
 ---

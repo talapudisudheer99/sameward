@@ -7,7 +7,7 @@
 
 ## 1. What this phase is for
 
-Before TeamHub feels “real,” we need three things:
+Before Sameward feels “real,” we need three things:
 
 1. **Tests** — important flows don’t break quietly  
 2. **Performance** — pages stay snappy as features grow  
@@ -62,7 +62,7 @@ Auth env checklist: [auth/PRODUCTION.md](../../auth/PRODUCTION.md)
 | GitHub | Code history, PRs, team review |
 | **Railway** | Always-on host for Next **and** Socket.IO (our locked choice) |
 
-We are **not** deploying the production TeamHub app on Vercel. Vercel’s serverless model is a poor fit for long-lived WebSockets. Railway keeps both processes alive on one platform.
+We are **not** deploying the production Sameward app on Vercel. Vercel’s serverless model is a poor fit for long-lived WebSockets. Railway keeps both processes alive on one platform.
 
 ---
 

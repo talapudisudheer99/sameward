@@ -9,8 +9,8 @@ export function getSupportEmail(): string {
   return fromEnv || FALLBACK_SUPPORT_EMAIL
 }
 
-/** mailto with a helpful default subject for TeamHub help requests */
-export function getSupportMailtoHref(subject = "TeamHub help"): string {
+/** mailto with a helpful default subject for Sameward help requests */
+export function getSupportMailtoHref(subject = "Sameward help"): string {
   const email = getSupportEmail()
   return `mailto:${email}?subject=${encodeURIComponent(subject)}`
 }

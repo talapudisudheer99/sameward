@@ -20,11 +20,11 @@ const sans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "TeamHub AI",
-    template: "%s · TeamHub AI",
+    default: "Sameward",
+    template: "%s · Sameward",
   },
   description: "Team collaboration — workspaces, channels, and realtime chat.",
-  applicationName: "TeamHub AI",
+  applicationName: "Sameward",
 }
 
 export default function RootLayout({

@@ -106,7 +106,7 @@ export default function SiteFooter({ signedIn = false }: SiteFooterProps) {
         </Reveal>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-border/60 pt-6 sm:mt-14 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-muted-foreground">© {year} TeamHub AI</p>
+          <p className="text-xs text-muted-foreground">© {year} Sameward</p>
           <a
             href={supportHref}
             className="text-xs text-muted-foreground transition-colors hover:text-foreground"

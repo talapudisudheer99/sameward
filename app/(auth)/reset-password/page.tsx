@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
   return (
     <AuthShell
       title="Set a new password"
-      description="Choose a strong password for your TeamHub account."
+      description="Choose a strong password for your Sameward account."
       panelTitle={
         <>
           Almost there. <span className="text-primary">One more step.</span>

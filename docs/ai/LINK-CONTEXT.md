@@ -10,7 +10,7 @@
 
 Teams paste URLs while they talk: Stack Overflow answers, GitHub issues, docs, design specs.
 
-Without this slice, TeamHub stored and showed the **raw URL string**. Channel AI only saw that string — not the page. If the chat is “see this SO answer” + a link, the model had almost no useful context.
+Without this slice, Sameward stored and showed the **raw URL string**. Channel AI only saw that string — not the page. If the chat is “see this SO answer” + a link, the model had almost no useful context.
 
 **Emotion:** *“The AI read what we linked.”* Pretty unfurl cards are nice UX (channels) but are not what makes Ask/Explain smarter.
 
@@ -74,7 +74,7 @@ scripts/verify-link-context.ts  # manual SSRF + example.com smoke
 1. **SSRF:** scheme allowlist; reject URL credentials; block localhost hostnames; classify resolved IPs (RFC1918, loopback, link-local incl. `169.254.169.254`, CGNAT, multicast, ULA, …).
 2. **DNS pinning:** resolve → validate → undici `Agent` `connect.lookup` returns only that address (supports Node `{ all: true }` lookup shape).
 3. **Redirects:** `redirect: "manual"`; each `Location` re-parsed and re-validated.
-4. **Timeouts + max bytes** before parse; no TeamHub cookies forwarded.
+4. **Timeouts + max bytes** before parse; no Sameward cookies forwarded.
 5. Fetched text treated as **untrusted** in prompts (system + block copy).
 
 ---

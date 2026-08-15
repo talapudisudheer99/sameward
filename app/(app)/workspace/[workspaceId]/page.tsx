@@ -216,7 +216,7 @@ export default function WorkspaceDetailPage() {
               <WorkspaceDescription text={data.description} />
             ) : (
               <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-                Your team&apos;s shared home in TeamHub
+                Your team&apos;s shared home in Sameward
               </p>
             )}
           </div>

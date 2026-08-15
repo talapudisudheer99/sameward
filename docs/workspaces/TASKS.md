@@ -105,7 +105,7 @@ Check off when reviewed.
 
 ## Later (not v1)
 
-- [ ] Invite non-TeamHub emails (signup + join)
+- [ ] Invite non-Sameward emails (signup + join)
 - [ ] Notify members on workspace delete
 - [ ] Transfer ownership
 - [ ] Workspace audit UI / export

@@ -26,7 +26,7 @@ export default function SettingsPage() {
           Settings
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Appearance, account security, and sessions for your TeamHub login.
+          Appearance, account security, and sessions for your Sameward login.
         </p>
       </header>
 
@@ -104,7 +104,7 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="font-heading text-base">Help & contact</CardTitle>
           <CardDescription>
-            Reach the TeamHub team for bugs, questions, or feedback.
+            Reach the Sameward team for bugs, questions, or feedback.
           </CardDescription>
         </CardHeader>
         <CardContent>

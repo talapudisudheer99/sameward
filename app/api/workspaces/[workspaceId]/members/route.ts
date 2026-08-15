@@ -107,7 +107,7 @@ export async function POST(
     for (const email of emails) {
       const targetUser = await User.findOne({ email })
 
-      // Existing TeamHub accounts only (signup+invite = later)
+      // Existing Sameward accounts only (signup+invite = later)
       if (!targetUser) {
         failed.push({ email, reason: "not_found" })
         continue

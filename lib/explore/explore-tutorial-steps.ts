@@ -22,8 +22,8 @@ export const EXPLORE_TUTORIAL_STORAGE_KEY = "teamhub-explore-tutorial-v1"
 export const EXPLORE_TUTORIAL_STEPS: ExploreTutorialStep[] = [
   {
     id: "welcome",
-    title: "Welcome to TeamHub",
-    body: "You’re inside Acme Studio — a sample team workspace. In about a minute we’ll show how TeamHub helps people understand conversations and stay on the same page.",
+    title: "Welcome to Sameward",
+    body: "You’re inside Acme Studio — a sample team workspace. In about a minute we’ll show how Sameward helps people understand conversations and stay on the same page.",
     placement: "center",
   },
   {
@@ -57,7 +57,7 @@ export const EXPLORE_TUTORIAL_STEPS: ExploreTutorialStep[] = [
   {
     id: "channel-ai",
     title: "Catch up on the whole channel",
-    body: "Open Channel AI for Summarize or Catch up — especially “Since last visit” when you’ve been away. That’s TeamHub’s core value.",
+    body: "Open Channel AI for Summarize or Catch up — especially “Since last visit” when you’ve been away. That’s Sameward’s core value.",
     target: '[data-explore-tutorial="channel-ai"]',
     placement: "bottom",
   },

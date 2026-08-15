@@ -6,7 +6,7 @@ Working style: discuss → docs → implement → review.
 **PO locks**
 - Cross-tenant / non-member → **404**
 - Owner/admin invites; hide CTAs for `member`; chips; no typeahead
-- Existing TeamHub users only; CTA = **Send invite**; inviter **emailVerified**
+- Existing Sameward users only; CTA = **Send invite**; inviter **emailVerified**
 - Leave / remove / rename / owner-delete (no notify)
 - Owner changes member ↔ admin after join
 - Accept may set `emailVerified` when invitee was unverified
@@ -42,7 +42,7 @@ Working style: discuss → docs → implement → review.
           - pending invite exists → rotate token / refresh expiry + resend
           - else create WorkspaceInvite { tokenHash, workspaceId, email,
               invitedBy, expiresAt }  // raw token only in email
-          - Resend: "{Inviter} invited you to {Workspace} on TeamHub"
+          - Resend: "{Inviter} invited you to {Workspace} on Sameward"
             link: {APP_URL}/invite/{rawToken}
           - pushed → invited[]
      g) Return { invited, failed }  // NOT membership yet

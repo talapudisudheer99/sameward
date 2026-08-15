@@ -51,7 +51,7 @@ export async function sendPasswordResetEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: "Reset your TeamHub password",
+    subject: "Reset your Sameward password",
     html: passwordResetEmailHtml(options.resetUrl),
     attachments: [logo],
   })
@@ -77,7 +77,7 @@ export async function sendVerificationEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: "Verify your TeamHub email address",
+    subject: "Verify your Sameward email address",
     html: verificationEmailHtml(options.verifyUrl),
     attachments: [logo],
   })
@@ -104,7 +104,7 @@ export async function sendWorkspaceInviteEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: `You're invited to ${options.workspaceName ?? "a TeamHub workspace"}`,
+    subject: `You're invited to ${options.workspaceName ?? "a Sameward workspace"}`,
     html: workspaceInviteEmailHtml({
       inviteUrl: options.inviteUrl,
       inviteFrom: options.inviteFrom,

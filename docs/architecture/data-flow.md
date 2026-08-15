@@ -1,6 +1,6 @@
 # End-to-end data flow
 
-How data moves through TeamHub — in plain English.
+How data moves through Sameward — in plain English.
 
 ## Read path (example: list workspaces)
 

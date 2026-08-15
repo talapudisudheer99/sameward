@@ -1,4 +1,4 @@
-# Folder structure — TeamHub AI (full stack)
+# Folder structure — Sameward (full stack)
 
 > **Why this doc exists:** Before shipping product features (workspaces, channels, …), we lock a **production-shaped** layout.  
 > Interviews and future-you should answer: *Where does UI live? Where does the API live? Where does domain logic live?* — without hunting.

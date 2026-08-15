@@ -33,13 +33,13 @@ export default function ExploreDemoBanner({
         <div className="min-w-0 space-y-0.5">
           <p className="flex flex-wrap items-center gap-2 font-heading text-sm font-semibold tracking-tight">
             <Sparkles className="size-3.5 text-primary" aria-hidden />
-            TeamHub Demo
+            Sameward Demo
             <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
               Read-only
             </span>
           </p>
           <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
-            Explore how TeamHub helps your team stay on the same page.
+            Explore how Sameward helps your team stay on the same page.
           </p>
         </div>
       </div>

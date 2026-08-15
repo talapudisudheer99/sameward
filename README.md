@@ -1,4 +1,4 @@
-# TeamHub AI
+# Sameward
 
 Modern SaaS collaboration platform built as a **deep frontend architecture learning project** (React, Next.js, Redux Toolkit, RTK Query, MongoDB, Socket.IO).
 

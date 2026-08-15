@@ -12,7 +12,7 @@
 
 **When regenerating flow / desktop sheets:** use the **hexagon + people** mark (not the old cube). See `teamhub-logo-system.png`.
 
-**Brand (must match TeamHub design system)**
+**Brand (must match Sameward design system)**
 - Light UI only (not dark mode)
 - Background `#F7F9FB`, cards white, text `#111827`, muted `#64748B`
 - **One accent:** Electric Teal `#0F9D94` — primary buttons, active channel, online dots, send button
@@ -34,7 +34,7 @@
 ## Component inventory (what to draw)
 
 ### App chrome (all screens)
-- Top: TeamHub wordmark / logo left; workspace name; user avatar right
+- Top: Sameward wordmark / logo left; workspace name; user avatar right
 - Left app nav (narrow): Workspaces · **Channels** (active) · Members · placeholder Docs/Boards muted
 - Or: within workspace layout — left **channel sidebar**, center **chat**, optional right **people** strip
 
@@ -85,7 +85,7 @@
 Copy-paste:
 
 ```text
-UI mockup flow sheet for TeamHub AI — Channels & realtime chat module. Product: B2B team collaboration SaaS. Light mode only. Background #F7F9FB, white panels, text #111827, muted #64748B, borders #D9E2EC, single accent Electric Teal #0F9D94. Clean engineered SaaS UI like Linear + Slack, generous whitespace, no purple, no neon, no dark mode, no decorative stickers.
+UI mockup flow sheet for Sameward — Channels & realtime chat module. Product: B2B team collaboration SaaS. Light mode only. Background #F7F9FB, white panels, text #111827, muted #64748B, borders #D9E2EC, single accent Electric Teal #0F9D94. Clean engineered SaaS UI like Linear + Slack, generous whitespace, no purple, no neon, no dark mode, no decorative stickers.
 
 Layout: one wide landscape poster with labeled wireframe-quality high-fidelity screens arranged in a clear flow with small arrows and labels Ch-A, Ch-C, Ch-D, Ch-E, Ch-F.
 
@@ -111,7 +111,7 @@ Copy-paste:
 ```text
 High-fidelity UI mockup, two devices side by side on a light gray studio background.
 
-Left: Desktop browser window — TeamHub AI workspace Channels view.
+Left: Desktop browser window — Sameward workspace Channels view.
 - Left sidebar: channel list with #general active (teal accent), #design, locked #hiring.
 - Center: chat for #general. Header shows “# general”, “12 members”, “4 online”.
 - Message thread: realistic short work chat (standup, share screenshot). One message includes a rounded image attachment preview. One includes a PDF file chip “spec.pdf · 2.1 MB”.
@@ -119,7 +119,7 @@ Left: Desktop browser window — TeamHub AI workspace Channels view.
 - Bottom composer: multiline input, paperclip, emoji, teal Send button. Small attachment preview chips above the input (one png, one pdf).
 - Subtle online presence dots on a slim right people strip (optional).
 
-Right: Mobile phone frame — same TeamHub chat, stacked: top channel title, messages, composer with attach + send. Hamburger or back to channels list.
+Right: Mobile phone frame — same Sameward chat, stacked: top channel title, messages, composer with attach + send. Hamburger or back to channels list.
 
 Brand: light UI, Electric Teal #0F9D94 accent only, background #F7F9FB, white cards, border #D9E2EC, muted text #64748B. No purple, no dark mode, no threads UI, no reaction pills on messages, no DM list. Clean modern SaaS, sharp typography, production-ready mockup screenshot style.
 ```
@@ -133,7 +133,7 @@ Brand: light UI, Electric Teal #0F9D94 accent only, background #F7F9FB, white ca
 Copy-paste:
 
 ```text
-UI component detail sheet for TeamHub AI chat. Light mode, Electric Teal #0F9D94 accent, background #F7F9FB, white surfaces, borders #D9E2EC. Clean shadcn-like components, not Material Design.
+UI component detail sheet for Sameward chat. Light mode, Electric Teal #0F9D94 accent, background #F7F9FB, white surfaces, borders #D9E2EC. Clean shadcn-like components, not Material Design.
 
 Arrange 4 large labeled component close-ups on one landscape canvas:
 

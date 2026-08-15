@@ -2,7 +2,7 @@
 
 ## One-line vision
 
-TeamHub is a place where **teams** work together. A **workspace** is that team’s home; **members** are who belongs there and what they’re allowed to do.
+Sameward is a place where **teams** work together. A **workspace** is that team’s home; **members** are who belongs there and what they’re allowed to do.
 
 ## Mission
 
@@ -34,7 +34,7 @@ This is the **SaaS core loop**: create team space → invite people → collabor
 | Persona | What they get |
 |---------|----------------|
 | **New user** | Clear first action: create your team’s workspace. |
-| **Owner** | “This is our TeamHub” — create space, own it, invite others. |
+| **Owner** | “This is our Sameward” — create space, own it, invite others. |
 | **Member** | Belonging: “I’m in Acme Product,” not a lone account. |
 | **All** | Safety: you only see workspaces you’re a member of. |
 
@@ -48,7 +48,7 @@ This is the **SaaS core loop**: create team space → invite people → collabor
 - Create workspace (name → slug + owner membership)
 - List *my* workspaces · open / view if member
 - Roles: `owner` | `admin` | `member`
-- **Invite existing TeamHub users** (email link → accept → membership)
+- **Invite existing Sameward users** (email link → accept → membership)
 - Inviter must be email-verified; accept may verify invitee
 - Cross-tenant / non-member → **404**
 - **Leave** — any member; sole owner blocked (must delete; transfer = later)
@@ -62,7 +62,7 @@ This is the **SaaS core loop**: create team space → invite people → collabor
 - Email / in-app notify on workspace delete
 - Role picker on invite
 - Transfer ownership UI
-- Invite people without a TeamHub account (signup + join)
+- Invite people without a Sameward account (signup + join)
 - Instant-add without consent (explicitly rejected)
 - Global user autocomplete / typeahead
 - Audit UI / export
@@ -89,9 +89,9 @@ That is the product goal — CRUD is the tool, not the mission.
 
 The Entire Mental Model
 
-Think of TeamHub like a real office building:
+Think of Sameward like a real office building:
 
-TeamHub (The Building)
+Sameward (The Building)
 │
 ├── Workspace: Acme Product (Office)
 │      │

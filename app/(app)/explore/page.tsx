@@ -42,7 +42,7 @@ const DEMO_NUDGE =
   "This is a read-only demo. Create your workspace to start talking with your team."
 
 /**
- * Explore TeamHub — static Acme Studio demo (no Mongo / no live AI).
+ * Explore Sameward — static Acme Studio demo (no Mongo / no live AI).
  */
 export default function ExplorePage() {
   const router = useRouter()

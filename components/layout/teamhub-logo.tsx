@@ -12,7 +12,7 @@ type TeamHubLogoProps = {
   size?: number
   /** Accessible name when logo is the sole content of a link */
   title?: string
-  /** onDark = white “TeamHub” for navy/marketing panels */
+  /** onDark = white wordmark for navy/marketing panels */
   tone?: "default" | "onDark"
 }
 
@@ -79,14 +79,15 @@ function LogoMark({
 }
 
 /**
- * TeamHub AI brand mark — soft rounded squircle + team silhouettes.
+ * Sameward brand mark — soft rounded squircle + team silhouettes.
  * Unique gradient ids per instance so multiple logos never blank out.
+ * Component export name kept for compatibility (file path unchanged).
  */
 export function TeamHubLogo({
   className,
   variant = "mark",
   size = 28,
-  title = "TeamHub AI",
+  title = "Sameward",
   tone = "default",
 }: TeamHubLogoProps) {
   const uid = useId().replace(/:/g, "")
@@ -110,9 +111,8 @@ export function TeamHubLogo({
       : "font-semibold text-foreground"
 
   const wordmark = (
-    <span className="font-heading tracking-tight">
-      <span className={hubClass}>TeamHub</span>{" "}
-      <span className="font-semibold text-primary">AI</span>
+    <span className={cn("font-heading tracking-tight", hubClass)}>
+      Sameward
     </span>
   )
 

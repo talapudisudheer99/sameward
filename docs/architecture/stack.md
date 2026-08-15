@@ -71,7 +71,7 @@ Spec: [`docs/channels/SOCKETS.md`](../channels/SOCKETS.md).
 | **AWS S3** | Message file storage |
 
 **Topology + folder boundaries:** [deploy.md](./deploy.md) (Option B — Railway for Next + Socket.IO).  
-We do **not** use Vercel for the production TeamHub app (WebSockets need an always-on server).
+We do **not** use Vercel for the production Sameward app (WebSockets need an always-on server).
 
 ## Third-party (what we actually use)
 

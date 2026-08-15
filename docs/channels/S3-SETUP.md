@@ -2,7 +2,7 @@
 
 Same idea as Google Cloud Console for OAuth: you create the account resources once, put secrets in `.env.local`, never commit them.
 
-**PO lock:** AWS S3 for TeamHub channel attachments (v1).  
+**PO lock:** AWS S3 for Sameward channel attachments (v1).  
 Account setup below; **upload code is shipped** (presign → PUT → message attachments).
 
 ## Setup status
@@ -83,7 +83,7 @@ Later for production, add your real `https://…` origin.
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "TeamHubChatUploads",
+      "Sid": "SamewardChatUploads",
       "Effect": "Allow",
       "Action": [
         "s3:PutObject",
@@ -102,7 +102,7 @@ Later for production, add your real `https://…` origin.
 }
 ```
 
-4. Name the policy `TeamHubS3UploadsDev` → Create  
+4. Name the policy `SamewardS3UploadsDev` → Create  
 5. Back on the user: attach that policy → Create user  
 
 ### 6) Access key (this is your “client secret”)

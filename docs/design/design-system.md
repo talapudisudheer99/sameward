@@ -1,4 +1,4 @@
-# TeamHub AI — Visual Identity & Design System v1.0
+# Sameward — Visual Identity & Design System v1.0
 
 > Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)  
 > Logo system: [references/teamhub-logo-system.png](./references/teamhub-logo-system.png)  
@@ -6,7 +6,7 @@
 
 ## Brand summary
 
-TeamHub AI is a collaboration platform for teams that spend their workday in one app. Clarity over excitement. Confidence over novelty. **Engineered, not decorated.**
+Sameward is a collaboration platform for teams that spend their workday in one app. Clarity over excitement. Confidence over novelty. **Engineered, not decorated.**
 
 | Do | Don’t |
 |----|--------|
@@ -27,15 +27,15 @@ Brand gradient endpoints: `--brand-a #0EA5E9` → `--brand-b #22D3EE` (sky → c
 ## Logo
 
 **Mark:** Rounded squircle with a `--brand-a → --primary` gradient + three team silhouettes (collaboration).  
-**Wordmark:** `TeamHub` in foreground ink + `AI` in `--primary` (Ocean Blue). Both are theme tokens, so the mark follows the active palette automatically.  
-**Component:** `components/layout/teamhub-logo.tsx`
+**Wordmark:** `Sameward` in foreground ink (single product name; no “AI” suffix). Theme tokens keep the mark aligned with the active palette.  
+**Component:** `TeamHubLogo` in `components/layout/teamhub-logo.tsx` (filename/export kept for now; visible wordmark is Sameward).
 
 | Variant | Use |
 |---------|-----|
 | `mark` | Favicon-style, collapsed chrome |
 | `horizontal` | Headers, sidebar, marketing (default for nav) |
 | `stacked` | Centered / tight vertical spaces |
-| `tone="onDark"` | Navy marketing panels (white TeamHub + teal AI) |
+| `tone="onDark"` | Navy marketing panels (white Sameward wordmark) |
 
 Clear space ≈ mark height on all sides. Do not stretch or recolor the mark off-token.
 
@@ -49,7 +49,7 @@ Clear space ≈ mark height on all sides. Do not stretch or recolor the mark off
 | Invite layout | ✅ |
 | Browser favicon | ✅ `app/icon.svg` |
 | Create-workspace dialog header icon | ✅ `TeamHubLogo` mark |
-| Emails (Resend HTML) | Text-only “TeamHub” for now (no embedded SVG logo) |
+| Emails (Resend HTML) | Text-only “Sameward” for now (no embedded SVG logo) |
 
 ## Design tokens
 

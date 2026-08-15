@@ -5,7 +5,7 @@
 
 This note answers one question:
 
-> After someone is away, how does TeamHub help them get back on the same page — without reading hundreds of messages or asking everyone for a KT?
+> After someone is away, how does Sameward help them get back on the same page — without reading hundreds of messages or asking everyone for a KT?
 
 And the follow-up:
 
@@ -32,7 +32,7 @@ The hard part is:
 
 He should not have to ask everyone for a walkthrough or read hundreds of messages just to know what changed.
 
-### What TeamHub AI is for
+### What Sameward is for
 
 Turn a large conversation into the **context a returning teammate needs** — then let them dig into one detail with **evidence** (source messages).
 
@@ -219,7 +219,7 @@ Still **no** requirement for a workspace-wide overview unless we reopen that dec
 
 Never claim: “The AI read every message.”
 
-Say something like: “TeamHub looked at the conversation since your last visit and pulled out important changes, decisions, and discussions.”
+Say something like: “Sameward looked at the conversation since your last visit and pulled out important changes, decisions, and discussions.”
 
 Show scope in the UI, for example:
 
@@ -232,7 +232,7 @@ Show scope in the UI, for example:
 ## 9. Picture of V1.5
 
 ```
-                 TeamHub AI V1.5
+                 Sameward V1.5
                         │
            ┌────────────┴────────────┐
            ▼                         ▼
