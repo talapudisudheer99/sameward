@@ -13,7 +13,7 @@
 {
   "fullName": "Sudheer Talapudi",
   "title": "Full-stack engineer",
-  "bio": "Building TeamHub AI.",
+  "bio": "Building Sameward.",
   "timezone": "Asia/Kolkata",
   "links": [{ "label": "GitHub", "url": "https://github.com/…" }],
   "avatarUrl": null

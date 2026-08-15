@@ -8,7 +8,7 @@ import { z } from "zod"
 import CancelButton from "@/components/buttons/cancel-button"
 import SubmitButton from "@/components/buttons/submit-button"
 import { AppFormField } from "@/components/forms/app-form-field"
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -104,7 +104,7 @@ export default function CreateWorkSpaceDialog({
 
       <DialogContent className="gap-5 p-5 sm:max-w-md">
         <DialogHeader className="gap-3 pr-8 text-left">
-          <TeamHubLogo variant="mark" size={44} />
+          <SamewardLogo variant="mark" size={44} />
           <div className="space-y-1.5">
             <DialogTitle className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
               Create workspace

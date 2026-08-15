@@ -62,7 +62,7 @@ const SUMMARIES: Record<string, string> = {
 - Dark-mode contrast check if needed`,
 
   [DEMO_CHANNEL_IDS.general]: `## Topics
-- Team welcome on TeamHub
+- Team welcome on Sameward
 - Pulse v1.2 release note draft (Friday)
 
 ## Decisions
@@ -122,7 +122,7 @@ Why it matters: anyone returning cold (like Jordan) can treat this message as th
 
   [DEMO_EXPLAIN_MESSAGE_IDS.designScope]: `Sam is agreeing with Riley’s product/design principle for the Explore experience.
 
-They’re saying the demo banner should teach the value (“stay on the same page”) with a Create CTA — not a checklist of Chat, AI, DMs, etc. That keeps the demo aligned with TeamHub’s differentiator: understanding conversations, not listing features.`,
+They’re saying the demo banner should teach the value (“stay on the same page”) with a Create CTA — not a checklist of Chat, AI, DMs, etc. That keeps the demo aligned with Sameward’s differentiator: understanding conversations, not listing features.`,
 }
 
 export async function demoSummarize(channelId: string): Promise<AiResponse> {

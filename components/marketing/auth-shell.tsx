@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
 
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 
 type AuthShellProps = {
   title: string
@@ -25,7 +25,7 @@ export function AuthShell({
     <div className="grid min-h-svh lg:grid-cols-2">
       <aside className="bg-brand-panel relative hidden flex-col justify-between overflow-hidden p-10 text-slate-50 lg:flex xl:p-14">
         <Link href="/" className="relative z-10 flex w-fit items-center">
-          <TeamHubLogo variant="horizontal" size={32} tone="onDark" />
+          <SamewardLogo variant="horizontal" size={32} tone="onDark" />
         </Link>
 
         <div className="relative z-10 max-w-md">
@@ -42,7 +42,7 @@ export function AuthShell({
               <span className="size-2 rounded-full bg-amber-400/80" />
               <span className="size-2 rounded-full bg-emerald-400/80" />
               <span className="ml-2 text-xs text-slate-400">
-                workspace.teamhub.ai
+                workspace.sameward.com
               </span>
             </div>
             <div className="grid grid-cols-[120px_1fr]">
@@ -77,7 +77,7 @@ export function AuthShell({
       <div className="flex flex-col bg-background">
         <div className="flex items-center px-5 py-4 lg:hidden">
           <Link href="/" className="flex items-center">
-            <TeamHubLogo variant="horizontal" size={28} />
+            <SamewardLogo variant="horizontal" size={28} />
           </Link>
         </div>
 

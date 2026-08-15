@@ -1,8 +1,8 @@
-# Product Vision — TeamHub AI
+# Product Vision — Sameward
 
 ## One-sentence pitch
 
-TeamHub AI is a workspace where teams **talk, plan, document, and get AI help** in one place — built so we can master production frontend architecture end-to-end.
+Sameward is a workspace where teams **talk, plan, document, and get AI help** in one place — built so we can master production frontend architecture end-to-end.
 
 ## Not a clone
 

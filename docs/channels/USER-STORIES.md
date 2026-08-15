@@ -12,7 +12,7 @@ Acceptance = what we demo for v1.
 
 **As a** workspace member,  
 **I want** public and private channels with live messages,  
-**So that** my team can discuss work in TeamHub without refreshing or leaving for Slack.
+**So that** my team can discuss work in Sameward without refreshing or leaving for Slack.
 
 ---
 

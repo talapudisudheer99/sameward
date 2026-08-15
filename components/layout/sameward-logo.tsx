@@ -4,7 +4,7 @@ import { useId } from "react"
 
 import { cn } from "@/lib/utils"
 
-type TeamHubLogoProps = {
+type SamewardLogoProps = {
   className?: string
   /** mark = icon only · horizontal = icon + wordmark · stacked = icon above wordmark */
   variant?: "mark" | "horizontal" | "stacked"
@@ -12,7 +12,7 @@ type TeamHubLogoProps = {
   size?: number
   /** Accessible name when logo is the sole content of a link */
   title?: string
-  /** onDark = white “TeamHub” for navy/marketing panels */
+  /** onDark = white wordmark for navy/marketing panels */
   tone?: "default" | "onDark"
 }
 
@@ -20,10 +20,12 @@ function LogoMark({
   size,
   className,
   gradientId,
+  tone,
 }: {
   size: number
   className?: string
   gradientId: string
+  tone: "default" | "onDark"
 }) {
   return (
     <svg
@@ -38,59 +40,43 @@ function LogoMark({
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="var(--brand-a)" />
-          <stop offset="1" stopColor="var(--primary)" />
+          <stop
+            offset="1"
+            stopColor={tone === "onDark" ? "var(--brand-b)" : "var(--primary)"}
+          />
         </linearGradient>
       </defs>
 
-      <rect
-        x="2"
-        y="2"
-        width="28"
-        height="28"
-        rx="9"
+      <g
         fill={`url(#${gradientId})`}
-      />
-
-      <circle cx="9.8" cy="12.8" r="2" fill="var(--primary-foreground)" />
-      <path
-        d="M6.2 20.6c0-1.9 1.6-3.2 3.6-3.2s3.6 1.3 3.6 3.2v.35H6.2v-.35Z"
-        fill="var(--primary-foreground)"
-      />
-      <circle cx="22.2" cy="12.8" r="2" fill="var(--primary-foreground)" />
-      <path
-        d="M18.6 20.6c0-1.9 1.6-3.2 3.6-3.2s3.6 1.3 3.6 3.2v.35h-7.2v-.35Z"
-        fill="var(--primary-foreground)"
-      />
-      <circle cx="16" cy="11.6" r="2.4" fill="var(--primary-foreground)" />
-      <path
-        d="M11.8 21c0-2.3 1.9-3.85 4.2-3.85S20.2 18.7 20.2 21v.4h-8.4V21Z"
-        fill="var(--primary-foreground)"
-      />
-      <rect
-        x="15.2"
-        y="21.1"
-        width="1.6"
-        height="3.4"
-        rx="0.8"
-        fill="var(--primary-foreground)"
-      />
+        stroke={`url(#${gradientId})`}
+        strokeLinejoin="round"
+      >
+        <path d="M12.6 5.4 29.4 16 12.6 26.6 18.2 16Z" strokeWidth="2.2" />
+        <path
+          d="M2.6 8.7 13.3 16 2.6 23.3 6.6 16Z"
+          strokeWidth="1.8"
+          opacity={tone === "onDark" ? "0.55" : "0.42"}
+        />
+      </g>
     </svg>
   )
 }
 
 /**
- * TeamHub AI brand mark — soft rounded squircle + team silhouettes.
- * Unique gradient ids per instance so multiple logos never blank out.
+ * Sameward brand mark — two tapered wings travelling the same way
+ * ("ward" = direction). Unique gradient ids per instance so multiple logos
+ * never blank out.
  */
-export function TeamHubLogo({
+export function SamewardLogo({
   className,
   variant = "mark",
   size = 28,
-  title = "TeamHub AI",
+  title = "Sameward",
   tone = "default",
-}: TeamHubLogoProps) {
+}: SamewardLogoProps) {
   const uid = useId().replace(/:/g, "")
-  const gradientId = `teamhub-mark-${uid}`
+  const gradientId = `sameward-mark-${uid}`
 
   if (variant === "mark") {
     return (
@@ -99,20 +85,27 @@ export function TeamHubLogo({
         role="img"
         aria-label={title}
       >
-        <LogoMark size={size} gradientId={gradientId} />
+        <LogoMark size={size} gradientId={gradientId} tone={tone} />
       </span>
     )
   }
 
-  const hubClass =
-    tone === "onDark"
-      ? "font-semibold text-white"
-      : "font-semibold text-foreground"
-
   const wordmark = (
-    <span className="font-heading tracking-tight">
-      <span className={hubClass}>TeamHub</span>{" "}
-      <span className="font-semibold text-primary">AI</span>
+    <span
+      className={cn(
+        // trailing letter-space would push the lockup off-centre, so pull it back
+        "font-heading -mr-[0.15em] font-bold uppercase tracking-[0.15em]",
+        tone === "onDark" ? "text-white" : "text-foreground",
+      )}
+    >
+      Same
+      <span
+        style={{
+          color: tone === "onDark" ? "var(--brand-b)" : "var(--primary)",
+        }}
+      >
+        ward
+      </span>
     </span>
   )
 
@@ -123,7 +116,7 @@ export function TeamHubLogo({
         role="img"
         aria-label={title}
       >
-        <LogoMark size={size} gradientId={gradientId} />
+        <LogoMark size={size} gradientId={gradientId} tone={tone} />
         <span className="text-center text-sm leading-tight">{wordmark}</span>
       </span>
     )
@@ -136,7 +129,7 @@ export function TeamHubLogo({
       aria-label={title}
       style={{ fontSize: Math.max(13, Math.round(size * 0.5)) }}
     >
-      <LogoMark size={size} gradientId={gradientId} />
+      <LogoMark size={size} gradientId={gradientId} tone={tone} />
       {wordmark}
     </span>
   )

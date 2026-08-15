@@ -9,7 +9,7 @@ import { resolveUserFromSessionToken } from "@/lib/auth/session-user"
 
     handshake:{
         headers:{
-            cookie:"teamhub_session=abc123"
+            cookie:"sameward_session=abc123"
         },
         auth:{
             token:"..."
@@ -51,7 +51,7 @@ export function readCookie(
 
 /**
  * Raw session token from handshake:
- * 1. Cookie `teamhub_session` (browser withCredentials)
+ * 1. Cookie `sameward_session` (browser withCredentials)
  * 2. `handshake.auth.token` (smoke / future short-lived token)
  */
 export function readHandshakeSessionToken(socket: Socket): string | null {

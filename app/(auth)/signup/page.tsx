@@ -83,7 +83,7 @@ export default function SignUpPage() {
         return
       }
 
-      toast.success("Account created — welcome to TeamHub")
+      toast.success("Account created — welcome to Sameward")
       // Signup created the user and session cookie; enter the protected app.
       router.replace("/workspace")
       router.refresh()
@@ -101,7 +101,7 @@ export default function SignUpPage() {
   return (
     <AuthShell
       title="Create account"
-      description="Join TeamHub AI and get started in minutes."
+      description="Join Sameward and get started in minutes."
       panelTitle={
         <>
           Your work. <span className="text-primary">All together.</span>
@@ -155,7 +155,7 @@ export default function SignUpPage() {
           />
 
           <p className="text-xs leading-relaxed text-muted-foreground">
-            TeamHub is a learning product. Formal Terms of Service and Privacy
+            Sameward is a learning product. Formal Terms of Service and Privacy
             Policy pages will be published later.
           </p>
 

@@ -49,7 +49,7 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* TeamHub AI design system v1.0 — see docs/design/design-system.md */
+/* Sameward design system v1.0 — see docs/design/design-system.md */
 :root {
     --background: #F7FAFC;
     --foreground: #0F172A;
@@ -212,10 +212,10 @@
   }
 
   /*
-   * TeamHub toasts (Sonner) — Ocean Blue product chrome.
+   * Sameward toasts (Sonner) — Ocean Blue product chrome.
    * Prefer these over Sonner richColors (generic green/red).
    */
-  .teamhub-toast {
+  .sameward-toast {
     --toast-icon: var(--primary);
     width: min(22rem, calc(100vw - 2rem)) !important;
     border: 1px solid color-mix(in oklab, var(--border) 90%, var(--primary)) !important;
@@ -235,7 +235,7 @@
     padding: 0.875rem 1rem !important;
   }
 
-  .teamhub-toast-success {
+  .sameward-toast-success {
     --toast-icon: var(--primary);
     border-color: color-mix(in oklab, var(--primary) 35%, var(--border)) !important;
     background:
@@ -253,7 +253,7 @@
       var(--card) !important;
   }
 
-  .teamhub-toast-error {
+  .sameward-toast-error {
     --toast-icon: var(--destructive);
     border-color: color-mix(in oklab, var(--destructive) 35%, var(--border)) !important;
     background:
@@ -271,7 +271,7 @@
       var(--card) !important;
   }
 
-  .teamhub-toast-warning {
+  .sameward-toast-warning {
     --toast-icon: var(--warning);
     border-color: color-mix(in oklab, var(--warning) 40%, var(--border)) !important;
     background:
@@ -284,7 +284,7 @@
       var(--card) !important;
   }
 
-  .teamhub-toast-info {
+  .sameward-toast-info {
     --toast-icon: var(--brand-a);
     border-color: color-mix(in oklab, var(--brand-a) 35%, var(--border)) !important;
     background:
@@ -302,7 +302,7 @@
       var(--card) !important;
   }
 
-  .teamhub-toast-close {
+  .sameward-toast-close {
     background: var(--card) !important;
     border: 1px solid var(--border) !important;
     color: var(--muted-foreground) !important;
@@ -313,7 +313,7 @@
       background 0.15s ease;
   }
 
-  .teamhub-toast-close:hover {
+  .sameward-toast-close:hover {
     background: color-mix(in oklab, var(--primary) 10%, var(--card)) !important;
     border-color: color-mix(in oklab, var(--primary) 35%, var(--border)) !important;
     color: var(--primary) !important;

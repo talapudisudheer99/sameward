@@ -15,7 +15,7 @@ Channels + live messaging turn belonging into collaboration.
 
 Without chat:
 - Workspace home is a shell (placeholders for channels/docs/boards).
-- Teams bounce to Slack/Discord and TeamHub never becomes daily.
+- Teams bounce to Slack/Discord and Sameward never becomes daily.
 
 With channels:
 - Public spaces for whole-team talk (`#general`).

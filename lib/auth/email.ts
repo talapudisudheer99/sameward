@@ -24,12 +24,12 @@ async function logoAttachment() {
     process.cwd(),
     "public",
     "brand",
-    "teamhub-logo.png"
+    "sameward-logo.png"
   )
   const content = await readFile(filePath)
 
   return {
-    filename: "teamhub-logo.png",
+    filename: "sameward-logo.png",
     content: content.toString("base64"),
     contentId: EMAIL_LOGO_CID,
     contentType: "image/png",
@@ -51,7 +51,7 @@ export async function sendPasswordResetEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: "Reset your TeamHub password",
+    subject: "Reset your Sameward password",
     html: passwordResetEmailHtml(options.resetUrl),
     attachments: [logo],
   })
@@ -77,7 +77,7 @@ export async function sendVerificationEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: "Verify your TeamHub email address",
+    subject: "Verify your Sameward email address",
     html: verificationEmailHtml(options.verifyUrl),
     attachments: [logo],
   })
@@ -104,7 +104,7 @@ export async function sendWorkspaceInviteEmail(options: {
   const { error } = await resend.emails.send({
     from,
     to: options.to,
-    subject: `You're invited to ${options.workspaceName ?? "a TeamHub workspace"}`,
+    subject: `You're invited to ${options.workspaceName ?? "a Sameward workspace"}`,
     html: workspaceInviteEmailHtml({
       inviteUrl: options.inviteUrl,
       inviteFrom: options.inviteFrom,

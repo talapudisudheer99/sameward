@@ -37,7 +37,7 @@ This folder is the **single source of truth** for the workspaces module (same id
 
 ## What v1 does **not** cover (deferred)
 
-- Invite emails with no TeamHub account  
+- Invite emails with no Sameward account  
 - Role picker on invite  
 - Transfer ownership  
 - Notify members on delete  

@@ -5,6 +5,13 @@ import { UserMinus } from "lucide-react"
 import UserAvatar from "@/components/profile/user-avatar"
 import { Button } from "@/components/ui/button"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -140,26 +147,33 @@ export default function MembersTable({
               </div>
 
               {canEditRole ? (
-                <select
-                  className={cn(
-                    "h-8 w-full max-w-[7.5rem] rounded-lg border border-border bg-background px-2 text-xs font-medium capitalize outline-none",
-                    "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-                    "disabled:cursor-not-allowed disabled:opacity-60",
-                    WORKSPACE_ROLE_STYLES[role] ?? WORKSPACE_ROLE_STYLES.member
-                  )}
+                <Select
                   value={role === "admin" ? "admin" : "member"}
                   disabled={isUpdating}
-                  aria-label={`Role for ${member.fullName || member.email}`}
-                  onChange={(e) => {
-                    const next = e.target.value as MemberRoleOption
-                    if (next !== role) {
-                      onRoleChange?.(member, next)
+                  onValueChange={(next) => {
+                    const value = next as MemberRoleOption
+                    if (value !== role) {
+                      onRoleChange?.(member, value)
                     }
                   }}
                 >
-                  <option value="member">Member</option>
-                  <option value="admin">Admin</option>
-                </select>
+                  <SelectTrigger
+                    aria-label={`Role for ${member.fullName || member.email}`}
+                    className={cn(
+                      "w-full max-w-30 rounded-full px-2.5 text-xs font-medium",
+                      WORKSPACE_ROLE_STYLES[role] ??
+                        WORKSPACE_ROLE_STYLES.member
+                    )}
+                  >
+                    <SelectValue>
+                      {(value) => (value === "admin" ? "Admin" : "Member")}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent align="start" alignItemWithTrigger={false}>
+                    <SelectItem value="member">Member</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
               ) : (
                 <span
                   className={cn(

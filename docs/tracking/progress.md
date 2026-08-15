@@ -85,7 +85,7 @@ Thin **Profile v1** (shipped) — not LinkedIn:
 | 2026-08-11 | Unread tracking | `channel_read_states` · mark-read · sidebar badges · Catch up “Since last visit” |
 | 2026-08-11 | 1:1 DMs + @mentions | `visibility: dm` · `…/dms` · composer `@` · transcript highlight |
 | 2026-08-11 | Repo cleanup | Removed unused marketing collage assets; docs + helpers aligned |
-| 2026-08-11 | Explore TeamHub demo | Read-only Acme Studio + canned Channel AI · `/explore` |
+| 2026-08-11 | Explore Sameward demo | Read-only Acme Studio + canned Channel AI · `/explore` |
 | 2026-08-11 | Message edit/delete (Slice 8) | Soft delete tombstones · PATCH/DELETE · realtime update/delete · hover UI |
 | 2026-08-11 | Message reactions (Slice 9) | Allowlisted toggle API · chips + picker · live via `message:update` |
 | 2026-08-11 | Settings v1 | `/settings` · theme · account/verify · change-password · sessions · sidebar |

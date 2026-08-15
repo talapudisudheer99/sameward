@@ -1,4 +1,4 @@
-# Deploy — how TeamHub goes live
+# Deploy — how Sameward goes live
 
 **Decision locked:** Aug 4, 2026 — **Option B**  
 **Host:** **Railway** runs both parts of the app.  
@@ -30,7 +30,7 @@ Resend / Google OAuth  ←── Next only
 | Shared helpers / models | Imported by both | `lib/**` |
 | Database / files / email | Atlas / AWS / Resend | Env vars on Railway |
 
-**Production host:** Railway only. We do not put TeamHub production on Vercel — serverless hosts sleep, and Socket.IO needs a process that stays awake.
+**Production host:** Railway only. We do not put Sameward production on Vercel — serverless hosts sleep, and Socket.IO needs a process that stays awake.
 
 ---
 

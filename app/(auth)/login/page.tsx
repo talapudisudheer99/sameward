@@ -82,7 +82,7 @@ function LoginForm() {
   return (
     <AuthShell
       title="Welcome back"
-      description="Sign in to your TeamHub AI workspace."
+      description="Sign in to your Sameward workspace."
       panelTitle={
         <>
           Your work. <span className="text-primary">All together.</span>

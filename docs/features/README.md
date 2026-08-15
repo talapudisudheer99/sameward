@@ -31,7 +31,7 @@ Status means **built in the app**, not “planned.”
 | AI assist (Path A) | ✅ | [**ai/**](../ai/README.md) |
 | AI reads public shared links | ✅ | [LINK-CONTEXT](../ai/LINK-CONTEXT.md) |
 | Member profiles (thin v1) | ✅ | [**profiles/**](../profiles/README.md) |
-| Explore TeamHub demo | ✅ | [explore-demo](./explore-demo.md) |
+| Explore Sameward demo | ✅ | [explore-demo](./explore-demo.md) |
 | Docs / boards | ⬜ Later | Not built |
 | AI V1.5 (large Catch up / Ask sources / cache) | ⬜ Later | [ai CONVERSATION-UNDERSTANDING](../ai/CONVERSATION-UNDERSTANDING.md) |
 | Tests + Railway live deploy | ⬜ Next | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) |

@@ -28,7 +28,7 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
         <div className="flex w-full max-w-2xl flex-col items-center">
           <Reveal onMount y={10}>
             <p className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-              TeamHub <span className="text-primary">AI</span>
+              Sameward
             </p>
           </Reveal>
 
@@ -113,7 +113,7 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
           >
             <ProductUiMock density="band" />
             <figcaption className="sr-only">
-              TeamHub workspaces, channels, link previews, profiles, and
+              Sameward workspaces, channels, link previews, profiles, and
               Channel AI with link-aware context
             </figcaption>
           </figure>

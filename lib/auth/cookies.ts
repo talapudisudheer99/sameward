@@ -3,7 +3,7 @@
  * so signup / login / logout can never disagree about the name or options.
  */
 
-export const SESSION_COOKIE_NAME = "teamhub_session"
+export const SESSION_COOKIE_NAME = "sameward_session"
 
 export type SessionMaxAge = "short" | "medium" | "long"
 

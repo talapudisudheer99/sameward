@@ -8,7 +8,7 @@ Optional lifestyle photos may still go under `public/marketing/` (see [`public/m
 **Brand locks for every prompt**
 - Ocean Blue UI (`#0369A1` / sky accents), white/light gray surfaces  
 - Clean SaaS product UI — **not** purple, neon glow, or cream-terracotta  
-- No fake logos that aren’t TeamHub; no unreadable lorem in giant type  
+- No fake logos that aren’t Sameward; no unreadable lorem in giant type  
 - Prefer real app chrome over photoreal invented UIs  
 
 ---
@@ -19,11 +19,11 @@ Only needed if you want a JPG fallback instead of `ProductUiMock`.
 **Save as:** `public/marketing/product-hero.jpg` (16:9 or 21:9)
 
 ```text
-Create a premium B2B SaaS marketing hero image for TeamHub AI.
+Create a premium B2B SaaS marketing hero image for Sameward.
 
 STRICT — DO NOT CHANGE
-- Logo: Keep the TeamHub AI logo EXACTLY as in the attached reference. Same rounded blue squircle mark with three white team silhouettes. Same wordmark: “TeamHub” (dark) + “AI” (Ocean Blue). Do not redesign, recolor, distort, or invent a different logo.
-- Product name: only “TeamHub AI” — no other brand names.
+- Logo: Keep the Sameward logo EXACTLY as in the attached reference. Same rounded blue squircle mark with three white team silhouettes. Same wordmark: “Sameward” (dark) + “AI” (Ocean Blue). Do not redesign, recolor, distort, or invent a different logo.
+- Product name: only “Sameward” — no other brand names.
 - Features must match this product ONLY:
   1) Workspaces — list/tiles of team workspaces
   2) Channels — public (#) and private (lock) + 1:1 DMs

@@ -32,7 +32,7 @@ function splitEmails(raw: string): string[] {
 }
 
 function failureLabel(reason: string): string {
-  if (reason === "not_found") return "not on TeamHub"
+  if (reason === "not_found") return "not on Sameward"
   if (reason === "already_member") return "already a member"
   if (reason === "invite_failed") return "couldn’t create invite"
   if (reason === "email_send_failed")
@@ -188,7 +188,7 @@ export default function InviteMemberDialog({
             Send invite
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed">
-            Enter emails of people who already have a TeamHub account. They’ll
+            Enter emails of people who already have a Sameward account. They’ll
             get a link to accept before joining.
           </DialogDescription>
         </DialogHeader>

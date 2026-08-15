@@ -1,5 +1,5 @@
 /**
- * Static Acme Studio fixtures for the Explore TeamHub demo.
+ * Static Acme Studio fixtures for the Explore Sameward demo.
  * Never persisted — ids are not real Mongo ObjectIds.
  */
 import type {
@@ -263,7 +263,7 @@ const MESSAGES: Record<string, ChatMessage[]> = {
       channelId: DEMO_CHANNEL_IDS.design,
       authorId: USERS.sam.userId,
       authorName: USERS.sam.fullName,
-      body: "Agreed. Banner = “TeamHub Demo” + stay-on-the-same-page line + Create CTA. No checklist of Chat/AI/DMs.",
+      body: "Agreed. Banner = “Sameward Demo” + stay-on-the-same-page line + Create CTA. No checklist of Chat/AI/DMs.",
       createdAt: "2026-08-09T13:35:00.000Z",
     }),
     msg({
@@ -281,7 +281,7 @@ const MESSAGES: Record<string, ChatMessage[]> = {
       channelId: DEMO_CHANNEL_IDS.general,
       authorId: USERS.maya.userId,
       authorName: USERS.maya.fullName,
-      body: "Welcome to Acme Studio on TeamHub — use channels for shared context, DMs for 1:1, and Channel AI when you need to catch up.",
+      body: "Welcome to Acme Studio on Sameward — use channels for shared context, DMs for 1:1, and Channel AI when you need to catch up.",
       createdAt: "2026-08-08T09:00:00.000Z",
     }),
     msg({

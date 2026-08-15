@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 
 import Sidebar from "@/components/layout/sidebar"
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -55,7 +55,7 @@ export default function MobileNav() {
           href="/workspace"
           className="flex min-w-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <TeamHubLogo variant="horizontal" size={24} />
+          <SamewardLogo variant="horizontal" size={26} />
         </Link>
       </header>
 

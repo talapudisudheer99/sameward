@@ -14,7 +14,7 @@ import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { cn } from "@/lib/utils"
 
 /**
- * TeamHub-branded Sonner toaster — Ocean Blue surfaces, not default green/red richColors.
+ * Sameward-branded Sonner toaster — Ocean Blue surfaces, not default green/red richColors.
  */
 const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
@@ -53,7 +53,7 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
       toastOptions={{
         ...toastOptions,
         classNames: {
-          toast: cn("teamhub-toast", toastOptions?.classNames?.toast),
+          toast: cn("sameward-toast", toastOptions?.classNames?.toast),
           title: cn(
             "font-heading text-sm font-semibold tracking-tight",
             toastOptions?.classNames?.title
@@ -71,20 +71,20 @@ const Toaster = ({ className, toastOptions, ...props }: ToasterProps) => {
             toastOptions?.classNames?.cancelButton
           ),
           closeButton: cn(
-            "teamhub-toast-close",
+            "sameward-toast-close",
             toastOptions?.classNames?.closeButton
           ),
           success: cn(
-            "teamhub-toast-success",
+            "sameward-toast-success",
             toastOptions?.classNames?.success
           ),
-          error: cn("teamhub-toast-error", toastOptions?.classNames?.error),
+          error: cn("sameward-toast-error", toastOptions?.classNames?.error),
           warning: cn(
-            "teamhub-toast-warning",
+            "sameward-toast-warning",
             toastOptions?.classNames?.warning
           ),
-          info: cn("teamhub-toast-info", toastOptions?.classNames?.info),
-          loading: cn("teamhub-toast-info", toastOptions?.classNames?.loading),
+          info: cn("sameward-toast-info", toastOptions?.classNames?.info),
+          loading: cn("sameward-toast-info", toastOptions?.classNames?.loading),
         },
       }}
       {...props}

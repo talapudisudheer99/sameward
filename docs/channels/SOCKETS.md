@@ -14,7 +14,7 @@
 | Room name helpers | `lib/channels/channel-room.ts` · `lib/channels/workspace-room.ts` |
 | Client provider + hooks | `components/providers/socket-provider.tsx` · `hooks/channels/use-channel-typing.ts` · `hooks/workspace/user-workspace-presence.ts` |
 
-**PO lock:** TeamHub runs a **dedicated Socket.IO process** (not inside serverless Route Handlers).
+**PO lock:** Sameward runs a **dedicated Socket.IO process** (not inside serverless Route Handlers).
 
 Next.js owns REST + UI. Realtime service owns persistent connections, rooms, typing, presence, and fan-out.
 

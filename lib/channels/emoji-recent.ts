@@ -1,6 +1,6 @@
 import { QUICK_EMOJI } from "@/lib/channels/emoji-catalog"
 
-const STORAGE_KEY = "teamhub-emoji-recent-v1"
+const STORAGE_KEY = "sameward-emoji-recent-v1"
 const MAX_RECENT = 24
 
 export function readRecentEmoji(): string[] {

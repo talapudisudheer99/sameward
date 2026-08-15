@@ -2,7 +2,7 @@
 
 ## One-line vision
 
-A TeamHub user has a **thin professional card** so teammates can answer “who is this?” in five seconds.
+A Sameward user has a **thin professional card** so teammates can answer “who is this?” in five seconds.
 
 ## Mission
 

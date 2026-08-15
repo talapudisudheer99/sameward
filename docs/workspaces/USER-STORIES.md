@@ -5,7 +5,7 @@ Each story has **acceptance criteria** we can demo.
 
 **PO locks**
 - Jul 29–30: cross-tenant → **404**; owner/admin only for invites; chips UX; no global typeahead  
-- Jul 30 (product): **invite → accept** (not instant-add); **existing TeamHub users only**; inviter must be **emailVerified**  
+- Jul 30 (product): **invite → accept** (not instant-add); **existing Sameward users only**; inviter must be **emailVerified**  
 - Jul 31: leave / remove / rename / owner-delete (no notify) · owner changes member ↔ admin · workspace audit (no UI)
 
 **Status:** US-1…US-8 implemented + E2E verified (Jul 31).
@@ -14,7 +14,7 @@ Each story has **acceptance criteria** we can demo.
 
 ## Epic
 
-**As a** signed-in TeamHub user,  
+**As a** signed-in Sameward user,  
 **I want** workspaces I can create and join with teammates,  
 **So that** my work lives in a shared team home with clear boundaries.
 
@@ -24,7 +24,7 @@ Each story has **acceptance criteria** we can demo.
 
 **As a** newly signed-in user with no workspaces,  
 **I want** to create a workspace with a name (and optional short description),  
-**So that** my team has a home in TeamHub and members know what it’s for.
+**So that** my team has a home in Sameward and members know what it’s for.
 
 **Acceptance**
 - [x] From `/workspace` empty state, I open Create Workspace and submit a valid name
@@ -80,7 +80,7 @@ Each story has **acceptance criteria** we can demo.
 ## US-5 — Invite members (consent-based)
 
 **As an** owner or admin with a **verified email**,  
-**I want** to invite existing TeamHub users by email,  
+**I want** to invite existing Sameward users by email,  
 **So that** they join my workspace only after they accept — I never force people in.
 
 ### Why this flow (product / interview)
@@ -92,7 +92,7 @@ Instant-add without consent lets anyone pull a teammate into a workspace without
 
 - [x] Inviter must be `emailVerified` — else **403** with clear message (and UI hides / disables Send invite)
 - [x] Dialog CTA = **Send invite** (not “Add”)
-- [x] Body `{ emails: string[] }` — chips UX; existing TeamHub users only
+- [x] Body `{ emails: string[] }` — chips UX; existing Sameward users only
 - [x] Unknown email → failed `not_found` (no account yet; signup+invite = later)
 - [x] Already a member → failed `already_member`
 - [x] Pending invite already open → resend / refresh token (not 10 duplicate invites)
@@ -107,7 +107,7 @@ Instant-add without consent lets anyone pull a teammate into a workspace without
 
 ### Out of scope (later)
 
-- Invite people who don’t have a TeamHub account yet (signup + join)
+- Invite people who don’t have a Sameward account yet (signup + join)
 - Role picker on invite
 - Invite links / allowed email domains
 
@@ -117,7 +117,7 @@ Instant-add without consent lets anyone pull a teammate into a workspace without
 
 **As a** customer,  
 **I want** my workspace data unreachable by outsiders,  
-**So that** I can trust TeamHub with team work.
+**So that** I can trust Sameward with team work.
 
 **Acceptance**
 - [x] Guessing another workspace’s id does not return its details (get-one → 404)
@@ -165,7 +165,7 @@ Instant-add without consent lets anyone pull a teammate into a workspace without
 - Audit UI / export (events are written; no viewer)
 - Global “search all users” autocomplete
 - Guest links / allowed email domains
-- Invite non-TeamHub emails
+- Invite non-Sameward emails
 
 ---
 

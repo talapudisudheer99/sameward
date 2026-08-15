@@ -9,7 +9,7 @@
 
 ## 1. Business requirement
 
-Before TeamHub can sell collaboration, the engineering foundation must be correct: routing, layouts, Server vs Client Components, styling system, and TypeScript toolchain.
+Before Sameward can sell collaboration, the engineering foundation must be correct: routing, layouts, Server vs Client Components, styling system, and TypeScript toolchain.
 
 Wrong mental models here create expensive bugs in auth, Redux, and data fetching later.
 

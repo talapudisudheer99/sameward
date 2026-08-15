@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 import { buttonVariants } from "@/components/ui/button"
 import { getCurrentUser } from "@/lib/auth/session"
 import { cn } from "@/lib/utils"
@@ -28,7 +28,7 @@ export async function SiteHeader() {
           href={signedIn ? "/workspace" : "/"}
           className="flex shrink-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <TeamHubLogo variant="horizontal" size={32} />
+          <SamewardLogo variant="horizontal" size={32} />
         </Link>
 
         <nav

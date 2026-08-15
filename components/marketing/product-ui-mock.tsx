@@ -83,7 +83,7 @@ export function ProductUiMock({
         <span className="size-2 rounded-full bg-[#FBBF24]/70" />
         <span className="size-2 rounded-full bg-[#34D399]/70" />
         <span className="ml-2 truncate text-xs text-muted-foreground">
-          teamhub.ai
+          sameward.com
         </span>
       </Beat>
 

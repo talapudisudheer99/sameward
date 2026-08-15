@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 
 /**
  * Invite accept lives outside (app) so guests can open the link
@@ -15,7 +15,7 @@ export default function InviteLayout({
     <div className="flex min-h-svh flex-col bg-background text-foreground">
       <header className="flex items-center border-b border-border px-6 py-4">
         <Link href="/" className="flex items-center">
-          <TeamHubLogo variant="horizontal" size={28} />
+          <SamewardLogo variant="horizontal" size={28} />
         </Link>
       </header>
       <main className="bg-brand-wash flex flex-1 items-center justify-center px-4 py-12">

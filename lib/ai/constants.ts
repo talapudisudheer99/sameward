@@ -16,7 +16,7 @@ export const AI_LINK_MAX_BYTES = 512_000
 export const AI_LINK_FETCH_TIMEOUT_MS = 5_000
 export const AI_LINK_MAX_REDIRECTS = 3
 export const AI_LINK_USER_AGENT =
-  "TeamHubAIBot/1.0 (+https://github.com/talapudisudheer99/teamhub-ai; link-context)"
+  "SamewardBot/1.0 (+https://github.com/talapudisudheer99/teamhub-ai; link-context)"
 
 export type AiKind =
   "summarize" | "catch-up" | "ask" | "explain" | "draft-reply" | "notes"

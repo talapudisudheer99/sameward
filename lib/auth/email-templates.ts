@@ -1,12 +1,13 @@
 /**
- * TeamHub transactional email HTML — Ocean Blue brand, table layout for clients.
+ * Sameward transactional email HTML — Ocean Blue brand, table layout for clients.
  * Inline styles only (email CSS support is limited).
  *
- * Logo uses cid:teamhub-logo (attached by lib/auth/email.ts) so Gmail works
- * without a publicly hosted image URL.
+ * Logo is the Sameward wing lockup (public/brand/sameward-logo.png), attached
+ * inline via cid:sameward-logo by lib/auth/email.ts so Gmail renders it without
+ * a publicly hosted URL.
  */
 
-export const EMAIL_LOGO_CID = "teamhub-logo"
+export const EMAIL_LOGO_CID = "sameward-logo"
 
 const BRAND = {
   primary: "#0369A1",
@@ -41,7 +42,7 @@ function brandMarkHtml(): string {
           <img
             src="cid:${EMAIL_LOGO_CID}"
             width="200"
-            alt="TeamHub AI"
+            alt="Sameward"
             style="display:block;width:200px;max-width:70%;height:auto;border:0;outline:none;"
           />
         </td>
@@ -83,7 +84,7 @@ function fallbackLinkHtml(href: string): string {
   `.trim()
 }
 
-export function renderTeamHubEmail(options: {
+export function renderSamewardEmail(options: {
   preheader: string
   title: string
   bodyHtml: string
@@ -138,7 +139,7 @@ export function renderTeamHubEmail(options: {
                 ${footnote}
               </p>
               <p style="margin:8px 12px 0;font-family:${FONT};font-size:12px;line-height:1.4;color:${BRAND.soft};text-align:center;">
-                TeamHub AI · channels, catch-up, and context for your team
+                Sameward · channels, catch-up, and context for your team
               </p>
             </td>
           </tr>
@@ -151,11 +152,11 @@ export function renderTeamHubEmail(options: {
 }
 
 export function passwordResetEmailHtml(resetUrl: string): string {
-  return renderTeamHubEmail({
-    preheader: "Reset your TeamHub password — link expires in 30 minutes.",
+  return renderSamewardEmail({
+    preheader: "Reset your Sameward password — link expires in 30 minutes.",
     title: "Reset your password",
     bodyHtml: `
-      <p style="margin:0 0 12px;">You asked to reset your TeamHub password.</p>
+      <p style="margin:0 0 12px;">You asked to reset your Sameward password.</p>
       <p style="margin:0;">Use the button below to choose a new one. If you didn’t request this, you can safely ignore this email.</p>
     `,
     ctaHref: resetUrl,
@@ -166,17 +167,17 @@ export function passwordResetEmailHtml(resetUrl: string): string {
 }
 
 export function verificationEmailHtml(verifyUrl: string): string {
-  return renderTeamHubEmail({
-    preheader: "Verify your email to unlock invites and trusted TeamHub features.",
+  return renderSamewardEmail({
+    preheader: "Verify your email to unlock invites and trusted Sameward features.",
     title: "Verify your email",
     bodyHtml: `
-      <p style="margin:0 0 12px;">Welcome to TeamHub. Confirm this address so we know it’s really you.</p>
+      <p style="margin:0 0 12px;">Welcome to Sameward. Confirm this address so we know it’s really you.</p>
       <p style="margin:0;">Verification unlocks invites and other trusted features in your workspace.</p>
     `,
     ctaHref: verifyUrl,
     ctaLabel: "Verify email address",
     expiryLabel: "Expires in 24 hours",
-    footnote: "If you didn’t create a TeamHub account, you can ignore this email.",
+    footnote: "If you didn’t create a Sameward account, you can ignore this email.",
   })
 }
 
@@ -188,15 +189,15 @@ export function workspaceInviteEmailHtml(options: {
   const from = escapeHtml(options.inviteFrom)
   const workspace = escapeHtml(options.workspaceName ?? "a workspace")
 
-  return renderTeamHubEmail({
-    preheader: `${options.inviteFrom} invited you to ${options.workspaceName ?? "a TeamHub workspace"}.`,
+  return renderSamewardEmail({
+    preheader: `${options.inviteFrom} invited you to ${options.workspaceName ?? "a Sameward workspace"}.`,
     title: "You’re invited",
     bodyHtml: `
       <p style="margin:0 0 12px;">
         <strong style="color:${BRAND.foreground};">${from}</strong>
         invited you to join
         <strong style="color:${BRAND.foreground};">${workspace}</strong>
-        on TeamHub.
+        on Sameward.
       </p>
       <p style="margin:0;">
         Accept to open the workspace with your team — channels, catch-up, and shared context in one place.

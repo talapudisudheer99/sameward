@@ -2,7 +2,7 @@
 
 ## What “logged in” means here
 
-1. Browser holds an httpOnly cookie: `teamhub_session` (raw random token).
+1. Browser holds an httpOnly cookie: `sameward_session` (raw random token).
 2. Mongo `sessions` collection holds `tokenHash` + `userId` + `expiresAt`.
 3. Every trusted check hashes the cookie and looks up the session + user.
 
