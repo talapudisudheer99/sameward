@@ -2,9 +2,9 @@
  * Sameward transactional email HTML — Ocean Blue brand, table layout for clients.
  * Inline styles only (email CSS support is limited).
  *
- * Logo uses cid:teamhub-logo (attached by lib/auth/email.ts) so Gmail works
- * without a publicly hosted image URL. CID/filename kept for infrastructure
- * compatibility (Phase 4).
+ * Logo is the Sameward wing lockup (public/brand/teamhub-logo.png), attached
+ * inline via cid:teamhub-logo by lib/auth/email.ts so Gmail renders it without
+ * a publicly hosted URL. CID/filename kept for infrastructure compat (Phase 4).
  */
 
 export const EMAIL_LOGO_CID = "teamhub-logo"
