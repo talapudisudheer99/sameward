@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ChevronsUpDown, UserRound } from "lucide-react"
+import { ChevronsUpDown, Settings, UserRound } from "lucide-react"
 
 import { LogoutButton } from "@/components/layout/logout-button"
 import { LogoutAllDevicesButton } from "@/components/layout/logout-all-devices-button"
@@ -102,6 +102,22 @@ export function AccountMenu({
         >
           <UserRound className="size-4 text-muted-foreground" aria-hidden />
           View profile
+        </Link>
+
+        <Link
+          href="/settings"
+          onClick={() => {
+            setOpen(false)
+            onNavigate?.()
+          }}
+          className={cn(
+            "flex h-9 items-center gap-2 rounded-lg px-2 text-[13px] font-medium text-foreground transition-colors",
+            "hover:bg-muted/70",
+            "outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          )}
+        >
+          <Settings className="size-4 text-muted-foreground" aria-hidden />
+          Settings
         </Link>
 
         <div className="my-1.5 h-px bg-border" />
