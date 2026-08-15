@@ -7,7 +7,6 @@ import {
   LayoutGrid,
   Settings,
   Sparkles,
-  UserRound,
   type LucideIcon,
 } from "lucide-react"
 
@@ -31,11 +30,6 @@ const navItems: NavItem[] = [
     label: "Workspaces",
     href: "/workspace",
     icon: LayoutGrid,
-  },
-  {
-    label: "Profile",
-    href: "/profile",
-    icon: UserRound,
   },
   {
     label: "Settings",
@@ -64,6 +58,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   const displayName = user?.fullName?.trim() || "You"
   const initial = displayName.slice(0, 1).toUpperCase()
   const email = user?.email ?? ""
+  const identityActive =
+    pathname === "/profile" || pathname.startsWith("/profile/")
 
   return (
     <div className="bg-brand-wash flex h-full flex-col bg-sidebar text-sidebar-foreground">
@@ -228,12 +224,21 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <Link
           href="/profile"
           onClick={onNavigate}
+          aria-current={identityActive ? "page" : undefined}
           className={cn(
-            "mb-1 flex items-center gap-2.5 rounded-[var(--radius)] px-2 py-2 transition-colors",
-            "hover:bg-sidebar-accent",
-            "outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+            "relative mb-1 flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors",
+            "outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            identityActive
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "hover:bg-sidebar-accent/60"
           )}
         >
+          {identityActive ? (
+            <span
+              aria-hidden
+              className="absolute inset-y-1.5 left-0 w-1 rounded-full bg-sidebar-primary"
+            />
+          ) : null}
           {user?.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
