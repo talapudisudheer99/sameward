@@ -8,9 +8,8 @@
 | `channels-mockups-flow.png` | Screen map Ch-A…F + dialogs | ⬜ |
 | `channels-mockups-desktop-mobile.png` | Main chat desktop + mobile | ⬜ |
 | `channels-mockups-dialogs.png` | Create channel · invite private · composer+attach | ✅ |
-| `teamhub-logo-system.png` | Logo mark + variants | ✅ adopted in `TeamHubLogo` |
 
-**When regenerating flow / desktop sheets:** use the **hexagon + people** mark (not the old cube). See `teamhub-logo-system.png`.
+**When regenerating flow / desktop sheets:** use the current **two tapered wings** mark and uppercase Sameward wordmark from `components/layout/sameward-logo.tsx`.
 
 **Brand (must match Sameward design system)**
 - Light UI only (not dark mode)

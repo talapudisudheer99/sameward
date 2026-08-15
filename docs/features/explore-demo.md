@@ -43,7 +43,7 @@ Optional — never required.
 
 ## First visit tour
 
-On first `/explore` visit, a **8-step spotlight tour** runs (Skip / Next). Progress is stored in `localStorage` (`teamhub-explore-tutorial-v1`). Users can **Replay tour** from the demo banner.
+On first `/explore` visit, a **8-step spotlight tour** runs (Skip / Next). Progress is stored in `localStorage` (`sameward-explore-tutorial-v1`). Users can **Replay tour** from the demo banner.
 
 Steps: welcome → demo label → channels → read thread → Explain → Channel AI → DMs → create workspace.
 

@@ -2,12 +2,12 @@
  * Sameward transactional email HTML — Ocean Blue brand, table layout for clients.
  * Inline styles only (email CSS support is limited).
  *
- * Logo is the Sameward wing lockup (public/brand/teamhub-logo.png), attached
- * inline via cid:teamhub-logo by lib/auth/email.ts so Gmail renders it without
- * a publicly hosted URL. CID/filename kept for infrastructure compat (Phase 4).
+ * Logo is the Sameward wing lockup (public/brand/sameward-logo.png), attached
+ * inline via cid:sameward-logo by lib/auth/email.ts so Gmail renders it without
+ * a publicly hosted URL.
  */
 
-export const EMAIL_LOGO_CID = "teamhub-logo"
+export const EMAIL_LOGO_CID = "sameward-logo"
 
 const BRAND = {
   primary: "#0369A1",
@@ -84,7 +84,7 @@ function fallbackLinkHtml(href: string): string {
   `.trim()
 }
 
-export function renderTeamHubEmail(options: {
+export function renderSamewardEmail(options: {
   preheader: string
   title: string
   bodyHtml: string
@@ -152,7 +152,7 @@ export function renderTeamHubEmail(options: {
 }
 
 export function passwordResetEmailHtml(resetUrl: string): string {
-  return renderTeamHubEmail({
+  return renderSamewardEmail({
     preheader: "Reset your Sameward password — link expires in 30 minutes.",
     title: "Reset your password",
     bodyHtml: `
@@ -167,7 +167,7 @@ export function passwordResetEmailHtml(resetUrl: string): string {
 }
 
 export function verificationEmailHtml(verifyUrl: string): string {
-  return renderTeamHubEmail({
+  return renderSamewardEmail({
     preheader: "Verify your email to unlock invites and trusted Sameward features.",
     title: "Verify your email",
     bodyHtml: `
@@ -189,7 +189,7 @@ export function workspaceInviteEmailHtml(options: {
   const from = escapeHtml(options.inviteFrom)
   const workspace = escapeHtml(options.workspaceName ?? "a workspace")
 
-  return renderTeamHubEmail({
+  return renderSamewardEmail({
     preheader: `${options.inviteFrom} invited you to ${options.workspaceName ?? "a Sameward workspace"}.`,
     title: "You’re invited",
     bodyHtml: `

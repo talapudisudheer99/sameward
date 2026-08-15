@@ -17,7 +17,7 @@ export type ExploreTutorialStep = {
   placement?: "top" | "bottom" | "left" | "right" | "center"
 }
 
-export const EXPLORE_TUTORIAL_STORAGE_KEY = "teamhub-explore-tutorial-v1"
+export const EXPLORE_TUTORIAL_STORAGE_KEY = "sameward-explore-tutorial-v1"
 
 export const EXPLORE_TUTORIAL_STEPS: ExploreTutorialStep[] = [
   {

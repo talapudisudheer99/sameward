@@ -3,7 +3,7 @@
 import Link from "next/link"
 
 import { Reveal } from "@/components/marketing/motion"
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 import { getSupportEmail, getSupportMailtoHref } from "@/lib/support"
 
 type SiteFooterProps = {
@@ -34,7 +34,7 @@ export default function SiteFooter({ signedIn = false }: SiteFooterProps) {
               href="/"
               className="inline-flex outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <TeamHubLogo variant="horizontal" size={28} />
+              <SamewardLogo variant="horizontal" size={28} />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               One calm place for your team to plan, create, and ship.

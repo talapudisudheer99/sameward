@@ -8,7 +8,7 @@ Use this when something “doesn’t work” before randomly editing routes.
 
 | Symptom | Check first |
 |---------|-------------|
-| Instant redirect to `/login` on `/workspace` | Cookie missing? → DevTools → Application → Cookies → `teamhub_session` |
+| Instant redirect to `/login` on `/workspace` | Cookie missing? → DevTools → Application → Cookies → `sameward_session` |
 | Cookie present but still bounced to login | Session row missing/expired → Mongo `sessions`; or `requireUser` |
 | API 401 Invalid credentials | Password / Google-only user / wrong email — check `AuthEvent` reason |
 | API 429 | Rate limit — wait window or restart dev server (in-memory Map clears) |

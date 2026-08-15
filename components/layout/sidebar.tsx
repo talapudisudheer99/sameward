@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { TeamHubLogo } from "@/components/layout/teamhub-logo"
+import { SamewardLogo } from "@/components/layout/sameward-logo"
 import { AccountMenu } from "@/components/layout/account-menu"
 import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { useGetWorkspacesQuery } from "@/store/api/workspace/workspaces-api"
@@ -104,7 +104,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           onClick={onNavigate}
           className="flex items-center rounded-[var(--radius)] outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
         >
-          <TeamHubLogo variant="horizontal" size={30} />
+          <SamewardLogo variant="horizontal" size={30} />
         </Link>
       </div>
 

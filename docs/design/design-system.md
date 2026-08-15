@@ -1,7 +1,6 @@
 # Sameward — Visual Identity & Design System v1.0
 
-> Reference mockups: [references/teamhub-ui-mockups-v1.png](./references/teamhub-ui-mockups-v1.png)  
-> Logo system: [references/teamhub-logo-system.png](./references/teamhub-logo-system.png)  
+> Logo source of truth: [`SamewardLogo`](../../components/layout/sameward-logo.tsx) and [`app/icon.svg`](../../app/icon.svg)
 > Channels chat components: [references/channels-mockups-dialogs.png](./references/channels-mockups-dialogs.png)
 
 ## Brand summary
@@ -28,7 +27,7 @@ Brand gradient endpoints: `--brand-a #0EA5E9` → `--brand-b #22D3EE` (sky → c
 
 **Mark:** Two tapered wings travelling the same way (“ward” = direction), filled with the `--brand-a → --primary` gradient (`--brand-a → --brand-b` on dark panels). The trailing wing sits at 42% opacity so the pair reads as movement, not repetition. No container tile in-app — the tile is favicon-only.  
 **Wordmark:** `Sameward` set in Manrope bold, tracking `-0.03em`. `Same` sits in foreground ink; `ward` (“direction”) carries the brand accent — `--primary` (Ocean Blue) on light, `--brand-b` (cyan) on dark — echoing the mark’s two-tone. One continuous word, no “AI” suffix.  
-**Component:** `TeamHubLogo` in `components/layout/teamhub-logo.tsx` (filename/export kept for now; visible wordmark is Sameward).
+**Component:** `SamewardLogo` in `components/layout/sameward-logo.tsx`.
 
 | Variant | Use |
 |---------|-----|
@@ -43,13 +42,13 @@ Clear space ≈ mark height on all sides. Do not stretch or recolor the mark off
 
 | Surface | Status |
 |---------|--------|
-| App sidebar | ✅ `TeamHubLogo` horizontal |
+| App sidebar | ✅ `SamewardLogo` horizontal |
 | Marketing header | ✅ |
 | Auth shell (dark + mobile) | ✅ |
 | Invite layout | ✅ |
 | Browser favicon | ✅ `app/icon.svg` |
-| Create-workspace dialog header icon | ✅ `TeamHubLogo` mark |
-| Emails (Resend HTML) | Text-only “Sameward” for now (no embedded SVG logo) |
+| Create-workspace dialog header icon | ✅ `SamewardLogo` mark |
+| Emails (Resend HTML) | ✅ inline `public/brand/sameward-logo.png` attachment |
 
 ## Design tokens
 

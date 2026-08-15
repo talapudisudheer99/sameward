@@ -24,12 +24,12 @@ async function logoAttachment() {
     process.cwd(),
     "public",
     "brand",
-    "teamhub-logo.png"
+    "sameward-logo.png"
   )
   const content = await readFile(filePath)
 
   return {
-    filename: "teamhub-logo.png",
+    filename: "sameward-logo.png",
     content: content.toString("base64"),
     contentId: EMAIL_LOGO_CID,
     contentType: "image/png",

@@ -4,7 +4,7 @@ import { useId } from "react"
 
 import { cn } from "@/lib/utils"
 
-type TeamHubLogoProps = {
+type SamewardLogoProps = {
   className?: string
   /** mark = icon only · horizontal = icon + wordmark · stacked = icon above wordmark */
   variant?: "mark" | "horizontal" | "stacked"
@@ -66,17 +66,17 @@ function LogoMark({
 /**
  * Sameward brand mark — two tapered wings travelling the same way
  * ("ward" = direction). Unique gradient ids per instance so multiple logos
- * never blank out. Export name kept for compatibility (file path unchanged).
+ * never blank out.
  */
-export function TeamHubLogo({
+export function SamewardLogo({
   className,
   variant = "mark",
   size = 28,
   title = "Sameward",
   tone = "default",
-}: TeamHubLogoProps) {
+}: SamewardLogoProps) {
   const uid = useId().replace(/:/g, "")
-  const gradientId = `teamhub-mark-${uid}`
+  const gradientId = `sameward-mark-${uid}`
 
   if (variant === "mark") {
     return (
