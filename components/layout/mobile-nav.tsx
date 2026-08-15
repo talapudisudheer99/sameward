@@ -55,7 +55,7 @@ export default function MobileNav() {
           href="/workspace"
           className="flex min-w-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <TeamHubLogo variant="horizontal" size={24} />
+          <TeamHubLogo variant="horizontal" size={26} />
         </Link>
       </header>
 

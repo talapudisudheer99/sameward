@@ -93,7 +93,8 @@ export function TeamHubLogo({
   const wordmark = (
     <span
       className={cn(
-        "font-heading font-bold tracking-[-0.03em]",
+        // trailing letter-space would push the lockup off-centre, so pull it back
+        "font-heading -mr-[0.15em] font-bold uppercase tracking-[0.15em]",
         tone === "onDark" ? "text-white" : "text-foreground",
       )}
     >
@@ -126,7 +127,7 @@ export function TeamHubLogo({
       className={cn("inline-flex items-center gap-2.5", className)}
       role="img"
       aria-label={title}
-      style={{ fontSize: Math.max(14, Math.round(size * 0.54)) }}
+      style={{ fontSize: Math.max(13, Math.round(size * 0.5)) }}
     >
       <LogoMark size={size} gradientId={gradientId} tone={tone} />
       {wordmark}

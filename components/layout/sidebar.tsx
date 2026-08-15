@@ -74,7 +74,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           onClick={onNavigate}
           className="flex items-center rounded-[var(--radius)] outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
         >
-          <TeamHubLogo variant="horizontal" size={28} />
+          <TeamHubLogo variant="horizontal" size={30} />
         </Link>
       </div>
 
