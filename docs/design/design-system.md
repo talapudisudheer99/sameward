@@ -27,7 +27,7 @@ Brand gradient endpoints: `--brand-a #0EA5E9` → `--brand-b #22D3EE` (sky → c
 ## Logo
 
 **Mark:** Two tapered wings travelling the same way (“ward” = direction), filled with the `--brand-a → --primary` gradient (`--brand-a → --brand-b` on dark panels). The trailing wing sits at 42% opacity so the pair reads as movement, not repetition. No container tile in-app — the tile is favicon-only.  
-**Wordmark:** `Sameward` in foreground ink (single product name; no “AI” suffix). Theme tokens keep the mark aligned with the active palette.  
+**Wordmark:** `Sameward` set in Manrope bold, tracking `-0.03em`. `Same` sits in foreground ink; `ward` (“direction”) carries the brand accent — `--primary` (Ocean Blue) on light, `--brand-b` (cyan) on dark — echoing the mark’s two-tone. One continuous word, no “AI” suffix.  
 **Component:** `TeamHubLogo` in `components/layout/teamhub-logo.tsx` (filename/export kept for now; visible wordmark is Sameward).
 
 | Variant | Use |

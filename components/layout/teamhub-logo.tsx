@@ -90,14 +90,21 @@ export function TeamHubLogo({
     )
   }
 
-  const hubClass =
-    tone === "onDark"
-      ? "font-semibold text-white"
-      : "font-semibold text-foreground"
-
   const wordmark = (
-    <span className={cn("font-heading tracking-tight", hubClass)}>
-      Sameward
+    <span
+      className={cn(
+        "font-heading font-bold tracking-[-0.03em]",
+        tone === "onDark" ? "text-white" : "text-foreground",
+      )}
+    >
+      Same
+      <span
+        style={{
+          color: tone === "onDark" ? "var(--brand-b)" : "var(--primary)",
+        }}
+      >
+        ward
+      </span>
     </span>
   )
 
