@@ -18,7 +18,14 @@ import { cn } from "@/lib/utils"
  * 2. router.replace("/login") → leave the protected area
  * 3. proxy would also bounce /workspace without a cookie — this is just cleaner UX
  */
-export function LogoutButton() {
+export function LogoutButton({
+  className,
+  compact = false,
+}: {
+  className?: string
+  /** Tighter sizing for use inside the sidebar account menu */
+  compact?: boolean
+}) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -51,11 +58,15 @@ export function LogoutButton() {
       disabled={isLoading}
       className={cn(
         buttonVariants({ variant: "ghost" }),
-        "w-full justify-start gap-2 rounded-[var(--radius)] text-muted-foreground hover:text-foreground"
+        "w-full justify-start gap-2 rounded-[var(--radius)] text-muted-foreground hover:text-foreground",
+        className
       )}
     >
-      <LogOut className="size-5" data-icon="inline-start" />
-      <span className="text-sm font-medium">
+      <LogOut
+        className={compact ? "size-4" : "size-5"}
+        data-icon="inline-start"
+      />
+      <span className={cn("font-medium", compact ? "text-[13px]" : "text-sm")}>
         {isLoading ? "Logging out…" : "Log out"}
       </span>
     </button>

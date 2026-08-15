@@ -11,8 +11,7 @@ import {
 } from "lucide-react"
 
 import { TeamHubLogo } from "@/components/layout/teamhub-logo"
-import { LogoutButton } from "@/components/layout/logout-button"
-import { LogoutAllDevicesButton } from "@/components/layout/logout-all-devices-button"
+import { AccountMenu } from "@/components/layout/account-menu"
 import { buttonVariants } from "@/components/ui/button"
 import { useCurrentUser } from "@/hooks/auth/use-current-user"
 import { useGetWorkspacesQuery } from "@/store/api/workspace/workspaces-api"
@@ -56,7 +55,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   const quickWorkspaces = workspaces.slice(0, 5)
 
   const displayName = user?.fullName?.trim() || "You"
-  const initial = displayName.slice(0, 1).toUpperCase()
   const email = user?.email ?? ""
   const identityActive =
     pathname === "/profile" || pathname.startsWith("/profile/")
@@ -220,53 +218,14 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       </div>
 
       {/* Account / session — identity sits at the foot, where users look for it */}
-      <div className="border-t border-sidebar-border px-2 py-2.5">
-        <Link
-          href="/profile"
-          onClick={onNavigate}
-          aria-current={identityActive ? "page" : undefined}
-          className={cn(
-            "relative mb-1 flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors",
-            "outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-            identityActive
-              ? "bg-sidebar-accent text-sidebar-accent-foreground"
-              : "hover:bg-sidebar-accent/60"
-          )}
-        >
-          {identityActive ? (
-            <span
-              aria-hidden
-              className="absolute inset-y-1.5 left-0 w-1 rounded-full bg-sidebar-primary"
-            />
-          ) : null}
-          {user?.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.avatarUrl}
-              alt=""
-              className="size-8 shrink-0 rounded-full object-cover ring-1 ring-sidebar-border"
-            />
-          ) : (
-            <span
-              className="brand-tile flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-              aria-hidden
-            >
-              {initial}
-            </span>
-          )}
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13px] font-medium text-foreground">
-              {displayName}
-            </span>
-            {email ? (
-              <span className="block truncate text-[11px] text-muted-foreground">
-                {email}
-              </span>
-            ) : null}
-          </span>
-        </Link>
-        <LogoutButton />
-        <LogoutAllDevicesButton />
+      <div className="border-t border-sidebar-border px-3 py-3">
+        <AccountMenu
+          displayName={displayName}
+          email={email}
+          avatarUrl={user?.avatarUrl}
+          active={identityActive}
+          onNavigate={onNavigate}
+        />
       </div>
     </div>
   )
