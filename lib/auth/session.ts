@@ -8,6 +8,7 @@ import { MAX_SESSIONS_PER_USER, Session } from "@/lib/models/session"
 import {
   SESSION_COOKIE_NAME,
   getSessionMaxAgeSeconds,
+  sessionCookieClearOptions,
   sessionCookieOptions,
 } from "./cookies"
 import { hashToken, resolveUserFromSessionToken } from "./session-user"
@@ -121,7 +122,7 @@ export async function destroySession(): Promise<void> {
     await Session.deleteOne({ tokenHash: hashToken(token) })
   }
 
-  cookiesStore.delete(SESSION_COOKIE_NAME)
+  cookiesStore.set(SESSION_COOKIE_NAME, "", sessionCookieClearOptions())
 }
 
 /** Kill every session for this user (all devices), then clear this browser's cookie */
@@ -131,5 +132,5 @@ export async function destroyAllSessions(userId: string): Promise<void> {
   await Session.deleteMany({ userId })
 
   const cookieStore = await cookies()
-  cookieStore.delete(SESSION_COOKIE_NAME)
+  cookieStore.set(SESSION_COOKIE_NAME, "", sessionCookieClearOptions())
 }
