@@ -98,9 +98,9 @@ const resourceSteps = [
 function ChannelAiSection() {
   const { duration, at } = useBeatClock()
   const intro = 0.03
-  const capsStart = 0.18
-  const capGap = 0.11
-  const demoParent = capsStart + channelAiCapabilities.length * capGap + 0.05
+  const capsStart = 0.1
+  const capGap = 0.05
+  const demoParent = capsStart + channelAiCapabilities.length * capGap + 0.04
 
   return (
     <section
@@ -259,8 +259,8 @@ function ChannelAiSection() {
 function SolutionsSection() {
   const { duration, at } = useBeatClock()
   const intro = 0.03
-  const bandStart = 0.2
-  const bandGap = 0.18
+  const bandStart = 0.1
+  const bandGap = 0.08
 
   return (
     <section
@@ -372,9 +372,9 @@ function ResourcesSection({
 }) {
   const { duration, at } = useBeatClock()
   const intro = 0.03
-  const stepStart = 0.16
-  const stepGap = 0.17
-  const ctaStart = stepStart + resourceSteps.length * stepGap + 0.06
+  const stepStart = 0.1
+  const stepGap = 0.08
+  const ctaStart = stepStart + resourceSteps.length * stepGap + 0.05
 
   return (
     <section

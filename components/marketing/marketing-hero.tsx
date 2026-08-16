@@ -32,14 +32,14 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
             </p>
           </Reveal>
 
-          <Reveal onMount y={12} delay={0.06} className="mt-3 sm:mt-5">
+          <Reveal onMount y={12} delay={0.05} className="mt-3 sm:mt-5">
             <h1 className="font-heading text-[1.55rem] font-bold tracking-tight text-foreground sm:text-3xl sm:leading-[1.15] md:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
               One place for your team to{" "}
               <span className="text-primary">plan, create and ship</span>
             </h1>
           </Reveal>
 
-          <Reveal onMount y={10} delay={0.12} className="mt-3 sm:mt-4">
+          <Reveal onMount y={10} delay={0.1} className="mt-3 sm:mt-4">
             <p className="mx-auto max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
               Channels, link-aware Channel AI, and a calm workspace — catch up
               on the talk <span className="font-medium text-foreground/80">and</span>{" "}
@@ -47,7 +47,7 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
             </p>
           </Reveal>
 
-          <Reveal onMount y={8} delay={0.18} className="mt-6 w-full sm:mt-8 sm:w-auto">
+          <Reveal onMount y={8} delay={0.15} className="mt-6 w-full sm:mt-8 sm:w-auto">
             <div className="flex w-full flex-col items-stretch gap-2.5 sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-3">
               {signedIn ? (
                 <Link
@@ -104,7 +104,7 @@ export default function MarketingHero({ signedIn = false }: MarketingHeroProps) 
         <Reveal
           onMount
           y={14}
-          delay={0.26}
+          delay={0.2}
           className="relative mt-8 w-full sm:mt-10 lg:mt-11"
         >
           <figure
