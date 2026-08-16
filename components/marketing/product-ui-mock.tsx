@@ -23,8 +23,8 @@ const AVATARS = {
  */
 function useMockTimeline() {
   const { reduce } = useMarketingMotion()
-  const step = reduce ? 0 : 0.048
-  const duration = reduce ? 0 : 0.28
+  const step = reduce ? 0 : 0.04
+  const duration = reduce ? 0 : 0.26
 
   const at = (groupStart: number, index = 0) =>
     reduce ? 0 : groupStart + index * step
@@ -34,17 +34,17 @@ function useMockTimeline() {
     duration,
     step,
     chrome: at(0),
-    channelsParent: at(0.04),
-    channelItem: (i: number) => at(0.09, i),
-    workspacesParent: at(0.26),
-    workspaceItem: (i: number) => at(0.31, i),
-    chatHeader: at(0.48),
-    message: (i: number) => at(0.54, i),
-    composer: at(0.72),
-    profileParent: at(0.8),
-    profileChild: (i: number) => at(0.85, i),
-    aiParent: at(1.04),
-    aiChild: (i: number) => at(1.09, i),
+    channelsParent: at(0.03),
+    channelItem: (i: number) => at(0.06, i),
+    workspacesParent: at(0.16),
+    workspaceItem: (i: number) => at(0.2, i),
+    chatHeader: at(0.3),
+    message: (i: number) => at(0.34, i),
+    composer: at(0.46),
+    profileParent: at(0.52),
+    profileChild: (i: number) => at(0.56, i),
+    aiParent: at(0.66),
+    aiChild: (i: number) => at(0.7, i),
   }
 }
 

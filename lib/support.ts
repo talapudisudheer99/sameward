@@ -1,8 +1,12 @@
 /**
- * Public support contact — change NEXT_PUBLIC_SUPPORT_EMAIL anytime (redeploy / restart).
+ * Public support contact. NEXT_PUBLIC_SUPPORT_EMAIL overrides it, but that value
+ * is inlined at build time — the web service needs a redeploy, not a restart.
+ *
+ * The fallback is the live address: the apex is an ALIAS (not a CNAME), so it can
+ * carry MX records, and ImprovMX forwards support@ to a real inbox.
  */
 
-const FALLBACK_SUPPORT_EMAIL = "sudheertalaudi@gmail.com"
+const FALLBACK_SUPPORT_EMAIL = "support@sameward.com"
 
 export function getSupportEmail(): string {
   const fromEnv = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim()

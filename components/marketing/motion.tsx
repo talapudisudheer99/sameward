@@ -25,8 +25,8 @@ export function useMarketingMotion() {
   const reduce = useReducedMotion()
   return {
     reduce: Boolean(reduce),
-    duration: reduce ? 0 : 0.35,
-    stagger: reduce ? 0 : 0.06,
+    duration: reduce ? 0 : 0.3,
+    stagger: reduce ? 0 : 0.04,
   }
 }
 
@@ -36,8 +36,8 @@ export function useMarketingMotion() {
  */
 export function useBeatClock(options?: { step?: number; duration?: number }) {
   const { reduce } = useMarketingMotion()
-  const step = reduce ? 0 : (options?.step ?? 0.05)
-  const duration = reduce ? 0 : (options?.duration ?? 0.3)
+  const step = reduce ? 0 : (options?.step ?? 0.04)
+  const duration = reduce ? 0 : (options?.duration ?? 0.26)
   const at = (groupStart: number, index = 0) =>
     reduce ? 0 : groupStart + index * step
   return { reduce, duration, step, at }

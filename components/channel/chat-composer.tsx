@@ -419,7 +419,12 @@ const ChatComposer = forwardRef<ChatComposerHandle, ChatComposerProps>(
         @ to mention teammates or @all
       </p>
 
-      <div className="relative overflow-hidden rounded-[var(--radius)] border border-border bg-background">
+      {/*
+        No `overflow-hidden` here: the mention list and emoji picker are
+        absolutely positioned above this box, so clipping would hide them.
+        Children that touch the edges round their own corners instead.
+      */}
+      <div className="relative rounded-[var(--radius)] border border-border bg-background">
         {mentionMatches.length > 0 && mentionQuery ? (
           <ul
             className="absolute bottom-full left-0 z-20 mb-2 max-h-56 w-full max-w-md overflow-y-auto rounded-xl border border-border/80 bg-card p-1.5 shadow-[0_10px_30px_-18px_rgba(2,6,23,0.35)]"
@@ -474,7 +479,7 @@ const ChatComposer = forwardRef<ChatComposerHandle, ChatComposerProps>(
 
         {/* Live link preview (WhatsApp-style) — above the text field */}
         {showPreview ? (
-          <div className="flex items-stretch gap-0 border-b border-border/70 bg-muted/35">
+          <div className="flex items-stretch gap-0 overflow-hidden rounded-t-[calc(var(--radius)-1px)] border-b border-border/70 bg-muted/35">
             <div className="min-w-0 flex-1 overflow-hidden">
               {composerPreview ? (
                 <div className="max-h-36 overflow-hidden">
