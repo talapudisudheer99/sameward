@@ -1,6 +1,6 @@
 # Phase 8 — Quality, performance & deployment
 
-**Status:** ⬜ **Not started** — next on the roadmap after Path A chat/AI  
+**Status:** Frontend tests ✅ (Jest + React Testing Library). Other Phase 8 items follow this doc.  
 **Prev:** [← Phase 7](../07-ai-integrations/README.md) · **Deploy lock:** [docs/architecture/deploy.md](../../architecture/deploy.md)
 
 ---
@@ -19,7 +19,7 @@ We already chose **Railway** for production (not Vercel). Socket.IO needs a serv
 
 ## 2. What you will build
 
-- Tests for critical user flows (Jest + React Testing Library)
+- Tests for critical **frontend** user flows (Jest + React Testing Library) — **done** (components, forms, validation, user interactions, API loading/error states). No backend test suite.
 - Light performance work (lazy routes, sensible images, memo only when needed)
 - GitHub as the source of truth for code
 - **Railway:** two services from one repo  
@@ -102,7 +102,7 @@ Mentor assigns near the end of the project. You can connect the GitHub remote ea
 ## 9. Before you call it “shipped”
 
 - [ ] `npm run typecheck` and `npm run lint` pass  
-- [ ] Critical tests pass  
+- [x] Critical **frontend** tests pass (Jest + React Testing Library)
 - [ ] Railway **web** and **realtime** both healthy  
 - [ ] Smoke: signup/login, open a channel, send a message, see it live on a second browser  
 - [ ] Smoke: verify/reset email links use the production `APP_URL`
@@ -121,7 +121,7 @@ Mentor assigns near the end of the project. You can connect the GitHub remote ea
 ## 11. Definition of done
 
 - App is live from **GitHub → Railway** (Next web + Socket.IO realtime)  
-- Core flows have tests  
+- Core **frontend** flows have Jest + React Testing Library tests (not backend tests)
 - You can explain the architecture end-to-end in an interview  
 
 ---

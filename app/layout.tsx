@@ -25,6 +25,20 @@ export const metadata: Metadata = {
   },
   description: "Team collaboration — workspaces, channels, and realtime chat.",
   applicationName: "Sameward",
+  metadataBase: new URL("https://sameward.com"),
+  openGraph: {
+    title: "Sameward",
+    description: "A live workspace for team chat, files, and AI assistance — in one place.",
+    url: "https://sameward.com",
+    siteName: "Sameward",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sameward",
+    description: "A live workspace for team chat, files, and AI assistance — in one place.",
+  },
 }
 
 export default function RootLayout({

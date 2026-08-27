@@ -52,7 +52,7 @@ docs/
 | “Profiles?” | [profiles/README.md](./profiles/README.md) |
 | “Settings?” | [settings/README.md](./settings/README.md) |
 | “Where do we deploy?” | [architecture/deploy.md](./architecture/deploy.md) — **Railway** (Next + Socket.IO) |
-| “What’s next?” | [Phase 8](./phases/08-quality-deployment/README.md) — tests + live Railway deploy |
+| “What’s next?” | [Phase 8](./phases/08-quality-deployment/README.md) — quality & deploy (frontend tests ✅) |
 | “Where are we?” | [tracking/progress.md](./tracking/progress.md) |
 | “What is Sameward?” | [architecture/product-vision.md](./architecture/product-vision.md) |
 | Mentorship rules | [MENTORSHIP.md](./MENTORSHIP.md) |
@@ -71,7 +71,7 @@ docs/
 | [5 Collaboration](./phases/05-collaboration-core/README.md) | Channels first; docs/boards later | ✅ Chat done → [channels/](./channels/README.md) |
 | [6 Realtime](./phases/06-realtime/README.md) | Socket.IO for chat | ✅ Done → [channels/SOCKETS.md](./channels/SOCKETS.md) |
 | [7 AI](./phases/07-ai-integrations/README.md) | Path A knowledge assistant | ✅ Done → [ai/](./ai/README.md) |
-| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests + Railway live ship | ⬜ **Next** |
+| [8 Quality & deploy](./phases/08-quality-deployment/README.md) | Tests + Railway live ship | Frontend tests ✅ (Jest + RTL) |
 
 Also shipped outside the phase numbers: **Profiles**, **Settings**, **Explore demo**, **link previews**, **AI link-context**.
 
