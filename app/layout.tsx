@@ -23,12 +23,14 @@ export const metadata: Metadata = {
     default: "Sameward",
     template: "%s · Sameward",
   },
-  description: "Team collaboration — workspaces, channels, and realtime chat.",
+  description:
+    "A live workspace for team chat, files, and AI assistance — everything your team needs, without switching between separate tools for chat, storage, and context.",
   applicationName: "Sameward",
   metadataBase: new URL("https://sameward.com"),
   openGraph: {
     title: "Sameward",
-    description: "A live workspace for team chat, files, and AI assistance — in one place.",
+    description:
+      "A live workspace for team chat, files, and AI assistance — everything your team needs, without switching between separate tools for chat, storage, and context.",
     url: "https://sameward.com",
     siteName: "Sameward",
     locale: "en_US",
@@ -37,7 +39,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Sameward",
-    description: "A live workspace for team chat, files, and AI assistance — in one place.",
+    description:
+      "A live workspace for team chat, files, and AI assistance — everything your team needs, without switching between separate tools for chat, storage, and context.",
   },
 }
 
