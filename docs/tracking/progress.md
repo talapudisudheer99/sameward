@@ -6,10 +6,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Current phase** | Phase 8 — Quality & deploy (**next**) |
+| **Current phase** | Phase 8 — Quality & deploy (frontend tests ✅ Jest + RTL) |
 | **Current feature** | Product V1 chat + AI Path A ✅ (incl. link-context + OG previews) |
 | **Current technology** | Next.js · Mongo · Zod · RTK · Socket.IO · S3 · OpenAI · Railway (deploy lock) |
-| **Last updated** | 2026-08-14 |
+| **Last updated** | 2026-08-23 |
 
 ## Phase status
 
@@ -24,7 +24,7 @@
 | 5 | Collaboration core | ✅ **Chat v1 shipped** | Channels + REST + realtime + S3 · unread · DMs · mentions · edit/delete · reactions · link previews · DnD · See more · [`docs/channels/`](../channels/README.md) |
 | 6 | Realtime | ✅ **Chat realtime done** | Socket auth, live messages, typing, presence; Redis multi-instance later |
 | 7 | AI & integrations | ✅ **Path A + link-context** | Six capabilities + AI-time link reading · V1.5 planned later · [`docs/ai/`](../ai/README.md) |
-| 8 | Quality & deployment | ⬜ **Next** | Tests + live Railway ship — [phase README](../phases/08-quality-deployment/README.md) |
+| 8 | Quality & deployment | Frontend tests ✅ | Jest + React Testing Library for UI (components, forms, API states). No backend tests. — [phase README](../phases/08-quality-deployment/README.md) |
 | — | **Profile v1** | ✅ **Shipped** | [`docs/profiles/`](../profiles/README.md) |
 | — | **Settings v1** | ✅ **Shipped** | Theme · password · sessions (max 2) · [`docs/settings/`](../settings/README.md) |
 
@@ -97,6 +97,7 @@ Thin **Profile v1** (shipped) — not LinkedIn:
 | 2026-08-13 | AI V1 link-context docs | US-AI10 · `docs/ai/LINK-CONTEXT.md` · E2E S14 |
 | 2026-08-13 | AI V1 link-context + OG previews | SSRF-safe AI excerpts · chat/composer OG cards · DnD · See more · pushed `33f8e39` |
 | 2026-08-14 | Docs: Railway + truth sync | Phase 8 / deploy docs = Railway; hub & progress match shipped product |
+| 2026-08-23 | Docs: frontend tests | Jest + React Testing Library status → **done** (UI only; no backend tests) |
 
 ## GitHub
 

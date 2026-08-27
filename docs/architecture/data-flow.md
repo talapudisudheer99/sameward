@@ -61,7 +61,7 @@ Details: [../channels/SOCKETS.md](../channels/SOCKETS.md)
 | DB | MongoDB |
 | Live | Socket.IO |
 | Edge cookie check | `proxy.ts` |
-| Tests (next) | Jest + RTL |
+| Tests | Jest + RTL (frontend UI) |
 | Ship | GitHub + Railway |
 
 ## Common mistakes (bookmark this)

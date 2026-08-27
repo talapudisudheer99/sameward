@@ -3,7 +3,7 @@
 **Status:** ✅ Done — RTK Query is used across the app  
 **Prev:** [← Phase 3](../03-workspaces-members/README.md) · **Next:** [Phase 5 — Collaboration →](../05-collaboration-core/README.md)
 
-> Store + API slices are live for workspaces, channels, AI, profiles, settings, and uploads. Phase 8 will add more tests around this layer.
+> Store + API slices are live for workspaces, channels, AI, profiles, settings, and uploads. Frontend Jest + React Testing Library tests cover UI behavior around this layer.
 
 ---
 

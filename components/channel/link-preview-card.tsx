@@ -115,7 +115,7 @@ export default function LinkPreviewCard({
       <div
         className={cn(
           "relative space-y-1 pb-3 pt-2",
-          attached ? "px-3.5 pl-4" : "px-3.5"
+          attached ? "px-3 pl-3.5" : "px-3.5"
         )}
       >
         <div className="flex items-center gap-1.5">

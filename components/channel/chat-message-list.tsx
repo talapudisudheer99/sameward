@@ -384,6 +384,15 @@ export default function ChatMessageList({
           ) &&
           !bodyTrim.includes("\n") &&
           bodyTrim.split(/\s+/).length <= 2
+        /**
+         * Squared corner on the author's side, like a chat tail. Only the first
+         * message of a run gets it, so a burst from one person reads as a single
+         * block instead of repeating the anchor on every bubble.
+         */
+        const bubbleCorner = cn(
+          "rounded-lg",
+          grouped ? null : mine ? "rounded-tr-none" : "rounded-tl-none"
+        )
 
         return (
           <article
@@ -467,7 +476,7 @@ export default function ChatMessageList({
               )}
 
               {deleted ? (
-                <p className="rounded-2xl bg-muted/60 px-3 py-1.5 text-sm italic text-muted-foreground">
+                <p className="rounded-lg bg-muted/60 px-3 py-1.5 text-sm italic text-muted-foreground">
                   This message was deleted
                 </p>
               ) : isEditing ? (
@@ -583,10 +592,9 @@ export default function ChatMessageList({
                               : "w-fit max-w-[min(100%,22rem)] sm:max-w-[min(80vw,28rem)] lg:max-w-[min(68vw,30rem)]",
                             previews.length > 0
                               ? cn(
-                                  "rounded-2xl shadow-md ring-1",
-                                  mine
-                                    ? "rounded-br-md ring-primary/25"
-                                    : "rounded-bl-md ring-border/80"
+                                  bubbleCorner,
+                                  "shadow-md ring-1",
+                                  mine ? "ring-primary/25" : "ring-border/80"
                                 )
                               : null
                           )}
@@ -612,7 +620,7 @@ export default function ChatMessageList({
                           {msg.body && !linkOnlyBody ? (
                             <div
                               className={cn(
-                                "px-3.5 py-2.5 text-left text-sm leading-relaxed select-none md:select-text [-webkit-touch-callout:none]",
+                                "px-3 py-2 text-left text-sm leading-relaxed select-none md:select-text [-webkit-touch-callout:none]",
                                 previews.length > 0
                                   ? cn(
                                       "rounded-none",
@@ -621,10 +629,10 @@ export default function ChatMessageList({
                                         : "border-t border-border/60 bg-muted text-foreground"
                                     )
                                   : cn(
-                                      "rounded-2xl",
+                                      bubbleCorner,
                                       mine
-                                        ? "rounded-br-md bg-primary text-primary-foreground"
-                                        : "rounded-bl-md bg-muted text-foreground"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted text-foreground"
                                     )
                               )}
                             >

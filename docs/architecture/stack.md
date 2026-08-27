@@ -64,7 +64,7 @@ Spec: [`docs/channels/SOCKETS.md`](../channels/SOCKETS.md).
 
 | Technology | Role |
 |------------|------|
-| **Jest + React Testing Library** | Unit / integration of UI behavior |
+| **Jest + React Testing Library** | Frontend UI tests (components, forms, API states). No backend test suite. |
 | **GitHub** | Source control + collaboration |
 | **Railway** | Always-on host: Next (UI+REST) + Socket.IO (`server/realtime`) |
 | **MongoDB Atlas** | Database |

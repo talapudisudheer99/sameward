@@ -34,7 +34,8 @@ Status means **built in the app**, not “planned.”
 | Explore Sameward demo | ✅ | [explore-demo](./explore-demo.md) |
 | Docs / boards | ⬜ Later | Not built |
 | AI V1.5 (large Catch up / Ask sources / cache) | ⬜ Later | [ai CONVERSATION-UNDERSTANDING](../ai/CONVERSATION-UNDERSTANDING.md) |
-| Tests + Railway live deploy | ⬜ Next | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) |
+| Frontend tests (Jest + RTL) | ✅ | UI: components, forms, validation, interactions, API loading/error states. No backend tests. [Phase 8](../phases/08-quality-deployment/README.md) |
+| Railway live deploy | ⬜ Next | [Phase 8](../phases/08-quality-deployment/README.md) · [deploy](../architecture/deploy.md) |
 
 Workspace empty-state notes: [workspace-home.md](./workspace-home.md)
 
