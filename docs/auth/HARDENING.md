@@ -1,6 +1,6 @@
 # Auth hardening (F1–F7)
 
-Phase **2B**. All items done. Full mentoring log was retired; this is the lasting reference.
+All items shipped. This is the lasting reference.
 
 | # | Feature | What shipped |
 |---|---------|----------------|
@@ -24,7 +24,7 @@ Phase **2B**. All items done. Full mentoring log was retired; this is the lastin
 
 ---
 
-## Why each matters (interview)
+## Why each matters
 
 | # | One line |
 |---|----------|

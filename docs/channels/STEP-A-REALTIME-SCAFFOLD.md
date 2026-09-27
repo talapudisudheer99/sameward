@@ -4,7 +4,7 @@
 **Status:** ✅ Step A done (Aug 4, 2026)  
 **Done when:** `GET /health` → `200` + `{ ok: true, ... }` while `next dev` can still run on `:3000`.
 
-Parent mental model: [MENTORSHIP.md](../MENTORSHIP.md) · Deploy: [deploy.md](../architecture/deploy.md)
+Deploy: [deploy.md](../architecture/deploy.md)
 
 ---
 

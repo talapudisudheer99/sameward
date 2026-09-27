@@ -1,7 +1,7 @@
 # Folder structure — Sameward (full stack)
 
 > **Why this doc exists:** Before shipping product features (workspaces, channels, …), we lock a **production-shaped** layout.  
-> Interviews and future-you should answer: *Where does UI live? Where does the API live? Where does domain logic live?* — without hunting.
+> Anyone reading the repo should be able to answer: *Where does UI live? Where does the API live? Where does domain logic live?* — without hunting.
 
 This is the **source of truth** for structure. Phase guides may show examples; if they conflict, **this file wins**.
 
@@ -36,7 +36,7 @@ teamhub-ai/
 ├── lib/                    # Shared + server logic, models, schemas
 ├── hooks/                  # Client hooks (when needed)
 ├── public/                 # Static assets
-├── docs/                   # Learning + feature reference
+├── docs/                   # Feature and architecture reference
 ├── proxy.ts                # Edge gate (cookie presence) — Next 16 name for middleware
 ├── .env.example            # Env names only (no secrets)
 ├── package.json
@@ -191,7 +191,7 @@ lib/
 - Do **not** put React components in `lib/`.
 - Do **not** import `lib/models` from Client Components — keep DB on the server.
 
-### Domain slice pattern (interview-friendly)
+### Domain slice pattern
 
 For each product domain (auth, workspaces, channels):
 
@@ -203,7 +203,7 @@ For each product domain (auth, workspaces, channels):
 | Business helpers | `lib/<domain>/` (when logic > ~40 lines in the route) |
 | UI | `app/(app)/…` pages + `components/<domain>/` |
 
-That is a **modular monolith** inside one Next app — production-common for SaaS learning apps.
+That is a **modular monolith** inside one Next app — common in production SaaS apps.
 
 ---
 
@@ -223,7 +223,7 @@ That is a **modular monolith** inside one Next app — production-common for Saa
 | Anti-pattern | Why we avoid it |
 |--------------|-----------------|
 | `pages/` router alongside App Router | Two routing systems |
-| Separate `backend/` Express app | Extra deploy + loses Next learning goals |
+| Separate `backend/` Express app | Extra deploy + duplicates what Next Route Handlers already do |
 | Dumping all components in one flat folder | Unfindable after 30 files |
 | Business logic only inside `route.ts` forever | Unusable routes; hard to test |
 | Client Components that import Mongoose | Bundle + security disaster |
@@ -264,9 +264,7 @@ Full inventory: [`docs/channels/`](../channels/README.md) · [`LIB-AND-MODELS.md
 
 ---
 
-## 9. Interview talking points
-
-Use these lines confidently:
+## 9. Design principles in short
 
 1. **“Full-stack Next modular monolith”** — UI and API in one repo; domain folders under `app/api` and `lib`.
 2. **“Route groups separate shells”** — marketing, auth, and authenticated app don’t share the wrong layout.
@@ -291,4 +289,4 @@ Before coding:
 
 ---
 
-[← Docs hub](../README.md) · [Stack](./stack.md) · [Auth reference](../auth/README.md) · [Workspaces module](../workspaces/README.md) · [Phase 3](../phases/03-workspaces-members/README.md)
+[← Docs hub](../README.md) · [Stack](./stack.md) · [Auth reference](../auth/README.md) · [Workspaces module](../workspaces/README.md)

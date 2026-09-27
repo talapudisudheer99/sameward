@@ -9,7 +9,7 @@ import { redirectIfSessionLost } from "@/lib/auth/redirect-if-session-lost"
  * - One place to set defaults (cookies, base URL, headers)
  * - Later: interceptors (auto-logout on 401, attach headers, etc.)
  *
- * Learning note vs fetch:
+ * Why axios over fetch:
  * - fetch: you pass credentials/headers on EVERY call
  * - axios: set once here, every `api.post(...)` reuses them
  */

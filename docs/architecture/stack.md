@@ -7,14 +7,14 @@
 | **React 19** | UI library | Industry standard, component model, hooks | Vanilla DOM is too low-level for SaaS UI |
 | **TypeScript** | Type safety | Contracts between UI ↔ API ↔ DB | Plain JS scales poorly in teams |
 | **Next.js App Router** | Framework | Routing, RSC, layouts, Route Handlers, `proxy.ts` edge gate | CRA is deprecated; Vite SPA alone lacks full-stack patterns we need to learn |
-| **Tailwind CSS** | Styling | Utility-first, fast iteration, design tokens | Heavy CSS modules alone slower for learning velocity |
+| **Tailwind CSS** | Styling | Utility-first, fast iteration, design tokens | Heavy CSS modules alone slow down iteration |
 | **shadcn/ui** | Accessible primitives | Own the code (not a black-box npm UI kit) | MUI/Chakra hide too much; reinventing a11y is costly |
 
 ## State
 
 | Technology | Role | Why |
 |------------|------|-----|
-| **Redux Toolkit** | Client / UI state | Predictable global state, DevTools, interview relevance |
+| **Redux Toolkit** | Client / UI state | Predictable global state, DevTools, wide industry use |
 | **RTK Query** | Server state cache | Caching, invalidation, mutations — replaces ad-hoc Axios sprawl |
 
 **Rule of thumb:**
@@ -33,13 +33,13 @@
 
 ### MongoDB vs the original Supabase/Postgres idea
 
-Earlier planning mentioned Supabase (Postgres). We are documenting **MongoDB** as the persistence layer for this learning path because:
+Earlier planning mentioned Supabase (Postgres). We are documenting **MongoDB** as the persistence layer because:
 
 - Document model maps cleanly to nested workspace → channel → message shapes
-- You practice Mongoose/native driver patterns common in interviews
+- Mongoose gives schemas and validation on top of a flexible document store
 - Auth can be owned in-app (sessions/JWT) rather than only vendor auth
 
-**Trade-off:** You lose built-in Supabase Auth/Realtime — we replace those with our own auth + Socket.IO (intentional learning).
+**Trade-off:** You lose built-in Supabase Auth/Realtime — we replace those with our own auth + Socket.IO (full control over sessions and realtime).
 
 ## Auth (Phase 2)
 
@@ -64,7 +64,7 @@ Spec: [`docs/channels/SOCKETS.md`](../channels/SOCKETS.md).
 
 | Technology | Role |
 |------------|------|
-| **Jest + React Testing Library** | Frontend UI tests (components, forms, API states). No backend test suite. |
+| **TypeScript + ESLint** | Type and lint checks on every change; core flows tested manually end to end before each deploy |
 | **GitHub** | Source control + collaboration |
 | **Railway** | Always-on host: Next (UI+REST) + Socket.IO (`server/realtime`) |
 | **MongoDB Atlas** | Database |

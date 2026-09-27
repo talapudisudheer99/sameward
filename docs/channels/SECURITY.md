@@ -34,7 +34,7 @@ Non-negotiable for this module. Builds on [workspaces SECURITY](../workspaces/SE
 
 ---
 
-## Interview line
+## In one line
 
 > “Realtime doesn’t relax authorization — it multiplies the places we must check membership: REST and every socket join.”
 

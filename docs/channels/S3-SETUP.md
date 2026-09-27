@@ -151,7 +151,7 @@ Say only: “secret is in `.env.local`.”
 
 - Keep the bucket **private**  
 - Rotate/delete access keys if leaked  
-- Free-tier limits exist; for learning, traffic stays tiny  
+- Free-tier limits exist; at current traffic this stays well within them  
 - We still enforce app limits: **10 MB · max 3 files · jpeg/png/webp/gif/pdf**
 
 ---

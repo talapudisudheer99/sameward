@@ -69,6 +69,6 @@ Cookie `maxAge` and DB `expiresAt` always use the **same** seconds (`lib/auth/se
 
 ---
 
-## Interview one-liner
+## In one line
 
 > “We use DB-backed sessions: raw token in an httpOnly cookie, hash in Mongo. Proxy only checks cookie presence; layouts and APIs call `getCurrentUser` for real auth. Hardening adds soft email verify, rate limits, logout-all, remember-me TTLs, and audit events.”

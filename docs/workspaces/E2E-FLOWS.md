@@ -66,7 +66,7 @@ Working style: discuss → docs → implement → review.
 
 **Why verify on accept?** Same pattern as password-reset / verify-email: possession of the link proves inbox control for that address.
 
-**Why not instant Membership.create?** Belonging without consent is indefensible in a real product. Learning speed is not a product reason.
+**Why not instant Membership.create?** Belonging without consent is indefensible in a real product. Speed of building is not a product reason.
 
 ---
 

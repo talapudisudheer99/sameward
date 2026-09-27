@@ -1,6 +1,6 @@
 # Concept Dependency Map
 
-Never learn these in isolation. Each layer assumes the one above.
+These layers depend on each other. Each layer assumes the one above.
 
 ```
 JavaScript fundamentals
@@ -25,7 +25,7 @@ RTK Query (server cache on top of APIs)
         ↓
 Socket.IO (realtime beside REST)
         ↓
-Testing (Jest + RTL)
+Release checks (TypeScript, ESLint, end-to-end)
         ↓
 Performance → GitHub → Railway
 ```

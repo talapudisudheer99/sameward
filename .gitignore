@@ -36,3 +36,9 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# internal working notes (kept locally, not published)
+docs/MENTORSHIP.md
+docs/phases/
+docs/tracking/
+.cursor/

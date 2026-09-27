@@ -31,7 +31,7 @@ Full why + layout: [docs/architecture/deploy.md](../architecture/deploy.md).
 | Persistence | WebSockets need a long-lived Node process |
 | Deploy | **Railway** for Next + realtime (always-on; not a serverless-only host) |
 | Migrate later | Two services / two folders → move realtime without rewriting REST |
-| Learning | Real Socket.IO rooms, auth, reconnect — not a black-box vendor |
+| Control | Real Socket.IO rooms, auth, reconnect — not a black-box vendor |
 
 ---
 
@@ -129,7 +129,7 @@ Option B: Redis pub/sub (better when scaling)
 
 ---
 
-## Interview lines
+## Key points
 
 > “HTTP is the source of truth for messages; Socket.IO is the notification bus.”  
 > “We authorize every room join the same way we authorize REST — membership is not optional because you have a socket.”

@@ -65,7 +65,7 @@ export default function SignUpPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-        // Explicit for learning: allow the browser to accept/send auth cookies.
+        // Explicit: allow the browser to accept/send auth cookies.
         // Same-origin fetch includes them by default, but this documents intent.
         credentials: "include",
       })
@@ -155,8 +155,8 @@ export default function SignUpPage() {
           />
 
           <p className="text-xs leading-relaxed text-muted-foreground">
-            Sameward is a learning product. Formal Terms of Service and Privacy
-            Policy pages will be published later.
+            Sameward is in early access. Formal Terms of Service and Privacy
+            Policy pages will be published soon.
           </p>
 
           {errors.root?.serverError?.message ? (
