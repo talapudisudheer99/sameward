@@ -256,11 +256,11 @@ All derive from `--brand-a` / `--primary` / `--warning`, so they follow the pale
 - [x] Marketing header + hero (Phase 1 UI)
 - [x] Workspace empty state (Phase 1 UI)
 
-## Mentor notes
+## Design notes
 
 - Mockups are **direction**, not pixel law. Prefer tokens + layout rules over copying every AI chrome widget.
 - “Trusted by” logo rows / floating AI bubbles can wait; hero stays one composition.
-- Keep building on route groups + shell you already have.
+- Keep building on the existing route groups and app shell.
 
 ---
 

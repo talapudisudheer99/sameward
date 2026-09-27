@@ -97,6 +97,6 @@ Reusable rule: **one Zod schema** imported by API + form so client and server ag
 
 ---
 
-## Your implementation task (function only)
+## Next
 
-See chat for the single micro-task. UI polish is mentor’s follow-up.
+UI polish is tracked as a follow-up.

@@ -135,10 +135,10 @@ Protocol never changes: **POST message → Mongo → notifyRealtime → `message
 
 ---
 
-## Interview line
+## In one line
 
 > “We run Next and Socket.IO on Railway so WebSockets stay alive, but we keep REST in `app/api` and realtime in `server/realtime` as separate processes. HTTP is the source of truth; the socket is the notification bus. That layout lets us move realtime to its own host later by changing env, not rewriting chat.”
 
 ---
 
-[← Stack](./stack.md) · [Sockets →](../channels/SOCKETS.md) · [Phase 8 →](../phases/08-quality-deployment/README.md)
+[← Stack](./stack.md) · [Sockets →](../channels/SOCKETS.md)

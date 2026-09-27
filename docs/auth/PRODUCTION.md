@@ -41,7 +41,7 @@ Also set realtime / S3 vars from `.env.example` when you deploy chat (see [deplo
 ## 3. External services
 
 ### MongoDB Atlas
-- [ ] Network access allows Railway (or, for learning only, `0.0.0.0/0`)
+- [ ] Network access allows Railway (or, for local testing only, `0.0.0.0/0`)
 - [ ] Strong DB user; URI uses that user
 - [ ] App uses `dbName: "teamhub"`
 
@@ -77,4 +77,4 @@ Also set realtime / S3 vars from `.env.example` when you deploy chat (see [deplo
 
 ---
 
-[← Auth docs](./README.md) · [Phase 8](../phases/08-quality-deployment/README.md) · [Deploy](../architecture/deploy.md)
+[← Auth docs](./README.md) · [Deploy](../architecture/deploy.md)

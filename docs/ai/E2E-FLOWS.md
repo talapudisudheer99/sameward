@@ -97,13 +97,13 @@
 
 Paste as **two users** in order (A = Maya voice, B = Arjun voice). Topic: separate Socket.IO vs merge into Next.
 
-1. **A:** hey — quick architecture check before we lock Phase 6 deploy. I’m still uneasy about running Socket.IO as a separate process on Railway. Feels like extra ops for a learning project. Why not just attach sockets to the Next server?  
+1. **A:** hey — quick architecture check before we lock Phase 6 deploy. I’m still uneasy about running Socket.IO as a separate process on Railway. Feels like extra ops for a small team. Why not just attach sockets to the Next server?  
 2. **B:** fair question. short answer: Next route handlers are request/response. WebSockets need a long-lived process. On serverless that dies. even on Node, mixing REST + sockets in one process makes deploys riskier — one bad socket leak takes down HTTP too.  
 3. **A:** ok but we’re on Railway Option B anyway, always-on Node. so the “serverless kills sockets” argument is weaker for us, right?  
 4. **B:** weaker, not gone. we still want a clean boundary: Next owns truth (Mongo writes), realtime owns fan-out. that split is what we documented — HTTP source of truth, socket is notification bus. if we merge them now we’ll rewrite later when we scale or split hosts.  
 5. **A:** another thing — if sockets are separate, how do we trust `channel:join`? cookie to another origin?  
 6. **B:** same session cookie / shared secret path we already built. handshake resolves userId, then every `channel:join` re-checks `canAccessChannel`. private channel without membership → deny. we must never treat “has a socket” as “is allowed.”  
-7. **A:** got it. so authz on join mirrors REST 404 behavior. good interview line too.  
+7. **A:** got it. so authz on join mirrors REST 404 behavior. nice and consistent.  
 8. **B:** exactly. also typing/presence stay ephemeral — no DB writes. messages always POST REST first, then `notifyRealtime` → `message:new`.  
 9. **A:** when do we need Redis adapter? two Railway instances would break rooms today, yes?  
 10. **B:** yes. single instance = in-memory rooms are fine for v1. multi-instance without Redis adapter = user A on instance 1 never sees emits from instance 2. I’d defer Redis until we actually horizontally scale. premature infra tax.  

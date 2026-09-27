@@ -44,4 +44,4 @@
 
 ---
 
-[← Docs hub](../README.md) · [Progress →](../tracking/progress.md)
+[← Docs hub](../README.md)

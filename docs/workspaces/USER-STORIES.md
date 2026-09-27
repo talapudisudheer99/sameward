@@ -83,7 +83,7 @@ Each story has **acceptance criteria** we can demo.
 **I want** to invite existing Sameward users by email,  
 **So that** they join my workspace only after they accept — I never force people in.
 
-### Why this flow (product / interview)
+### Why this flow
 
 Instant-add without consent lets anyone pull a teammate into a workspace without asking. That is easy to build and hard to defend.  
 **Invite → email link → accept** is how Notion/Slack-class products work: belonging is opted into, inbox ownership is proven by clicking the link, and we can mark `emailVerified` on accept when it was still false.

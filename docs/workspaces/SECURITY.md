@@ -73,7 +73,7 @@ Logger: `lib/workspaces/workspace-audit-logger.ts`.
 
 ---
 
-## Interview line
+## In one line
 
 > “Multi-tenant security is membership checks on every workspace-scoped request. The workspace id in the URL is a claim we verify against the memberships collection — never an entitlement by itself.”
 

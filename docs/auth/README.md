@@ -3,7 +3,7 @@
 **Status:** Phase 2 + 2B complete (email/password, Google, hardening F1–F7)
 
 This folder is the **single source of truth** for authentication.  
-If you need to debug, extend, or explain auth in an interview — start here.
+If you need to debug, extend, or explain auth — start here.
 
 | Doc | Use when |
 |-----|----------|
@@ -18,8 +18,6 @@ If you need to debug, extend, or explain auth in an interview — start here.
 
 **Related (not auth-specific):**
 - Mongoose refresh: [../guides/mongoose.md](../guides/mongoose.md)
-- Roadmap phase stub: [../phases/02-authentication/README.md](../phases/02-authentication/README.md)
-- Progress: [../tracking/progress.md](../tracking/progress.md)
 
 ---
 

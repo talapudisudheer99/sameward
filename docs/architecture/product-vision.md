@@ -2,7 +2,7 @@
 
 ## One-sentence pitch
 
-Sameward is a workspace where teams **talk, plan, document, and get AI help** in one place — built so we can master production frontend architecture end-to-end.
+Sameward is a workspace where teams **talk, plan, document, and get AI help** in one place, built with a production-grade frontend and realtime architecture.
 
 ## Not a clone
 
@@ -37,17 +37,15 @@ User (+ profile fields)
 
 Persisted in **MongoDB**. Exposed via **Next.js Route Handlers**. Consumed by **React + RTK Query**.
 
-## Success criteria for this learning project
+## Engineering principles
 
-By the end you should be able to:
-
-- Design a feature’s **data flow** before writing UI  
-- Explain **Server vs Client Components** and when Redux vs RTK Query applies  
-- Build secure **auth + protected APIs**  
-- Model multi-tenant data in **MongoDB**  
-- Add **realtime** without breaking REST architecture  
-- Test critical paths and deploy via **GitHub → Railway**  
-- Defend every stack choice in an interview  
+- Design each feature’s **data flow** before building UI  
+- Use **Server vs Client Components** deliberately; Redux for UI state, RTK Query for server state  
+- Secure **auth + protected APIs** on every route  
+- Model multi-tenant data cleanly in **MongoDB**  
+- Add **realtime** without breaking the REST source of truth  
+- Test critical paths end to end and deploy via **GitHub → Railway**  
+- Every stack choice has a written reason  
 
 ## Out of scope (for now)
 

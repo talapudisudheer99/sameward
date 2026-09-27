@@ -90,7 +90,7 @@ Check off when reviewed.
 ## Slice 6 — Docs & harden ✅ (docs pass Jul 31)
 
 - [x] **T15** Mark API/FRONTEND/LIB docs as fully implemented
-- [x] **T16** Update [progress.md](../tracking/progress.md)
+- [x] **T16** Update progress tracking
 - [x] **T17** verified email required to **send invites**
 
 ---

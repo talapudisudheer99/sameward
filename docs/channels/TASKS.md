@@ -78,7 +78,7 @@ Check off when reviewed.
 ## Slice 7 — Docs harden
 
 - [x] **T23** Mark API/FRONTEND/SOCKETS/LIB as implemented (exact filenames synced Aug 9)
-- [x] **T24** Update [progress.md](../tracking/progress.md) (through files slice, Aug 9)
+- [x] **T24** Update progress tracking (through files slice, Aug 9)
 - [x] Manual E2E script in [E2E-FLOWS.md](./E2E-FLOWS.md)
 
 ---

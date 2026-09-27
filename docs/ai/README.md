@@ -40,4 +40,4 @@ This folder is the **single source of truth** for the AI module (same idea as [`
 
 ---
 
-[← Docs hub](../README.md) · [Phase 7 →](../phases/07-ai-integrations/README.md)
+[← Docs hub](../README.md)
